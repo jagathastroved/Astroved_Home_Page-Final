@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-display: "Fraunces", serif;
+  --font-ui: "Fraunces", serif;
+  --font-sans: "Fraunces", serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-purple: #3B1E5E;
+  --color-indigo: #4B2E83;
+  --color-midnight: #000000;
+  --color-gold: #FBBF24;
+  --color-saffron: #F4A340;
+  --color-ivory: #FDFBF7;
+  --color-cream: #F7EFE1;
+
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-spin-slow: spin 25s linear infinite;
+  --animate-spin-slower: spin 60s linear infinite;
+}
+
+/* Custom scroll snap utility and custom aesthetics */
+.scroll-snap-x {
+  scroll-snap-type: x mandatory;
+}
+
+.snap-center {
+  scroll-snap-align: center;
+}
+
+/* Hide scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Custom glass styling */
+.glass-panel {
+  background: rgba(255, 253, 246, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.dark .glass-panel {
+  background: rgba(15, 19, 41, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 175, 55, 0.12);
+}
+
+/* Base custom themes */
+:root {
+  background-color: var(--color-ivory);
+  color: var(--color-midnight);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+html[data-theme='dark'] {
+  background-color: var(--color-midnight);
+  color: var(--color-cream);
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-reverse {
+  0% {
+    transform: translateX(-50%);
+  }
+
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 40s linear infinite;
+}
+
+.animate-marquee-reverse {
+  display: flex;
+  width: max-content;
+  animation: marquee-reverse 40s linear infinite;
+}
+
+.marquee-container:hover .animate-marquee,
+.marquee-container:hover .animate-marquee-reverse {
+  animation-play-state: paused;
+}

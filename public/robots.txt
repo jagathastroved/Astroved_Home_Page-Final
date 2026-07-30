@@ -1,0 +1,5 @@
+# IMPORTANT: Remove this Disallow rule on launch to allow indexing of the production domain.
+User-agent: *
+Disallow: /
+
+Sitemap: https://qa.astroved.com/sitemap.xml

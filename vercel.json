@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/proxy/menu",
+      "destination": "https://www.astroved.com/mainmenunew.json"
+    }
+  ]
+}

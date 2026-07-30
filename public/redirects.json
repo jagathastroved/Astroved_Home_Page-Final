@@ -1,0 +1,30 @@
+{
+  "redirects": [
+    {
+      "source": "/astrology/kundali-matching",
+      "destination": "/kundli-matching.html",
+      "type": 301
+    },
+    {
+      "source": "/astrology/birth-chart",
+      "destination": "/birth-chart.html",
+      "type": 301
+    },
+    {
+      "source": "/astrology/career-astrology",
+      "destination": "/career-astrology.html",
+      "type": 301
+    },
+    {
+      "source": "/astrology/horoscope-matching",
+      "destination": "/kundli-matching.html",
+      "type": 301
+    },
+    {
+      "source": "/astrology/free-horoscope",
+      "destination": "/#daily-widget",
+      "type": 301
+    }
+  ],
+  "note": "This file acts as a foundational redirect map for when qa.astroved.com replaces astroved.com. A server-side middleware or edge function should parse this to issue 301 redirects."
+}

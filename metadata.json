@@ -1,0 +1,6 @@
+{
+  "name": "Cosmic Timing",
+  "description": "An interactive Vedic cosmic timing, astrological moments, and daily guidance dashboard powered by AstroVed and Gemini.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
