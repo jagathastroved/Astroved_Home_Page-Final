@@ -89,7 +89,7 @@ const DESKTOP_DESC_STYLES = "font-sans text-gray-600 dark:text-gray-300 text-xs 
 const CTA_CONTAINER_STYLES = "mt-auto flex flex-col justify-start w-full";
 const CTA_ALIGNER_STYLES = "flex justify-center w-full min-h-[44px]";
 const DESKTOP_CTA_STYLES = "flex w-full justify-center items-center gap-1.5 px-3 lg:px-6 py-2.5 lg:py-3 rounded-full bg-amber-600 hover:bg-amber-500 text-white font-sans font-semibold tracking-wide text-[9px] lg:text-xs hover:scale-105 transition-transform shadow-md text-center leading-tight cursor-pointer";
-const FOOTER_TEXT_STYLES = "mt-2 text-xs lg:text-sm text-gray-500 dark:text-gray-400 font-medium font-sans min-h-[32px] text-center lg:text-left";
+const FOOTER_TEXT_STYLES = "mt-2 text-xs lg:text-sm text-gray-500 dark:text-gray-400 font-medium font-sans min-h-[32px] text-center lg:text-center";
 
 const MOBILE_CONTAINER_STYLES = "md:hidden relative group px-0 touch-pan-y";
 const MOBILE_CAROUSEL_BOX_STYLES = "overflow-hidden rounded-[2.5rem] bg-[#f8f9fa] dark:bg-[#0b0e14] border border-gray-100 dark:border-white/5 hover:border-[#b052ff]/30 hover:shadow-[0_0_40px_rgba(176,82,255,0.15)] transition-all duration-500 relative h-[670px] lg:h-[450px]";
