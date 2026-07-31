@@ -76,14 +76,10 @@ const setCookie = (name: string, value: string, days = 365) => {
     document.cookie = `${name}=${encodeURIComponent(value)};expires=${d.toUTCString()};path=/`;
 };
 
-
-
-
-
-
-
-
-
+const removeCookie = (name: string) => {
+    if (typeof document === 'undefined') return;
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+};
 
 export function PremiumPanchang() {
     const [panchangData, setPanchangData] = useState<any>(null);
@@ -116,22 +112,8 @@ export function PremiumPanchang() {
     const [isLocationOpen, setIsLocationOpen] = useState(false);
     const [calendarYear, setCalendarYear] = useState<number>(new Date().getFullYear());
     const [calendarMonth, setCalendarMonth] = useState<number>(new Date().getMonth());
-    const [tempCountry, setTempCountry] = useState(() => {
-        const loc = getCookie('panchang_location_name');
-        if (loc) {
-            const parts = loc.split(',');
-            return parts[parts.length - 1]?.trim() || '';
-        }
-        return '';
-    });
-    const [tempCity, setTempCity] = useState(() => {
-        const loc = getCookie('panchang_location_name');
-        if (loc) {
-            const parts = loc.split(',');
-            return parts[0]?.trim() || '';
-        }
-        return '';
-    });
+    const [tempCountry, setTempCountry] = useState('');
+    const [tempCity, setTempCity] = useState('');
     const [citySuggestions, setCitySuggestions] = useState<any[]>([]);
     const [isSearchingCities, setIsSearchingCities] = useState(false);
     const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
@@ -160,32 +142,22 @@ export function PremiumPanchang() {
                 const response = await fetch('https://api.ipify.org?format=json');
                 const data = await response.json();
 
-                let astrovedRes;
-                try {
-                    astrovedRes = await fetch(`https://webservice.astroved.com/Api/Panchang/GetLocationBasedOnIp/${data.ip}`);
-                    if (!astrovedRes.ok) throw new Error('Primary API returned not ok');
-                } catch (primaryErr) {
-                    console.warn('Primary IP API failed, trying fallback:', primaryErr);
-                    astrovedRes = await fetch(`https://qa.astroved.com/new/Home/GetLocationBasedOnIp`);
-                }
-                let astrovedData = await astrovedRes.json();
+                const astrovedRes = await fetch(`https://webservice.astroved.com/Api/Panchang/GetLocationBasedOnIp/${data.ip}`);
+                const astrovedData = await astrovedRes.json();
 
-                const latVal = astrovedData.Latitude || astrovedData.latitude;
-                const lngVal = astrovedData.Longitude || astrovedData.longitude;
-                if (astrovedData && latVal && lngVal) {
-                    const lat = parseFloat(latVal);
-                    const lng = parseFloat(lngVal);
-                    const city = astrovedData.City || astrovedData.city || 'Unknown City';
-                    const countryCode = astrovedData.CountryCode || astrovedData.countryCode || 'Unknown Country';
+                if (astrovedData && astrovedData.Latitude && astrovedData.Longitude) {
+                    const lat = parseFloat(astrovedData.Latitude);
+                    const lng = parseFloat(astrovedData.Longitude);
+                    const city = astrovedData.City || 'Unknown City';
+                    const countryCode = astrovedData.CountryCode || 'Unknown Country';
 
                     setCoordinates({ lat, lng });
                     setCookie('panchang_lat', String(lat));
                     setCookie('panchang_lng', String(lng));
 
-                    const tz = astrovedData.TimeZone || astrovedData.timeZone;
-                    if (tz) {
-                        setTimezone(tz);
-                        setCookie('panchang_timezone', tz);
+                    if (astrovedData.TimeZone) {
+                        setTimezone(astrovedData.TimeZone);
+                        setCookie('panchang_timezone', astrovedData.TimeZone);
                     }
 
                     let countryName = countryCode;
@@ -196,8 +168,6 @@ export function PremiumPanchang() {
 
                     const formattedName = `${city}, ${countryName}`;
                     setLocationName(formattedName);
-                    setTempCity(city);
-                    setTempCountry(countryName);
                     setCookie('panchang_location_name', formattedName);
                 }
             } catch (err) {
@@ -306,7 +276,7 @@ export function PremiumPanchang() {
 
     // Fetch city suggestions dynamically as user types with debounce
     useEffect(() => {
-        if (!tempCountry || !tempCity || tempCity.length < 3) {
+        if (!tempCountry || !tempCity || tempCity.length < 3 || isCitySelected) {
             setCitySuggestions([]);
             return;
         }
@@ -848,11 +818,6 @@ export function PremiumPanchang() {
                                                                     {suggestion.displayName}
                                                                 </button>
                                                             ))}
-                                                        </div>
-                                                    )}
-                                                    {tempCity.length >= 3 && !isSearchingCities && citySuggestions.length === 0 && tempCountry && !isCitySelected && tempCity !== locationName.split(',')[0].trim() && (
-                                                        <div className={Styles.SUGGESTIONS_CONTAINER_STYLES}>
-                                                            <div className="p-3 text-xs text-slate-500 text-center">No city found.</div>
                                                         </div>
                                                     )}
                                                 </div>

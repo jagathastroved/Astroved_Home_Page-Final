@@ -138,7 +138,7 @@ export function Horoscope({ onCalculateChart }: HoroscopeProps) {
         const timeZone = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Kolkata');
         const responseData = await fetchHoroscope(moonSign, apiPeriod, timeZone);
 
-        console.log('Horoscope API Success:', responseData);
+        // console.log('Horoscope API Success:', responseData);
 
         if (isMounted) {
           setHoroscopeData(responseData.summary || 'Horoscope data is currently unavailable. Please try again later.');
