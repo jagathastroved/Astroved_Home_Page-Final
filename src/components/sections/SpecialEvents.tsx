@@ -4,45 +4,26 @@ import { motion, AnimatePresence } from 'motion/react';
 import { fetchSpecialEvents } from '../../services/astrovedService';
 
 /**
- * Interface for static upcoming events to be used in the future.
- */
-interface StaticEventItem {
-  id: number;
-  title: string;
-  titleColor: string;
-  tagline: string;
-  taglineColor: string;
-  deadline: string;
-  deadlineColor: string;
-  cta: string;
-  buttonBg: string;
-  buttonText: string;
-  image: string;
-  mobileImage: string;
-}
-
-/**
- * Interface defining the structure of the fetched event banners.
+ * Interface defining the structure of a single banner (one image + link).
+ * `sources` holds any <picture><source> variants found *inside that same
+ * banner's own markup* — this is just for image-quality/bandwidth, NOT for
+ * deciding which banner set (mobile vs desktop) to show.
  */
 interface EventBanner {
   title: string;
   image: string;
-  tabletImage: string;
-  mobileImage: string;
   sources: Array<{ media: string; srcSet: string }>;
   link: string;
-  tabletLink: string;
-  mobileLink: string;
 }
 
 /**
- * Interface defining the structure of the parsed API event items.
+ * Interface defining the structure of a parsed carousel item.
+ * `isThreeBan` items render 1-3 banners side by side (desktop only, in this data set).
  */
 interface ApiEventItem {
   id: number;
   isThreeBan: boolean;
   banners: EventBanner[];
-  originalData: any;
 }
 
 /** --- Shared Tailwind CSS Classes --- */
@@ -50,10 +31,6 @@ interface ApiEventItem {
 /* Base Section & Headers */
 const SECTION_WRAPPER_STYLES = "pt-2 md:pt-4 pb-3 md:pb-6 relative overflow-hidden transition-colors duration-500 z-10";
 const CONTENT_WRAPPER_STYLES = "max-w-[1600px] mx-auto px-4 md:px-8 relative z-10";
-const HEADER_CONTAINER_STYLES = "text-center w-full mx-auto mb-6 md:mb-5 lg:mb-3";
-const HEADER_SUBTITLE_STYLES = "text-amber-600 dark:text-amber-400 font-sans text-xs md:text-sm uppercase tracking-widest font-bold mb-3";
-const HEADER_TITLE_STYLES = "font-serif text-3xl sm:text-4xl md:text-5xl text-midnight dark:text-cream leading-tight font-bold mb-4";
-const HEADER_DESC_STYLES = "block font-sans text-gray-500 dark:text-gray-400 text-sm sm:text-base md:text-sm lg:text-base leading-relaxed max-w-2xl mx-auto font-medium px-4 md:px-2 md:mt-1";
 
 /* Carousel Container */
 const CAROUSEL_WRAPPER_STYLES = "relative group px-0 touch-pan-y";
@@ -86,7 +63,7 @@ const CTA_ARROW_ICON_ASTRO_STYLES = "w-4 h-4 sm:w-5 sm:h-5 lg:w-5 lg:h-5 text-pu
 const CTA_ARROW_ICON_HOMA_STYLES = "w-4 h-4 sm:w-5 sm:h-5 lg:w-5 lg:h-5 text-orange-800 stroke-[2.5]";
 
 /**
- * Returns dynamic visibility classes for multi-banner arrays.
+ * Returns dynamic visibility classes for multi-banner (three-ban) arrays.
  * @param index - Index of the banner in the array.
  */
 const getMultiBannerVisibilityStyles = (index: number): string => {
@@ -101,30 +78,83 @@ const getPaginationDotStyles = (isActive: boolean): string => {
   return `h-1.5 rounded-full transition-all duration-300 pointer-events-auto ${isActive ? 'bg-amber-400 w-6' : 'bg-white/30 hover:bg-white/50 w-1.5'}`;
 };
 
+/**
+ * Parses a WordPress carousel HTML document into a normalized event list.
+ * This is used SEPARATELY for desktop_content and mobile_content — they are
+ * independent carousels with different item counts/structures, so they are
+ * never zipped together by index.
+ *
+ * @param htmlDoc - Parsed HTML document (desktop or mobile content).
+ * @param itemSelector - CSS selector for each slide/item wrapper
+ *   ('.carousel-item' for desktop_content, '.slide' for mobile_content).
+ */
+const parseCarouselDoc = (htmlDoc: Document, itemSelector: string): ApiEventItem[] => {
+  const items = htmlDoc.querySelectorAll(itemSelector);
+
+  return Array.from(items).map((item, index) => {
+    const threeBanContainer = item.querySelector('.three-ban');
+
+    if (threeBanContainer) {
+      // Multi-banner row (e.g. Saturn Transit / Pratyangira Devi / Shreem Brzee)
+      const anchors = threeBanContainer.querySelectorAll('a');
+      const banners: EventBanner[] = Array.from(anchors).map((anchor) => {
+        const img = anchor.querySelector('img');
+        return {
+          title: img ? (img.getAttribute('alt') || img.getAttribute('title') || 'Special Event') : 'Special Event',
+          image: img ? img.getAttribute('src') || '' : '',
+          sources: [],
+          link: anchor.getAttribute('href') || '',
+        };
+      });
+
+      return {
+        id: index + 1,
+        isThreeBan: true,
+        banners,
+      };
+    }
+
+    // Single banner slide
+    const img = item.querySelector('img');
+    const anchor = item.querySelector('a');
+    const picture = item.querySelector('picture');
+
+    const sources: Array<{ media: string; srcSet: string }> = [];
+    if (picture) {
+      picture.querySelectorAll('source').forEach((src) => {
+        sources.push({
+          media: src.getAttribute('media') || '',
+          srcSet: src.getAttribute('srcset') || '',
+        });
+      });
+    }
+
+    return {
+      id: index + 1,
+      isThreeBan: false,
+      banners: [
+        {
+          title: img ? (img.getAttribute('alt') || img.getAttribute('title') || 'Special Event') : 'Special Event',
+          image: img ? img.getAttribute('src') || '' : '',
+          sources,
+          link: anchor ? anchor.getAttribute('href') || '' : '',
+        },
+      ],
+    };
+  });
+};
+
 const preloadImages = async (events: ApiEventItem[]) => {
   const promises = events.flatMap((event) =>
-    event.banners.flatMap((banner) => {
-      const images = [banner.image];
-
-      if (banner.tabletImage) {
-        images.push(banner.tabletImage);
-      }
-      if (banner.mobileImage) {
-        images.push(banner.mobileImage);
-      }
-
-      return images.map(
-        (src) =>
-          new Promise<void>((resolve) => {
-            const img = new Image();
-
-            img.onload = () => resolve();
-            img.onerror = () => resolve();
-
-            img.src = src;
-          })
-      );
-    })
+    event.banners.map(
+      (banner) =>
+        new Promise<void>((resolve) => {
+          const img = new Image();
+          img.onload = () => resolve();
+          img.onerror = () => resolve();
+          img.src = banner.image;
+        })
+    )
   );
 
   await Promise.all(promises);
@@ -132,23 +162,51 @@ const preloadImages = async (events: ApiEventItem[]) => {
 
 /**
  * SpecialEvents Component
- * 
- * Fetches dynamic events from an external API and renders them in an interactive carousel,
- * alongside static premium CTA buttons.
+ *
+ * Fetches dynamic events from an external API. desktop_content and
+ * mobile_content are parsed into two SEPARATE carousels (they are not the
+ * same list at different resolutions — mobile drops some desktop banners
+ * and adds its own). The component watches actual viewport width and
+ * renders only the matching carousel, so mobile screens only ever show
+ * banners that came from mobile_content, and desktop only ever shows
+ * banners from desktop_content.
  */
 export function SpecialEvents() {
-  const [displayEvents, setDisplayEvents] = useState<ApiEventItem[]>([]);
+  const [desktopEvents, setDesktopEvents] = useState<ApiEventItem[]>([]);
+  const [mobileEvents, setMobileEvents] = useState<ApiEventItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
+  const [isMobile, setIsMobile] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
+  // The carousel actually shown right now — mobile_content on small screens,
+  // desktop_content everywhere else.
+  const displayEvents = isMobile ? mobileEvents : desktopEvents;
+
   /**
-   * Fetches event carousel HTML from the WordPress API, parses it using DOMParser,
-   * and normalizes the data into state-friendly objects.
+   * Tracks real viewport width so we know which parsed carousel to show.
+   */
+  useEffect(() => {
+    const checkViewport = () => setIsMobile(window.innerWidth < 768);
+    checkViewport();
+    window.addEventListener('resize', checkViewport);
+    return () => window.removeEventListener('resize', checkViewport);
+  }, []);
+
+  /**
+   * Reset to the first slide whenever we switch between the mobile and
+   * desktop carousels (they have different lengths/content).
+   */
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [isMobile]);
+
+  /**
+   * Fetches event carousel HTML from the WordPress API and parses
+   * desktop_content and mobile_content independently.
    */
   useEffect(() => {
     const fetchEvents = async () => {
@@ -156,147 +214,26 @@ export function SpecialEvents() {
         setIsLoading(true);
         const data = await fetchSpecialEvents();
 
-        if (Array.isArray(data) && data.length > 0 && data[0].desktop_content) {
+        if (Array.isArray(data) && data.length > 0) {
           const parser = new DOMParser();
-          const doc = parser.parseFromString(data[0].desktop_content, 'text/html');
-          const tabletDoc = data[0].tablet_content ? parser.parseFromString(data[0].tablet_content, 'text/html') : null;
-          const mobileDoc = data[0].mobile_content ? parser.parseFromString(data[0].mobile_content, 'text/html') : null;
 
-          const carouselItems = doc.querySelectorAll('.carousel-item');
-          const tabletCarouselItems = tabletDoc ? tabletDoc.querySelectorAll('.carousel-item') : [];
-          const mobileCarouselItems = mobileDoc ? mobileDoc.querySelectorAll('.carousel-item') : [];
+          const desktop = data[0].desktop_content
+            ? parseCarouselDoc(parser.parseFromString(data[0].desktop_content, 'text/html'), '.carousel-item')
+            : [];
 
-          if (carouselItems.length > 0) {
-            const parsedEvents = Array.from(carouselItems).map((item, index) => {
-              const tabletItem = tabletCarouselItems[index];
-              const mobileItem = mobileCarouselItems[index];
-              
-              const threeBanContainer = item.querySelector('.three-ban');
-              const tabletThreeBanContainer = tabletItem ? tabletItem.querySelector('.three-ban') : null;
-              const mobileThreeBanContainer = mobileItem ? mobileItem.querySelector('.three-ban') : null;
+          const mobile = data[0].mobile_content
+            ? parseCarouselDoc(parser.parseFromString(data[0].mobile_content, 'text/html'), '.slide')
+            : [];
 
-              if (threeBanContainer) {
-                const anchors = threeBanContainer.querySelectorAll('a');
-                const tabletAnchors = tabletThreeBanContainer ? tabletThreeBanContainer.querySelectorAll('a') : [];
-                const mobileAnchors = mobileThreeBanContainer ? mobileThreeBanContainer.querySelectorAll('a') : [];
+          await preloadImages([...desktop, ...mobile]);
 
-                const banners = Array.from(anchors).map((anchor, bIndex) => {
-                  const tabletAnchor = tabletAnchors[bIndex];
-                  const mobileAnchor = mobileAnchors[bIndex];
-                  
-                  const img = anchor.querySelector('img');
-                  const tabletImg = tabletAnchor ? tabletAnchor.querySelector('img') : null;
-                  const mobileImg = mobileAnchor ? mobileAnchor.querySelector('img') : null;
-                  
-                  const title = img ? (img.getAttribute('alt') || img.getAttribute('title') || 'Special Event') : 'Special Event';
-                  const image = img ? img.getAttribute('src') || '' : '';
-                  const tabletImage = tabletImg ? tabletImg.getAttribute('src') || image : image;
-                  const mobileImage = mobileImg ? mobileImg.getAttribute('src') || image : image;
-                  
-                  const link = anchor.getAttribute('href') || '';
-                  const tabletLink = tabletAnchor ? tabletAnchor.getAttribute('href') || link : link;
-                  const mobileLink = mobileAnchor ? mobileAnchor.getAttribute('href') || link : link;
-
-                  return {
-                    title,
-                    image,
-                    tabletImage,
-                    mobileImage,
-                    sources: [],
-                    link,
-                    tabletLink,
-                    mobileLink,
-                  };
-                });
-
-                return {
-                  id: index + 1,
-                  isThreeBan: true,
-                  banners,
-                  originalData: null
-                };
-              } else {
-                const img = item.querySelector('img');
-                const anchor = item.querySelector('a');
-                const picture = item.querySelector('picture');
-
-                const tabletAnchor = tabletItem ? tabletItem.querySelector('a') : null;
-                const tabletImg = tabletItem ? tabletItem.querySelector('img') : null;
-                const mobileAnchor = mobileItem ? mobileItem.querySelector('a') : null;
-                const mobileImg = mobileItem ? mobileItem.querySelector('img') : null;
-
-                let sources: Array<{ media: string; srcSet: string }> = [];
-                if (picture) {
-                  const sourceElements = picture.querySelectorAll('source');
-                  sourceElements.forEach(src => {
-                    sources.push({
-                      media: src.getAttribute('media') || '',
-                      srcSet: src.getAttribute('srcset') || ''
-                    });
-                  });
-                } else {
-                  // Fallback if no picture tag
-                  const source = item.querySelector('picture source');
-                  if (source && source.getAttribute('srcset')) {
-                    sources.push({
-                      media: '(max-width: 767px)',
-                      srcSet: source.getAttribute('srcset') || ''
-                    });
-                  }
-                }
-
-                const title = img ? (img.getAttribute('alt') || img.getAttribute('title') || 'Special Event') : 'Special Event';
-                const image = img ? img.getAttribute('src') || '' : '';
-
-                let tabletImage = image;
-                if (tabletImg) {
-                  tabletImage = tabletImg.getAttribute('src') || image;
-                }
-                
-                let mobileImage = image;
-                if (mobileImg) {
-                  mobileImage = mobileImg.getAttribute('src') || image;
-                } else if (sources.length > 0) {
-                  mobileImage = sources[0].srcSet;
-                }
-
-                const link = anchor ? anchor.getAttribute('href') || '' : '';
-                const tabletLink = tabletAnchor ? tabletAnchor.getAttribute('href') || link : link;
-                const mobileLink = mobileAnchor ? mobileAnchor.getAttribute('href') || link : link;
-
-                return {
-                  id: index + 1,
-                  isThreeBan: false,
-                  banners: [
-                    {
-                      title,
-                      image,
-                      tabletImage,
-                      mobileImage,
-                      sources,
-                      link,
-                      tabletLink,
-                      mobileLink,
-                    }
-                  ],
-                  originalData: null
-                };
-              }
-            });
-
-            await preloadImages(parsedEvents);
-            setDisplayEvents(parsedEvents);
-            setCurrentIndex(0);
-            setIsLoading(false);
-          } else {
-            setIsLoading(false);
-          }
-        } else {
-          setIsLoading(false);
+          setDesktopEvents(desktop);
+          setMobileEvents(mobile);
+          setCurrentIndex(0);
         }
-      } catch (err: any) {
+      } catch (err) {
         console.error('Error fetching special events:', err);
-        setError(err.message || 'Failed to fetch');
+      } finally {
         setIsLoading(false);
       }
     };
@@ -304,24 +241,18 @@ export function SpecialEvents() {
     fetchEvents();
   }, []);
 
-  /**
-   * Swipe gesture start logic.
-   */
+  /** Swipe gesture start logic. */
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
   };
 
-  /**
-   * Swipe gesture move logic.
-   */
+  /** Swipe gesture move logic. */
   const handleTouchMove = (e: React.TouchEvent) => {
     setTouchEnd(e.targetTouches[0].clientX);
   };
 
-  /**
-   * Swipe gesture end logic, determining slide direction.
-   */
+  /** Swipe gesture end logic, determining slide direction. */
   const handleTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
     const distance = touchStart - touchEnd;
@@ -329,52 +260,35 @@ export function SpecialEvents() {
     if (distance < -50) prevSlide();
   };
 
-  /**
-   * Advances the carousel to the next slide.
-   */
+  /** Advances the carousel to the next slide. */
   const nextSlide = () => {
+    if (displayEvents.length === 0) return;
     setDirection(1);
     setCurrentIndex((prev) => (prev === displayEvents.length - 1 ? 0 : prev + 1));
   };
 
-  /**
-   * Reverses the carousel to the previous slide.
-   */
+  /** Reverses the carousel to the previous slide. */
   const prevSlide = () => {
+    if (displayEvents.length === 0) return;
     setDirection(-1);
     setCurrentIndex((prev) => (prev === 0 ? displayEvents.length - 1 : prev - 1));
   };
 
-  /**
-   * Auto-scroll timer.
-   */
+  /** Auto-scroll timer. */
   useEffect(() => {
+    if (displayEvents.length <= 1) return;
     const timer = setTimeout(() => {
       nextSlide();
     }, 5000);
     return () => clearTimeout(timer);
   }, [displayEvents, currentIndex]);
 
-  // Image preloading is now handled in fetchEvents
-
   const ready = !isLoading && displayEvents.length > 0;
+  const activeEvent = ready ? displayEvents[currentIndex] : null;
 
   return (
     <section id="special-events" className={SECTION_WRAPPER_STYLES}>
-      <div className={CONTENT_WRAPPER_STYLES} >
-
-        {/* --- Header --- */}
-        {/* <div className={HEADER_CONTAINER_STYLES}> */}
-        {/* <p className={HEADER_SUBTITLE_STYLES}>
-            LIVE THIS WEEK
-          </p> */}
-        {/* <h2 className={HEADER_TITLE_STYLES}>
-            Current Divine Powertimes & <em className="text-amber-600 dark:text-amber-400 italic font-bold">Special Events.</em>
-          </h2>
-          <p className={HEADER_DESC_STYLES} style={{ maxWidth: '100%' }}>
-            Explore current AstroVed programs timed to sacred dates, deity blessings, temple traditions, and remedy windows.
-          </p>
-        </div> */}
+      <div className={CONTENT_WRAPPER_STYLES}>
 
         {/* --- Carousel Container --- */}
         <div
@@ -384,7 +298,7 @@ export function SpecialEvents() {
           onTouchEnd={handleTouchEnd}
         >
           <div className={CAROUSEL_BOX_STYLES}>
-            {!ready ? (
+            {!ready || !activeEvent ? (
               /* Loading Indicator */
               <div className={LOADING_CONTAINER_STYLES}>
                 <div className={LOADING_CONTENT_STYLES}>
@@ -396,101 +310,72 @@ export function SpecialEvents() {
                 </div>
               </div>
             ) : (
-              <>
-
-                {/* Animated Carousel Slides */}
-                <AnimatePresence initial={false} custom={direction}>
-                  {displayEvents.length > 0 && (
-                    <motion.div
-                      key={currentIndex}
-                      initial={{ opacity: 0, scale: 0.98 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 1.02 }}
-                      transition={{ duration: 0.8, ease: "easeInOut" }}
-                      className="w-full h-full cursor-pointer flex flex-col items-center justify-center col-start-1 row-start-1"
-                      onClick={() => {
-                        if (!displayEvents[currentIndex].isThreeBan) {
-                          const banner = displayEvents[currentIndex].banners[0];
-                          const getLink = () => {
-                            if (typeof window === 'undefined') return banner?.link;
-                            if (window.innerWidth <= 767) return banner?.mobileLink || banner?.link;
-                            if (window.innerWidth <= 1024) return banner?.tabletLink || banner?.link;
-                            return banner?.link;
-                          };
-                          const link = getLink();
-                          if (link) {
-                            window.open(link, '_blank', 'noopener,noreferrer');
-                          }
-                        }
-                      }}
-                    >
-                      {displayEvents[currentIndex].isThreeBan ? (
-                        <div className={MULTI_BANNER_WRAPPER_STYLES}>
-                          {displayEvents[currentIndex].banners.map((banner, bannerIndex) => {
-                            const getLink = () => {
-                              if (typeof window === 'undefined') return banner.link;
-                              if (window.innerWidth <= 767) return banner.mobileLink || banner.link;
-                              if (window.innerWidth <= 1024) return banner.tabletLink || banner.link;
-                              return banner.link;
-                            };
-                            return (
-                            <a
-                              key={bannerIndex}
-                              href={getLink()}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className={getMultiBannerVisibilityStyles(bannerIndex)}
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <picture>
-                                <source media="(max-width: 767px)" srcSet={banner.mobileImage} />
-                                <source media="(min-width: 768px) and (max-width: 1024px)" srcSet={banner.tabletImage} />
-                                <img
-                                  src={banner.image}
-                                  alt={banner.title}
-                                  className={MULTI_BANNER_IMG_STYLES}
-                                />
-                              </picture>
-                            </a>
-                            );
-                          })}
-                        </div>
-                      ) : (
-                        <div className={SINGLE_BANNER_WRAPPER_STYLES}>
-                          <picture>
-                            <source media="(max-width: 767px)" srcSet={displayEvents[currentIndex].banners[0].mobileImage} />
-                            <source media="(min-width: 768px) and (max-width: 1024px)" srcSet={displayEvents[currentIndex].banners[0].tabletImage} />
-                            {displayEvents[currentIndex].banners[0].sources.map((src, srcIndex) => (
-                              <source key={srcIndex} media={src.media} srcSet={src.srcSet} />
-                            ))}
-                            <img
-                              src={displayEvents[currentIndex].banners[0].image}
-                              alt={displayEvents[currentIndex].banners[0].title}
-                              className={SINGLE_BANNER_IMG_STYLES}
-                            />
-                          </picture>
-                        </div>
-                      )}
-                    </motion.div>
+              <AnimatePresence initial={false} custom={direction}>
+                <motion.div
+                  key={`${isMobile ? 'mobile' : 'desktop'}-${currentIndex}`}
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 1.02 }}
+                  transition={{ duration: 0.8, ease: "easeInOut" }}
+                  className="w-full h-full cursor-pointer flex flex-col items-center justify-center col-start-1 row-start-1"
+                  onClick={() => {
+                    if (!activeEvent.isThreeBan) {
+                      const link = activeEvent.banners[0]?.link;
+                      if (link) {
+                        window.open(link, '_blank', 'noopener,noreferrer');
+                      }
+                    }
+                  }}
+                >
+                  {activeEvent.isThreeBan ? (
+                    <div className={MULTI_BANNER_WRAPPER_STYLES}>
+                      {activeEvent.banners.map((banner, bannerIndex) => (
+                        <a
+                          key={bannerIndex}
+                          href={banner.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={getMultiBannerVisibilityStyles(bannerIndex)}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <img
+                            src={banner.image}
+                            alt={banner.title}
+                            className={MULTI_BANNER_IMG_STYLES}
+                          />
+                        </a>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className={SINGLE_BANNER_WRAPPER_STYLES}>
+                      <picture>
+                        {activeEvent.banners[0].sources.map((src, srcIndex) => (
+                          <source key={srcIndex} media={src.media} srcSet={src.srcSet} />
+                        ))}
+                        <img
+                          src={activeEvent.banners[0].image}
+                          alt={activeEvent.banners[0].title}
+                          className={SINGLE_BANNER_IMG_STYLES}
+                        />
+                      </picture>
+                    </div>
                   )}
-                </AnimatePresence>
-              </>
+                </motion.div>
+              </AnimatePresence>
             )}
           </div>
 
           {/* Navigation Controls */}
-          <button
-            onClick={prevSlide}
-            className={NAV_BTN_PREV_STYLES}
-          >
-            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
-          </button>
-          <button
-            onClick={nextSlide}
-            className={NAV_BTN_NEXT_STYLES}
-          >
-            <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
-          </button>
+          {displayEvents.length > 1 && (
+            <>
+              <button onClick={prevSlide} className={NAV_BTN_PREV_STYLES}>
+                <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
+              </button>
+              <button onClick={nextSlide} className={NAV_BTN_NEXT_STYLES}>
+                <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
+              </button>
+            </>
+          )}
 
           {/* Pagination Indicators */}
           <div className={PAGINATION_CONTAINER_STYLES}>
@@ -503,7 +388,6 @@ export function SpecialEvents() {
             ))}
           </div>
         </div>
-
 
         {/* --- Premium Static Theme CTA Bar --- */}
         <div className={CTA_BAR_CONTAINER_STYLES}>
