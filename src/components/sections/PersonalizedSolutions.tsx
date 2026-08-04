@@ -254,7 +254,7 @@ export function PersonalizedSolutions() {
                     <a
                       href={solution.link as string}
                       target="_blank"
-                      rel="noopener noreferrer"
+
                       className={DESKTOP_CTA_STYLES}
                     >
                       {solution.cta} <ArrowUpRight className="w-3.5 h-3.5 flex-shrink-0" />
@@ -352,7 +352,7 @@ export function PersonalizedSolutions() {
                             <a
                               href={currentSolution.link as string}
                               target="_blank"
-                              rel="noopener noreferrer"
+
                               className={MOBILE_CTA_STYLES}
                             >
                               {currentSolution.cta} <ArrowUpRight className="w-3.5 h-3.5" />

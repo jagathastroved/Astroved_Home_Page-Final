@@ -94,7 +94,7 @@ export function Footer() {
                   <a
                     href={linkData.targetId}
                     target="_blank"
-                    rel="noopener noreferrer"
+
                     className={getLinkStyles()}
                   >
                     {linkData.label}
@@ -162,10 +162,10 @@ export function Footer() {
       {/* --- App Download Badges & Trust Seals --- */}
       <div className="relative max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 mb-8 flex-wrap w-full">
         <div className="flex items-center gap-4">
-          <a href="https://play.google.com/store/apps/details?id=com.astroved.birthchartnew&pli=1" target="_blank" rel="noopener noreferrer" className="hover:opacity-90 transition-opacity">
+          <a href="https://play.google.com/store/apps/details?id=com.astroved.birthchartnew&pli=1" target="_blank" className="hover:opacity-90 transition-opacity">
             <img src={`${import.meta.env.VITE_CDN_URL}/images/images-av/play-store.png`} alt="Get it on Google Play" className="h-10 w-auto" />
           </a>
-          <a href="https://apps.apple.com/us/app/astroved-astrology-remedies/id1406242342" target="_blank" rel="noopener noreferrer" className="hover:opacity-90 transition-opacity">
+          <a href="https://apps.apple.com/us/app/astroved-astrology-remedies/id1406242342" target="_blank" className="hover:opacity-90 transition-opacity">
             <img src={`${import.meta.env.VITE_CDN_URL}/images/images-av/app-store.png`} alt="Download on the App Store" className="h-10 w-auto" />
           </a>
         </div>

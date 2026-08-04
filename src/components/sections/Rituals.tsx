@@ -269,7 +269,7 @@ export function Rituals() {
                           <span className="font-bold text-slate-800 dark:text-slate-200 lg:text-[#0a192f] lg:dark:text-[#0a192f] text-sm lg:text-[14px]">{currentEvent.priceText}</span>
                           <span>{currentEvent.deliveryText}</span>
                         </span>
-                        <a href={currentEvent.link} target="_blank" rel="noopener noreferrer" className={CTA_WRAPPER_STYLES}>
+                        <a href={currentEvent.link} target="_blank" className={CTA_WRAPPER_STYLES}>
                           {currentEvent.buttonText} <ArrowRight className="w-5 h-5 lg:w-4 lg:h-4 ml-1" />
                         </a>
                       </div>

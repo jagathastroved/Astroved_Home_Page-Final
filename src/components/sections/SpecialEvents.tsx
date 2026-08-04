@@ -334,7 +334,7 @@ export function SpecialEvents() {
                           key={bannerIndex}
                           href={banner.link}
                           target="_blank"
-                          rel="noopener noreferrer"
+
                           className={getMultiBannerVisibilityStyles(bannerIndex)}
                           onClick={(e) => e.stopPropagation()}
                         >
@@ -393,7 +393,7 @@ export function SpecialEvents() {
         <div className={CTA_BAR_CONTAINER_STYLES}>
 
           {/* Talk to Astrologer Button */}
-          <a href="https://www.astroved.com/AstrologerScheduler.aspx?id=115&promo=SL_SP_LAC-1" target="_blank" rel="noopener noreferrer" className={ASTRO_BTN_STYLES}>
+          <a href="https://www.astroved.com/AstrologerScheduler.aspx?id=115&promo=SL_SP_LAC-1" target="_blank" className={ASTRO_BTN_STYLES}>
             <div className={ASTRO_ICON_WRAPPER_STYLES}>
               <PhoneCall className="w-8 h-8 lg:w-9 lg:h-9 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] fill-white/20" strokeWidth={1.5} />
             </div>
@@ -408,7 +408,7 @@ export function SpecialEvents() {
           </a>
 
           {/* Free Kundali Button */}
-          <a href="/kundali-report/" target="_blank" rel="noopener noreferrer" className={HOMA_BTN_STYLES}>
+          <a href="/kundali-report/" target="_blank" className={HOMA_BTN_STYLES}>
             <div className={HOMA_ICON_WRAPPER_STYLES}>
               <ScrollText className="w-8 h-8 lg:w-9 lg:h-9 text-orange-200 drop-shadow-[0_0_8px_rgba(245,158,11,0.8)] fill-orange-500/30" strokeWidth={1.5} />
             </div>

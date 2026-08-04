@@ -130,7 +130,7 @@ export function AIReports() {
                 <a
                   href={report.link}
                   target="_blank"
-                  rel="noopener noreferrer"
+
                   className={`inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full ${getButtonColor(report.id)} text-white font-semibold tracking-wide text-xs hover:scale-105 transition-transform shadow-md`}
                 >
                   {report.cta} <ArrowUpRight className="w-3.5 h-3.5" />
@@ -187,7 +187,7 @@ export function AIReports() {
                         <a
                           href={report.link}
                           target="_blank"
-                          rel="noopener noreferrer"
+
                           className={`inline-flex w-full max-w-[240px] justify-center items-center gap-1.5 px-4 py-2.5 rounded-full ${getButtonColor(report.id)} text-white font-semibold tracking-wide text-xs hover:scale-105 transition-transform shadow-lg pointer-events-auto`}
                         >
                           {report.cta} <ArrowUpRight className="w-3.5 h-3.5" />

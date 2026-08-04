@@ -187,7 +187,7 @@ export function PersonalGuidance() {
 
                   {/* CTA Link */}
                   {expert.link ? (
-                    <a href={expert.link} target="_blank" rel="noopener noreferrer" className={CTA_WRAPPER_STYLES}>
+                    <a href={expert.link} target="_blank" className={CTA_WRAPPER_STYLES}>
                       {expert.cta} <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                     </a>
                   ) : (
@@ -207,7 +207,7 @@ export function PersonalGuidance() {
                     <a
                       href="/reacthome/reports/Sample Detailed Kundli Premium Report.pdf"
                       target="_blank"
-                      rel="noopener noreferrer"
+
                       className={FOOTER_TEXT_STYLES}
                     >
                       {expert.footerText}

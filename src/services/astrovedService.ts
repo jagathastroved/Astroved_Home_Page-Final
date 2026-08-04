@@ -14,7 +14,7 @@ export const fetchPanchangData = async (timezone: string, lat: number, lng: numb
         const encodedTz = btoa(timezone).replace(/=/g, '');
         const url = `${import.meta.env.VITE_ASTROVED_API_URL}/node/newpanchangam/${encodedTz}/${lat}/${lng}/${localISOTime}`;
         const response = await axios.get(url);
-        console.log('Punchang Data', response.data)
+        // console.log('Punchang Data', response.data)
         return response.data;
     } catch (error) {
         throw new Error('Failed to fetch panchang data');
