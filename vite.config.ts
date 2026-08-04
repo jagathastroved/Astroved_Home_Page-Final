@@ -33,14 +33,10 @@ export default defineConfig({
       "@": path.resolve(__dirname, "."),
     },
   },
-  // server: {
-  //   proxy: {
-  //     '/api/proxy/menu': {
-  //       target: 'https://www.astroved.com/mainmenunew.json',
-  //       changeOrigin: true,
-  //       rewrite: () => '',
-  //     },
-  //   },
-  // },
-  base: '/ReactHome'
+  server: {
+  host: "0.0.0.0",
+      port: 2173,
+      allowedHosts: ["homepage.astroved.com"],
+  },
+  // base: '/ReactHome'
 });

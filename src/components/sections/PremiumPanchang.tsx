@@ -20,11 +20,7 @@ import {
   fetchPanchangData,
   fetchTodayContent,
 } from "../../services/astrovedService";
-import {
-  fetchCountries,
-  searchLocation,
-  reverseGeocode,
-} from "../../services/locationService";
+import { fetchCountries, searchLocation } from "../../services/locationService";
 import { COUNTRIES } from "../../utils/countries";
 
 const Styles = {
@@ -91,16 +87,6 @@ const Styles = {
     "text-sm md:text-[15px] font-semibold text-midnight dark:text-cream flex flex-wrap items-center gap-2",
   ITEM_DATE_STYLES:
     "text-xs md:text-sm font-mono text-slate-600 dark:text-slate-400 mt-1",
-  CHART_CONTAINER_STYLES:
-    "bg-white/80 dark:bg-[#080b1a] rounded-2xl p-6 w-full max-w-[280px] flex flex-col items-center justify-center relative overflow-hidden border border-purple/10 dark:border-gold/10 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] dark:shadow-2xl transition-colors duration-500",
-  CHART_GRID_STYLES:
-    "grid grid-cols-4 grid-rows-4 gap-[2px] bg-purple/20 dark:bg-gold/30 p-[2px] relative z-10 w-full aspect-square rounded-sm mx-auto shadow-[0_0_20px_rgba(104,105,249,0.05)] dark:shadow-[0_0_30px_rgba(251,191,36,0.05)] transition-colors duration-500",
-  CHART_CELL_STYLES:
-    "bg-white dark:bg-[#0c0f24] flex items-center justify-center p-1 relative group hover:bg-purple/5 dark:hover:bg-indigo/20 transition-colors cursor-default overflow-hidden",
-  CHART_CELL_TEXT_STYLES:
-    "text-[10px] font-mono text-slate-600 dark:text-cream/60 group-hover:text-purple dark:group-hover:text-gold transition-colors font-bold dark:font-semibold text-center",
-  CENTER_CHART_CELL_STYLES:
-    "col-span-2 row-span-2 bg-ivory/50 dark:bg-[#080b1a] flex flex-col items-center justify-center relative border border-purple/5 dark:border-gold/10",
   getCalendarDayStyles: function (
     isSelected: boolean,
     isToday: boolean,
@@ -123,11 +109,13 @@ const Styles = {
   },
 };
 
+// ---------------------------------------------------------------------------
+// Cookie helpers
+// ---------------------------------------------------------------------------
 const getCookie = (name: string) => {
   if (typeof document === "undefined") return null;
   const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
-  if (match) return decodeURIComponent(match[2]);
-  return null;
+  return match ? decodeURIComponent(match[2]) : null;
 };
 
 const setCookie = (name: string, value: string, days = 365) => {
@@ -136,6 +124,95 @@ const setCookie = (name: string, value: string, days = 365) => {
   d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
   document.cookie = `${name}=${encodeURIComponent(value)};expires=${d.toUTCString()};path=/`;
 };
+
+// ---------------------------------------------------------------------------
+// Location resolution helpers
+// ---------------------------------------------------------------------------
+const CLOUDFLARE_LOCATION_ENDPOINT = "/api/get-cf-location";
+const ASTROVED_IP_LOCATION_ENDPOINT =
+  "https://astroved.com/new/Home/GetLocationBasedOnIp";
+
+type ResolvedLocation = {
+  lat: number;
+  lng: number;
+  city: string;
+  countryCode: string;
+  timezone?: string;
+};
+
+/** Attempts to resolve the user's location from Cloudflare geo headers. */
+const fetchLocationFromCloudflare = async (): Promise<ResolvedLocation> => {
+  const response = await fetch(CLOUDFLARE_LOCATION_ENDPOINT);
+  if (!response.ok) throw new Error("Cloudflare location endpoint failed");
+
+  const data = await response.json();
+  if (!data.cf_latitude || !data.cf_longitude) {
+    throw new Error("Cloudflare headers missing location data");
+  }
+
+  console.log("Using Cloudflare Headers Data:", data);
+
+  return {
+    lat: parseFloat(data.cf_latitude),
+    lng: parseFloat(data.cf_longitude),
+    city: data.cf_city || "Unknown City",
+    countryCode: data.cf_country || "Unknown Country",
+    timezone: data.cf_timezone,
+  };
+};
+
+/** Fallback: resolves the user's location via the AstroVed IP-lookup API. */
+const fetchLocationFromAstroVed = async (): Promise<ResolvedLocation> => {
+  const response = await fetch(ASTROVED_IP_LOCATION_ENDPOINT);
+  if (!response.ok) throw new Error("AstroVed IP location API failed");
+
+  const data = await response.json();
+  const lat = data.Latitude || data.latitude;
+  const lng = data.Longitude || data.longitude;
+  if (!lat || !lng) {
+    throw new Error("AstroVed IP location API returned no coordinates");
+  }
+
+  return {
+    lat: parseFloat(lat),
+    lng: parseFloat(lng),
+    city: data.City || data.city || "Unknown City",
+    countryCode: data.CountryCode || data.countryCode || "Unknown Country",
+    timezone: data.TimeZone || data.timeZone,
+  };
+};
+
+/** Cloudflare first, AstroVed IP API as fallback if Cloudflare is unavailable. */
+const detectLocationFromNetwork = async (): Promise<ResolvedLocation> => {
+  try {
+    return await fetchLocationFromCloudflare();
+  } catch (cfError) {
+    console.error(
+      "Cloudflare location unavailable, falling back to AstroVed IP API:",
+      cfError,
+    );
+    return await fetchLocationFromAstroVed();
+  }
+};
+
+const resolveCountryName = (countryCode: string) => {
+  const matchedCountry = COUNTRIES.find((c) => c.CountryCode === countryCode);
+  return (
+    matchedCountry?.CountryName1 ||
+    (matchedCountry as any)?.CountryName ||
+    countryCode
+  );
+};
+
+const formatLocationName = (
+  city: string,
+  state: string | undefined,
+  country: string,
+) => {
+  const statePart = state && state !== "Unknown" ? `${state}, ` : "";
+  return `${city}, ${statePart}${country}`;
+};
+
 export function PremiumPanchang() {
   const [panchangData, setPanchangData] = useState<any>(null);
   const [todayContentData, setTodayContentData] = useState<any>(null);
@@ -214,6 +291,30 @@ export function PremiumPanchang() {
     "December",
   ];
 
+  /**
+   * Applies a resolved location (coords + timezone + display name) to state
+   * and persists it to cookies. Single source of truth for "committing" a
+   * location, used by auto-detection, search, and manual selection flows.
+   */
+  const applyLocation = (
+    lat: number,
+    lng: number,
+    tz: string | undefined,
+    name: string,
+  ) => {
+    setCoordinates({ lat, lng });
+    setCookie("panchang_lat", String(lat));
+    setCookie("panchang_lng", String(lng));
+
+    if (tz) {
+      setTimezone(tz);
+      setCookie("panchang_timezone", tz);
+    }
+
+    setLocationName(name);
+    setCookie("panchang_location_name", name);
+  };
+
   useEffect(() => {
     fetchCountries()
       .then((data) => {
@@ -229,183 +330,41 @@ export function PremiumPanchang() {
       .catch((err) => console.error("Error fetching countries:", err));
   }, []);
 
-  // Single source of truth for auto-detecting location on first load.
-  // (Previously there were two separate geolocation effects that both called
-  // navigator.geolocation.getCurrentPosition — that caused duplicate permission
-  // prompts and a race condition between the two. Consolidated into one here.)
+  // Auto-detect the user's location on first load: Cloudflare headers first,
+  // AstroVed IP-lookup API as fallback. Skipped entirely if a location is
+  // already saved in cookies.
   useEffect(() => {
-    const fetchLocationFallback = async () => {
+    if (getCookie("panchang_location_name")) {
+      setIsLocationReady(true);
+      return;
+    }
+
+    const detectLocation = async () => {
       try {
-        let latVal, lngVal, city, countryCode, tz;
+        const resolved = await detectLocationFromNetwork();
+        const countryName = resolveCountryName(resolved.countryCode);
+        const formattedName = formatLocationName(
+          resolved.city,
+          undefined,
+          countryName,
+        );
 
-        try {
-          const response = await fetch("/api/get-cf-location");
-          if (!response.ok)
-            throw new Error("Failed to fetch Cloudflare location data");
-          const cfData = await response.json();
-
-          if (cfData.cf_latitude && cfData.cf_longitude) {
-            latVal = cfData.cf_latitude;
-            lngVal = cfData.cf_longitude;
-            city = cfData.cf_city;
-            countryCode = cfData.cf_country;
-            tz = cfData.cf_timezone;
-            console.log("Using Cloudflare Headers Data:", cfData);
-          } else {
-            throw new Error("CF headers missing location data");
-          }
-        } catch (cfErr) {
-          console.warn(
-            "Cloudflare headers failed/not found, falling back to AstroVed API:",
-            cfErr,
-          );
-          const fallbackRes = await fetch(
-            "https://www.astroved.com/new/Home/GetLocationBasedOnIp",
-          );
-          if (!fallbackRes.ok) throw new Error("AstroVed API returned not ok");
-          const astrovedData = await fallbackRes.json();
-
-          latVal = astrovedData.Latitude || astrovedData.latitude;
-          lngVal = astrovedData.Longitude || astrovedData.longitude;
-          city = astrovedData.City || astrovedData.city;
-          countryCode = astrovedData.CountryCode || astrovedData.countryCode;
-          tz = astrovedData.TimeZone || astrovedData.timeZone;
-          console.log("Using AstroVed API Data:", astrovedData);
-        }
-
-        if (latVal && lngVal) {
-          const lat = parseFloat(latVal);
-          const lng = parseFloat(lngVal);
-          city = city || "Unknown City";
-          countryCode = countryCode || "Unknown Country";
-
-          setCoordinates({ lat, lng });
-          setCookie("panchang_lat", String(lat));
-          setCookie("panchang_lng", String(lng));
-
-          if (tz) {
-            setTimezone(tz);
-            setCookie("panchang_timezone", tz);
-          }
-
-          let countryName = countryCode;
-          const matchedCountry = COUNTRIES.find(
-            (c) => c.CountryCode === countryCode,
-          );
-          if (
-            matchedCountry &&
-            (matchedCountry.CountryName1 || (matchedCountry as any).CountryName)
-          ) {
-            countryName =
-              matchedCountry.CountryName1 ||
-              (matchedCountry as any).CountryName ||
-              countryCode;
-          }
-
-          const formattedName = `${city}, ${countryName}`;
-          setLocationName(formattedName);
-          setTempCity(city);
-          setTempCountry(countryName);
-          setCookie("panchang_location_name", formattedName);
-        }
+        applyLocation(
+          resolved.lat,
+          resolved.lng,
+          resolved.timezone,
+          formattedName,
+        );
+        setTempCity(resolved.city);
+        setTempCountry(countryName);
       } catch (err) {
-        console.error("All location fallbacks failed:", err);
+        console.error("Unable to auto-detect location:", err);
       } finally {
         setIsLocationReady(true);
       }
     };
 
-    const checkLocation = async () => {
-      const hasLocation = getCookie("panchang_location_name");
-      if (hasLocation) {
-        setIsLocationReady(true);
-        return;
-      }
-
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          async (position) => {
-            try {
-              const { latitude, longitude } = position.coords;
-              const data = await reverseGeocode(latitude, longitude);
-              if (data && data.address) {
-                const city =
-                  data.address.city ||
-                  data.address.town ||
-                  data.address.village ||
-                  data.address.municipality ||
-                  data.address.county ||
-                  data.address.city_district ||
-                  data.address.suburb ||
-                  data.address.state ||
-                  "Unknown";
-                const state = data.address.state || "";
-                const country = data.address.country || "";
-                const formattedLocation = [city, state, country]
-                  .filter(Boolean)
-                  .join(", ");
-
-                setLocationName(formattedLocation);
-                setCoordinates({ lat: latitude, lng: longitude });
-                setTempCity(city);
-                setTempCountry(country);
-
-                setCookie("panchang_location_name", formattedLocation);
-                setCookie("panchang_lat", latitude.toString());
-                setCookie("panchang_lng", longitude.toString());
-                setCookie("panchang_location_permission", "granted");
-
-                // Retrieve exact timezone & normalized location from Astroved API
-                if (city && country) {
-                  try {
-                    const astrovedLocData = await fetchCitySuggestions(
-                      country,
-                      city,
-                    );
-                    if (
-                      Array.isArray(astrovedLocData) &&
-                      astrovedLocData.length > 0
-                    ) {
-                      const match = astrovedLocData[0];
-                      if (match.TimeZone) {
-                        setTimezone(match.TimeZone);
-                        setCookie("panchang_timezone", match.TimeZone);
-                      }
-                      const matchStatePart = match.StateorProvince
-                        ? `${match.StateorProvince}, `
-                        : "";
-                      const finalFormattedName = `${match.City}, ${matchStatePart}${match.Country}`;
-                      setLocationName(finalFormattedName);
-                      setCookie("panchang_location_name", finalFormattedName);
-                    }
-                  } catch (err) {
-                    console.error(
-                      "Failed to fetch Astroved exact location/timezone:",
-                      err,
-                    );
-                  }
-                }
-
-                setIsLocationReady(true);
-              } else {
-                fetchLocationFallback();
-              }
-            } catch (err) {
-              console.error("Error reverse geocoding:", err);
-              fetchLocationFallback();
-            }
-          },
-          (error) => {
-            console.error("Geolocation error:", error);
-            fetchLocationFallback();
-          },
-        );
-      } else {
-        fetchLocationFallback();
-      }
-    };
-
-    checkLocation();
+    detectLocation();
   }, []);
 
   useEffect(() => {
@@ -619,45 +578,38 @@ export function PremiumPanchang() {
     if (!query.trim()) return;
     try {
       const data = await searchLocation(query);
-      if (data && data.length > 0) {
-        const newLat = parseFloat(data[0].lat);
-        const newLng = parseFloat(data[0].lon);
-        setCoordinates({ lat: newLat, lng: newLng });
-        setCookie("panchang_lat", String(newLat));
-        setCookie("panchang_lng", String(newLng));
+      if (!data || data.length === 0) return;
 
-        const displayName = data[0].display_name;
-        const parts = displayName.split(",");
-        const city = parts[0]?.trim() || "";
-        const country = parts[parts.length - 1]?.trim() || "";
-        const formattedDisplay =
-          city && country ? `${city}, ${country}` : displayName;
-        setLocationName(formattedDisplay);
-        setCookie("panchang_location_name", formattedDisplay);
+      const newLat = parseFloat(data[0].lat);
+      const newLng = parseFloat(data[0].lon);
 
-        // Try resolving timezone via Astroved API since nominatim succeeded
-        if (city && country) {
-          try {
-            const astrovedLocData = await fetchCitySuggestions(country, city);
-            if (Array.isArray(astrovedLocData) && astrovedLocData.length > 0) {
-              const match = astrovedLocData[0];
-              if (match.TimeZone) {
-                setTimezone(match.TimeZone);
-                setCookie("panchang_timezone", match.TimeZone);
-              }
-              const matchStatePart = match.StateorProvince
-                ? `${match.StateorProvince}, `
-                : "";
-              const finalName = `${match.City}, ${matchStatePart}${match.Country}`;
-              setLocationName(finalName);
-              setCookie("panchang_location_name", finalName);
-            }
-          } catch (e) {
-            console.error(
-              "Astroved location API lookup inside handleLocationSearch failed:",
-              e,
+      const displayName = data[0].display_name;
+      const parts = displayName.split(",");
+      const city = parts[0]?.trim() || "";
+      const country = parts[parts.length - 1]?.trim() || "";
+      const formattedDisplay =
+        city && country ? `${city}, ${country}` : displayName;
+
+      applyLocation(newLat, newLng, undefined, formattedDisplay);
+
+      // Try resolving a more precise timezone/name via the AstroVed API
+      if (city && country) {
+        try {
+          const astrovedLocData = await fetchCitySuggestions(country, city);
+          if (Array.isArray(astrovedLocData) && astrovedLocData.length > 0) {
+            const match = astrovedLocData[0];
+            const finalName = formatLocationName(
+              match.City,
+              match.StateorProvince,
+              match.Country,
             );
+            applyLocation(newLat, newLng, match.TimeZone, finalName);
           }
+        } catch (e) {
+          console.error(
+            "Astroved location API lookup inside handleLocationSearch failed:",
+            e,
+          );
         }
       }
     } catch (err) {
@@ -750,19 +702,12 @@ export function PremiumPanchang() {
         const match = data[0];
         const newLat = parseFloat(match.Latitude);
         const newLng = parseFloat(match.Longitude);
-        setCoordinates({ lat: newLat, lng: newLng });
-        setCookie("panchang_lat", String(newLat));
-        setCookie("panchang_lng", String(newLng));
-        if (match.TimeZone) {
-          setTimezone(match.TimeZone);
-          setCookie("panchang_timezone", match.TimeZone);
-        }
-        const matchStatePart = match.StateorProvince
-          ? `${match.StateorProvince}, `
-          : "";
-        const finalName = `${match.City}, ${matchStatePart}${tempCountry || match.Country}`;
-        setLocationName(finalName);
-        setCookie("panchang_location_name", finalName);
+        const finalName = formatLocationName(
+          match.City,
+          match.StateorProvince,
+          tempCountry || match.Country,
+        );
+        applyLocation(newLat, newLng, match.TimeZone, finalName);
         return;
       }
     } catch (err) {
@@ -775,60 +720,6 @@ export function PremiumPanchang() {
     // Fallback: search using OSM Nominatim
     const query = `${tempCity}, ${tempCountry}`;
     await handleLocationSearch(query);
-  };
-
-  const planetAbbrs: Record<string, string> = {
-    Sun: "Su",
-    Moon: "Mo",
-    Mars: "Ma",
-    Mercury: "Me",
-    Jupiter: "Ju",
-    Venus: "Ve",
-    Saturn: "Sa",
-    Rahu: "Ra",
-    Ketu: "Ke",
-    Lagna: "Asc",
-  };
-
-  /**
-   * Maps an astrological sign index to the planets occupying it.
-   * @param {number} signIndex - The zodiac sign index (0-11).
-   * @returns {string[]} - Array of abbreviated planet names in the sign.
-   */
-  const getPlanetsForSign = (signIndex: number) => {
-    if (!panchangData || !panchangData.PositionList) {
-      const staticPositions: Record<number, string[]> = {
-        0: [],
-        1: ["Su"],
-        2: ["Mo"],
-        3: ["Me"],
-        4: ["Ra"],
-        5: ["Ju"],
-        6: [],
-        7: ["Sa"],
-        8: [],
-        9: [],
-        10: ["Ke"],
-        11: ["Ve"],
-      };
-      return staticPositions[signIndex] || [];
-    }
-
-    const list = panchangData.PositionList;
-    const result: string[] = [];
-    list.forEach((planet: any) => {
-      const longVal = parseFloat(
-        planet.LongitudeCalculations?.LongitudeValue || "0",
-      );
-      const calculatedSignIdx = Math.floor(longVal / 30);
-      if (calculatedSignIdx === signIndex) {
-        const abbr = planetAbbrs[planet.PlanetPlanetName];
-        if (abbr) {
-          result.push(abbr);
-        }
-      }
-    });
-    return result;
   };
 
   return (
@@ -1098,30 +989,16 @@ export function PremiumPanchang() {
                                     onClick={() => {
                                       setTempCity(suggestion.name);
                                       setIsCitySelected(true);
-                                      const newLat = suggestion.lat;
-                                      const newLng = suggestion.lng;
-                                      setCoordinates({
-                                        lat: newLat,
-                                        lng: newLng,
-                                      });
-                                      setCookie("panchang_lat", String(newLat));
-                                      setCookie("panchang_lng", String(newLng));
-                                      if (suggestion.timeZone) {
-                                        setTimezone(suggestion.timeZone);
-                                        setCookie(
-                                          "panchang_timezone",
-                                          suggestion.timeZone,
-                                        );
-                                      }
-                                      const statePart =
-                                        suggestion.stateName !== "Unknown"
-                                          ? `${suggestion.stateName}, `
-                                          : "";
-                                      const formattedName = `${suggestion.name}, ${statePart}${tempCountry || suggestion.country}`;
-                                      setLocationName(formattedName);
-                                      setCookie(
-                                        "panchang_location_name",
-                                        formattedName,
+                                      const finalName = formatLocationName(
+                                        suggestion.name,
+                                        suggestion.stateName,
+                                        tempCountry || suggestion.country,
+                                      );
+                                      applyLocation(
+                                        suggestion.lat,
+                                        suggestion.lng,
+                                        suggestion.timeZone,
+                                        finalName,
                                       );
                                       setCitySuggestions([]);
                                       setIsLocationOpen(false);

@@ -46,8 +46,8 @@ export const getUserCurrency = (): string => {
         return cookieCurrency;
     }
     
-    // 2. Check localStorage for location fallback
-    const savedLocation = localStorage.getItem('panchang_location_name');
+    // 2. Check cookies for location fallback
+    const savedLocation = getCookie('panchang_location_name');
     if (!savedLocation) {
         return 'USD';
     }
