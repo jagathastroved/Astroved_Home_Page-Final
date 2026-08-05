@@ -1,0 +1,43 @@
+header .max-w-\[clamp\(85px\,10vw\,150px\)\]{max-width:clamp(150px,15vw,216px)}
+header .h-\[clamp\(22px\,3vw\,40px\)\]{height:clamp(33px,5vw,48px)}
+header .w-\[18px\]{width:20px}
+header .h-\[18px\]{height:20px}
+header .h-\[clamp\(15px\,1\.1vw\,19px\)\]{height:clamp(20px,1.1vw,19px)}
+header .w-\[clamp\(15px\,1\.1vw\,19px\)\]{width:clamp(20px,1.1vw,19px)}
+header span.user-chip__icon svg {width: 20px; height: 20px;}
+.animate-marquee .text-gray-300{color:rgb(1 2 116);}
+.marquee-container.bg-\[\#0b1120\]{ background-color:rgb(224 225 255) }
+button.user-chip {display: flex;}
+.user-chip .user-chip__name{ margin-left:3px; margin-top:0; padding-right:0; line-height:22px }
+ @media(max-width:1130px) {.text-\[clamp\(12px\,1\.3vw\,17px\)\] { font-size: 13px;}
+header .max-w-\[clamp\(85px\,10vw\,150px\)\]{max-width: 140px; height: auto;}}
+@media(min-width:901px) and (max-width:1129px) {
+header > div.flex { flex-wrap: wrap;}
+header nav {flex-basis: 100% !important; order: 3; justify-content: space-around !important; gap: 0 !important;}
+header nav .py-2 { padding: 0;}}
+
+
+.coloroverwrite{
+  background : #675DF3 !important;
+    border: #675DF3 !important;
+    color: white !important;
+}
+
+
+#special-events .lg\:gap-8 {gap: 3rem;}
+#special-events .lg\:mt-3 {margin-top: 1.25rem;}
+	#special-events .rounded-full.lg\:h-\[76px\] {height: 50px;}
+#special-events .rounded-full.lg\:max-w-\[380px\] {max-width: 300px;}
+#special-events .rounded-full.shadow-\[0_10px_30px_rgba\(58\,12\,106\,0\.3\)\]{	--tw-shadow: 0 5px 10px rgba(58, 12, 106, .3); --tw-shadow-colored: 0 10px 10px var(--tw-shadow-color);}
+#special-events .rounded-full.shadow-\[0_10px_30px_rgba\(198\,81\,4\,0\.3\)\]{--tw-shadow: 0 5px 10px rgba(198, 81, 4, .3); --tw-shadow-colored: 0 5px 10px var(--tw-shadow-color);}
+#special-events .rounded-full .lg\:w-\[76px\] {width: 60px;}
+#special-events .rounded-full .lg\:w-9 {width: 1.25rem;}
+#special-events .rounded-full .lg\:h-9 {height: 1.5rem;}
+#special-events .rounded-full .lg\:w-10 {width: 2rem;}
+#special-events .rounded-full .lg\:h-10 {height: 2rem;}
+#special-events .rounded-full .border-amber-400{ border-color:rgb(251 191 36 / 81%) }
+#special-events .border-amber-400{ border-color:rgb(251 191 36 / 81%) }
+#special-events .rounded-full .lg\:text-\[22px\] {font-size: 18px; }
+.marquee-container .md\:mt-8 {margin-top: 1.5rem;}
+#daily-widget .bg-midnight{background-color: rgb(217 119 6 / var(--tw-bg-opacity, 1));}
+@media (max-width: 767px) {#special-events .lg\:gap-8 { gap: 1.5rem; }}
