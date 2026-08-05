@@ -129,8 +129,6 @@ const setCookie = (name: string, value: string, days = 30) => {
 // ---------------------------------------------------------------------------
 // Location resolution helpers
 // ---------------------------------------------------------------------------
-const CLOUDFLARE_LOCATION_ENDPOINT =
-  "https://homepage.astroved.com/api/get-cf-location";
 const ASTROVED_IP_LOCATION_ENDPOINT =
   "https://astroved.com/new/Home/GetLocationBasedOnIp";
 
@@ -142,29 +140,8 @@ type ResolvedLocation = {
   timezone?: string;
 };
 
-/** Attempts to resolve the user's location from Cloudflare geo headers. */
-const fetchLocationFromCloudflare = async (): Promise<ResolvedLocation> => {
-  const response = await fetch(CLOUDFLARE_LOCATION_ENDPOINT);
-  if (!response.ok) throw new Error("Cloudflare location endpoint failed");
-
-  const data = await response.json();
-  if (!data.cf_latitude || !data.cf_longitude) {
-    throw new Error("Cloudflare headers missing location data");
-  }
-
-  console.log("Using Cloudflare Headers Data:", data);
-
-  return {
-    lat: parseFloat(data.cf_latitude),
-    lng: parseFloat(data.cf_longitude),
-    city: data.cf_city || "Unknown City",
-    countryCode: data.cf_country || "Unknown Country",
-    timezone: data.cf_timezone,
-  };
-};
-
-/** Fallback: resolves the user's location via the AstroVed IP-lookup API. */
-const fetchLocationFromAstroVed = async (): Promise<ResolvedLocation> => {
+/** Resolves the user's location via the AstroVed IP-lookup API. */
+const detectLocationFromNetwork = async (): Promise<ResolvedLocation> => {
   const response = await fetch(ASTROVED_IP_LOCATION_ENDPOINT);
   if (!response.ok) throw new Error("AstroVed IP location API failed");
 
@@ -182,19 +159,6 @@ const fetchLocationFromAstroVed = async (): Promise<ResolvedLocation> => {
     countryCode: data.CountryCode || data.countryCode || "Unknown Country",
     timezone: data.TimeZone || data.timeZone,
   };
-};
-
-/** Cloudflare first, AstroVed IP API as fallback if Cloudflare is unavailable. */
-const detectLocationFromNetwork = async (): Promise<ResolvedLocation> => {
-  try {
-    return await fetchLocationFromCloudflare();
-  } catch (cfError) {
-    console.error(
-      "Cloudflare location unavailable, falling back to AstroVed IP API:",
-      cfError,
-    );
-    return await fetchLocationFromAstroVed();
-  }
 };
 
 const resolveCountryName = (countryCode: string) => {
