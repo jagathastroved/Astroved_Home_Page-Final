@@ -176,19 +176,27 @@ const parseCarouselDoc = (
 };
 
 const preloadImages = async (events: ApiEventItem[]) => {
-  const promises = events.flatMap((event) =>
-    event.banners.map(
-      (banner) =>
-        new Promise<void>((resolve) => {
-          const img = new Image();
-          img.onload = () => resolve();
-          img.onerror = () => resolve();
-          img.src = banner.image;
-        }),
-    ),
+  const allUrls = new Set<string>();
+  events.forEach((event) => {
+    event.banners.forEach((banner) => {
+      if (banner.image) allUrls.add(banner.image);
+      banner.sources.forEach((src) => {
+        if (src.srcSet) allUrls.add(src.srcSet);
+      });
+    });
+  });
+
+  const promises = Array.from(allUrls).map(
+    (url) =>
+      new Promise<void>((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve();
+        img.onerror = () => resolve();
+        img.src = url;
+      }),
   );
 
-  await Promise.all(promises);
+  return Promise.all(promises);
 };
 
 /**
@@ -266,23 +274,39 @@ export function SpecialEvents() {
           setMobileEvents(mobile);
           setCurrentIndex(0);
 
-          const firstBanner =
-            desktop[0]?.banners[0]?.image || mobile[0]?.banners[0]?.image;
+          const isMobileDevice = window.innerWidth < 768;
+          const currentEvents = isMobileDevice ? mobile : desktop;
 
-          if (firstBanner) {
-            const img = new Image();
-            img.onload = () => {
-              setIsLoading(false);
-              preloadImages([...desktop, ...mobile]);
-            };
-            img.onerror = () => {
-              setIsLoading(false);
-              preloadImages([...desktop, ...mobile]);
-            };
-            img.src = firstBanner;
+          const firstUrls = new Set<string>();
+          const addBannerUrls = (event: ApiEventItem | undefined) => {
+            if (!event) return;
+            event.banners.forEach((b) => {
+              if (b.image) firstUrls.add(b.image);
+              b.sources.forEach((s) => s.srcSet && firstUrls.add(s.srcSet));
+            });
+          };
+          addBannerUrls(currentEvents[0]);
+
+          const toLoad = Array.from(firstUrls);
+          let loaded = 0;
+
+          if (toLoad.length > 0) {
+            toLoad.forEach((src) => {
+              const img = new Image();
+              const checkDone = () => {
+                loaded++;
+                if (loaded === toLoad.length) {
+                  setIsLoading(false);
+                  preloadImages(currentEvents);
+                }
+              };
+              img.onload = checkDone;
+              img.onerror = checkDone;
+              img.src = src;
+            });
           } else {
             setIsLoading(false);
-            preloadImages([...desktop, ...mobile]);
+            preloadImages(currentEvents);
           }
         } else {
           setIsLoading(false);
@@ -391,7 +415,7 @@ export function SpecialEvents() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 1.02 }}
                   transition={{ duration: 0.8, ease: "easeInOut" }}
-                  className="w-full h-full cursor-pointer flex flex-col items-center justify-center col-start-1 row-start-1"
+                  className="absolute top-0 left-0 w-full h-full cursor-pointer flex flex-col items-center justify-center"
                   onClick={() => {
                     if (!activeEvent.isThreeBan) {
                       const link = activeEvent.banners[0]?.link;
@@ -423,7 +447,7 @@ export function SpecialEvents() {
                     </div>
                   ) : (
                     <div className={SINGLE_BANNER_WRAPPER_STYLES}>
-                      <picture>
+                      <picture className="w-full h-full block">
                         {activeEvent.banners[0].sources.map((src, srcIndex) => (
                           <source
                             key={srcIndex}

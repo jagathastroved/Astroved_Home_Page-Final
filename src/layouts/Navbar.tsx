@@ -48,6 +48,7 @@ import { scrollToSection } from "../utils/scroll";
 import { LoginModal } from "../components/sections/Account/LoginModel";
 import { MyAccount } from "../components/sections/Account/MyAccount";
 import "../components/sections/Account/Account.css";
+// import "../components/sections/Account/navbar.css";
 import "./navbar.css";
 /** --- Custom Hoisted SVG Icon Components to prevent TDZ errors --- */
 
@@ -337,7 +338,7 @@ export function Navbar() {
   };
 
   useEffect(() => {
-    fetch("/mainmenunew.json")
+    fetch(`${import.meta.env.VITE_SITE_URL}/mainmenunew.json`)
       .then((res) => res.json())
       .then((data) => {
         const formatUrl = (url: string) => {
