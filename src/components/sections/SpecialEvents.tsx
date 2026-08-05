@@ -262,15 +262,26 @@ export function SpecialEvents() {
               )
             : [];
 
-          await preloadImages([...desktop, ...mobile]);
-
           setDesktopEvents(desktop);
           setMobileEvents(mobile);
           setCurrentIndex(0);
+          setIsLoading(false);
+
+          const firstBanner =
+            desktop[0]?.banners[0]?.image || mobile[0]?.banners[0]?.image;
+
+          if (firstBanner) {
+            const img = new Image();
+            img.src = firstBanner;
+          }
+
+          // Load remaining images in background
+          preloadImages([...desktop, ...mobile]);
+        } else {
+          setIsLoading(false);
         }
       } catch (err) {
         console.error("Error fetching special events:", err);
-      } finally {
         setIsLoading(false);
       }
     };
