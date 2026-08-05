@@ -115,20 +115,22 @@ const Styles = {
 const getCookie = (name: string) => {
   if (typeof document === "undefined") return null;
   const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
-  return match ? decodeURIComponent(match[2]) : null;
+  return match ? decodeURIComponent(match[2]).replace(/_/g, " ") : null;
 };
 
-const setCookie = (name: string, value: string, days = 365) => {
+const setCookie = (name: string, value: string, days = 30) => {
   if (typeof document === "undefined") return;
   const d = new Date();
   d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
-  document.cookie = `${name}=${encodeURIComponent(value)};expires=${d.toUTCString()};path=/`;
+  const formattedValue = value.replace(/ /g, "_");
+  document.cookie = `${name}=${encodeURIComponent(formattedValue)};expires=${d.toUTCString()};path=/`;
 };
 
 // ---------------------------------------------------------------------------
 // Location resolution helpers
 // ---------------------------------------------------------------------------
-const CLOUDFLARE_LOCATION_ENDPOINT = "/api/get-cf-location";
+const CLOUDFLARE_LOCATION_ENDPOINT =
+  "https://homepage.astroved.com/api/get-cf-location";
 const ASTROVED_IP_LOCATION_ENDPOINT =
   "https://astroved.com/new/Home/GetLocationBasedOnIp";
 
@@ -254,6 +256,8 @@ export function PremiumPanchang() {
     new Date().getMonth(),
   );
   const [tempCountry, setTempCountry] = useState(() => {
+    const country = getCookie("panchang_country");
+    if (country) return country;
     const loc = getCookie("panchang_location_name");
     if (loc) {
       const parts = loc.split(",");
@@ -262,6 +266,8 @@ export function PremiumPanchang() {
     return "";
   });
   const [tempCity, setTempCity] = useState(() => {
+    const city = getCookie("panchang_city");
+    if (city) return city;
     const loc = getCookie("panchang_location_name");
     if (loc) {
       const parts = loc.split(",");
@@ -313,6 +319,11 @@ export function PremiumPanchang() {
 
     setLocationName(name);
     setCookie("panchang_location_name", name);
+    const nameParts = name.split(",");
+    const city = nameParts[0]?.trim() || "";
+    const country = nameParts[nameParts.length - 1]?.trim() || "";
+    setCookie("panchang_city", city);
+    setCookie("panchang_country", country);
   };
 
   useEffect(() => {

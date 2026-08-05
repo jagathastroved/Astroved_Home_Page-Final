@@ -1,0 +1,431 @@
+[
+	{
+		"name": "Special Events",
+		"image_sourceset": "https://phplexus.astroved.com/wp-content/uploads/2026/01/special.webp",
+		"image_source": "https://phplexus.astroved.com/wp-content/uploads/2026/01/special.jpg",
+		"Alt_tag": "AstroVed special events",
+		"link": "/us/specials?promo=SL_MM_Specials",
+		"sub": []
+	},
+	
+	{
+		"name": "Services",
+		"image_sourceset": "https://cdn.astroved.com/images/images-av/astrospeaks.webp",
+		"image_source": "https://cdn.astroved.com/images/images-av/astrospeaks.jpg",
+		"Alt_tag": "Online astrology consultations and personalized reports",
+		"link": "javascript:void(0)",
+		"sub": [
+			
+			{
+				"name": "Live Astrology Consultation",
+				"image_source": "",
+				"link": "/AstrologerScheduler.aspx?id=115&promo=SL_MM_LAC",
+				"sub": []
+			},
+			{
+				"name": "Instant Insight",
+				"image_source": "",
+				"link": "/prasnaastrology.aspx",
+				"sub": []
+			},
+			{
+				"name": "Consult & Counsel with Vijayalakshmi",
+				"image_source": "",
+				"link": "/AstrologerScheduler.aspx?id=63143&promo=SL_MM_Consult_and_Counsel",
+				"sub": []
+			},
+			{
+				"name": "Nadi Astrology",
+				"image_source": "",
+				"link": "/nadi/nadi-astrology",
+				"sub": []
+			},
+			{
+				"name": "Talk to Astrologer",
+				"image_source": "",
+				"link": "/astrovedspeaks/talk-to-astrologer",
+				"sub": []
+			},
+			{
+				"name": "Chat with Astrologer",
+				"image_source": "",
+				"link": "/astrovedspeaks/chat-with-astrologer",
+				"sub": []
+			},
+			{
+				"name": "Palm Reading",
+				"image_source": "",
+				"link": "/palm-reading",
+				"sub": []
+			},
+			{
+				"name": "Agastya Live Channel Reading",
+				"image_source": "",
+				"link": "/AstrologerScheduler.aspx?id=50579",
+				"sub": []
+			},
+			{
+				"name": "Goddess Angali Channel Reading",
+				"link": "/us/specials/goddess-angali-reading",
+				"sub": []
+			},
+			{
+				"name": "Karuppasamy Channel Reading",
+				"link": "/us/specials/karuppasamy-divine-reading-remedies-program",
+				"sub": []
+			},
+			{
+				"name": "Personalized Astrology Reports",
+				"image_source": "",
+				"link": "/reports",
+				"sub": []
+			},
+			{
+				"name": "Planetary Transit Reports",
+				"image_source": "",
+				"link": "/astrology-services#transit-report",
+				"sub": []
+			},
+			{
+				"name": "2026 Prediction Report",
+				"image_source": "",
+				"link": "/reports/yearly-horoscope-predictions",
+				"sub": []
+			}
+		]
+	},
+	{
+		"name": "Remedies",
+		"image_sourceset": "https://cdn.astroved.com/images/images-av/wealth-remedies.webp",
+		"image_source": "https://cdn.astroved.com/images/images-av/wealth-remedies.jpg",
+		"Alt_tag": "Astrological remedies for wealth and abundance",
+		"link": "javascript:void(0)",
+		"sub": [
+			{
+				"name": "Coconut Smashing",
+				"image_source": "",
+				"link": "/us/specials/coconut-smash?promo=SL_MM_Coconut_Smashing",
+				"sub": []
+			},
+			{
+				"name": "Pradosham",
+				"image_source": "",
+				"link": "/remedies/pradosham",
+				"sub": []
+			},
+			{
+				"name": "Rameshwaram Remedies",
+				"image_source": "",
+				"link": "/remedies/rameswaram-rituals",
+				"sub": []
+			},
+			{
+				"name": "Planetary Remedies",
+				"image_source": "",
+				"link": "/service-fire-lab-homa--c7.aspx",
+				"sub": []
+			},
+			{
+				"name": "Ancestral Remedies",
+				"image_source": "",
+				"link": "/tarpanam-c49.aspx",
+				"sub": []
+			},
+			{
+				"name": "Cow Feeding & Donation",
+				"image_source": "",
+				"link": "/us/specials/cow-feeding-program?promo=SL_MM_cow_feeding",
+				"sub": []
+			},
+			{
+				"name": "Dosha Remedies",
+				"image_source": "",
+				"link": "/dosha-pariharam?promo=SL_MM_Dosha_Remedies",
+				"sub": []
+			},
+			{
+				"name": "Kerala Remedies",
+				"image_source": "",
+				"link": "/us/specials/kerala-remedies?promo=SL_MM_Kerala_Remedies",
+				"sub": []
+			},
+			{
+				"name": "Proxy Mantra Writing",
+				"image_source": "",
+				"link": "/written-mantra-c51.aspx",
+				"sub": []
+			}
+		]
+	},
+	{
+		"name": "Homas",
+		"image_sourceset": "https://cdn.astroved.com/images/images-av/success-homa.webp",
+		"image_source": "https://cdn.astroved.com/images/images-av/success-homa.jpg",
+		"Alt_tag": "Powerful homas and poojas for success and prosperity",
+		"link": "javascript:void(0)",
+		"sub": [
+			{
+				"name": "Homas",
+				"image_source": "",
+				"link": "/fire-lab-homa--c8.aspx",
+				"sub": []
+			},
+			{
+				"name": "Grand Homas",
+				"image_source": "",
+				"link": "/us/specials/grand-homas",
+				"sub": []
+			},
+			{
+				"name": "AstroVed Temple Services",
+				"image_source": "",
+				"link": "/temple",
+				"sub": []
+			},
+			{
+				"name": "Instant Pooja and Homa",
+				"image_source": "",
+				"link": "/instant-pooja",
+				"sub": []
+			},
+			{
+				"name": "Special Poojas",
+				"image_source": "",
+				"link": "/pooja-c11.aspx",
+				"sub": []
+			},
+			{
+				"name": "Special Abishekams",
+				"image_source": "",
+				"link": "/Abishekam-Hydration-Pooja--C375.aspx",
+				"sub": []
+			},
+			{
+				"name": "Online Priest Service",
+				"image_source": "",
+				"link": "/priest-services",
+				"sub": []
+			}
+		]
+	},
+	{
+		"name": "Store",
+		"image_sourceset": "https://cdn.astroved.com/images/images-av/store.webp",
+		"image_source": "https://cdn.astroved.com/images/images-av/store.jpg",
+		"Alt_tag": "Spiritual store – yantras, malas, bracelets, and more",
+		"link": "javascript:void(0)",
+		"sub": [
+			{
+				"name": "Energized Products",
+				"image_source": "",
+				"link": "/us/specials/astrology-products",
+				"sub": []
+			},
+			{
+				"name": "Rudraksha",
+				"image_source": "",
+				"link": "/rudraksha-beads",
+				"sub": []
+			},
+			{
+				"name": "Yantras",
+				"image_source": "",
+				"link": "/yantra-c2.aspx",
+				"sub": []
+			},
+			{
+				"name": "Copper Amulets",
+				"image_source": "",
+				"link": "/energized-copper-amulet-c420.aspx",
+				"sub": []
+			},
+			{
+				"name": "Statues",
+				"image_source": "",
+				"link": "/statue-c95.aspx",
+				"sub": []
+			},
+			{
+				"name": "Malas",
+				"image_source": "",
+				"link": "/malas-c22.aspx",
+				"sub": []
+			},
+			{
+				"name": "Bracelets",
+				"image_source": "",
+				"link": "/bracelets-c145.aspx",
+				"sub": []
+			},
+			{
+				"name": "Pendants",
+				"image_source": "",
+				"link": "/pendants-c392.aspx",
+				"sub": []
+			},
+			{
+				"name": "Incense Sticks",
+				"image_source": "",
+				"link": "/agarbatti-incense-sticks",
+				"sub": []
+			}
+		]
+	},
+	{
+		"name": "Free Astrology",
+		"image_sourceset": "https://cdn.astroved.com/images/images-av/free-astrology.webp",
+		"image_source": "https://cdn.astroved.com/images/images-av/free-astrology.jpg",
+		"Alt_tag": "Free astrology reports – horoscope, birth chart, numerology",
+		"link": "javascript:void(0)",
+		"sub": [
+			{
+				"name": "Free Horoscope-Daily, Weekly & Monthly",
+				"image_source": "",
+				"link": "/horoscopes",
+				"sub": []
+			},
+			{
+				"name": "Free AI Kundali Report",
+				"image_source": "",
+				"link": "https://www.astroved.com/kundali-report/",
+				"sub": []
+			},
+			{
+				"name": "Free AI Numerology Report",
+				"image_source": "",
+				"link": "https://www.astroved.com/numerology-report/",
+				"sub": []
+			},
+			{
+				"name": "Free Birth Star Astrology Report",
+				"image_source": "",
+				"link": "/report.aspx?type=birthstar",
+				"sub": []
+			},
+			{
+				"name": "Free Moon Sign Report",
+				"image_source": "",
+				"link": "/report.aspx?type=moonsign",
+				"sub": []
+			},
+			
+			{
+				"name": "Free Planetary Influence Report",
+				"image_source": "",
+				"link": "/report.aspx?type=planetaryinfluence",
+				"sub": []
+			},
+			{
+				"name": "Free Hora Astrology Report",
+				"image_source": "",
+				"link": "/report.aspx?type=planetarywatch",
+				"sub": []
+			},
+			{
+				"name": "Check Zodiac Compatibility",
+				"image_source": "",
+				"link": "/zodiac-signs/compatibility",
+				"sub": []
+			},
+			{
+				"name": "Panchang & Nakshatra",
+				"image_source": "",
+				"link": "/astropedia/en/home",
+				"sub": []
+			},
+			{
+				"name": "More Astrology Services",
+				"image_source": "",
+				"link": "/astrology-services",
+				"sub": []
+			}
+		]
+	},
+	{
+		"name": "Resources",
+		"image_sourceset": "https://cdn.astroved.com/images/images-av/resources.webp",
+		"image_source": "https://cdn.astroved.com/images/images-av/resources.jpg",
+		"Alt_tag": "Astrology resources including podcasts, calendars and articles",
+		"link": "javascript:void(0)",
+		"sub": [
+			{
+				"name": "Astropedia ",
+				"image_source": "",
+				"link": "/astropedia/en/home",
+				"sub": []
+			},
+			{
+				"name": "Article",
+				"image_source": "",
+				"link": "/articles",
+				"sub": []
+			},
+			{
+				"name": "Blog",
+				"image_source": "",
+				"link": "/blogs",
+				"sub": []
+			},
+			{
+				"name": "Free 2026 Calendar",
+				"image_source": "",
+				"link": "/us/specials/astroved-calendar",
+				"sub": []
+			},
+			{
+				"name": "Newsletter",
+				"image_source": "",
+				"link": "/newsletters",
+				"sub": []
+			},
+			{
+				"name": "Contact Us",
+				"image_source": "",
+				"link": "/corporate-info/contact-us",
+				"sub": []
+			},
+			{
+				"name": "AstroVed Apps",
+				"image_source": "",
+				"link": "/apps/astroved",
+				"sub": []
+			},
+			{
+				"name": "Astrology Podcast",
+				"image_source": "",
+				"link": "/astrology-podcast",
+				"sub": []
+			},
+			{
+				"name": "Events Calendar",
+				"image_source": "",
+				"link": "/eventscalendar",
+				"sub": []
+			},
+			{
+				"name": "Gallery",
+				"image_source": "",
+				"link": "/gallery",
+				"sub": []
+			},
+			{
+				"name": "Store Reviews",
+				"image_source": "",
+				"link": "/reviews",
+				"sub": []
+			},
+			{
+				"name": "Testimonials",
+				"image_source": "",
+				"link": "/testimonials",
+				"sub": []
+			},
+			{
+				"name": "Live TV",
+				"image_source": "",
+				"link": "/live-tv/",
+				"sub": []
+			}	
+		]
+	}
+]

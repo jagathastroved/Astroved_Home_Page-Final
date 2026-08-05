@@ -33,10 +33,16 @@ export default defineConfig({
       "@": path.resolve(__dirname, "."),
     },
   },
-  server: {
-  host: "0.0.0.0",
-      port: 2173,
-      allowedHosts: ["homepage.astroved.com"],
-  },
-  // base: '/ReactHome'
+  // server: {
+  //   host: "0.0.0.0",
+  //   port: 2173,
+  //   allowedHosts: ["homepage.astroved.com"],
+  //   proxy: {
+  //     '/api/get-cf-location': {
+  //       target: 'http://localhost:3001',
+  //       changeOrigin: true
+  //     }
+  //   }
+  // },
+  base: '/ReactHome'
 });
