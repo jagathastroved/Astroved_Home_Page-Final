@@ -265,18 +265,25 @@ export function SpecialEvents() {
           setDesktopEvents(desktop);
           setMobileEvents(mobile);
           setCurrentIndex(0);
-          setIsLoading(false);
 
           const firstBanner =
             desktop[0]?.banners[0]?.image || mobile[0]?.banners[0]?.image;
 
           if (firstBanner) {
             const img = new Image();
+            img.onload = () => {
+              setIsLoading(false);
+              preloadImages([...desktop, ...mobile]);
+            };
+            img.onerror = () => {
+              setIsLoading(false);
+              preloadImages([...desktop, ...mobile]);
+            };
             img.src = firstBanner;
+          } else {
+            setIsLoading(false);
+            preloadImages([...desktop, ...mobile]);
           }
-
-          // Load remaining images in background
-          preloadImages([...desktop, ...mobile]);
         } else {
           setIsLoading(false);
         }
