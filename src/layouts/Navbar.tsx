@@ -630,30 +630,40 @@ export function Navbar() {
           {/* --- Desktop Actions & Theme Toggle --- */}
           <div className="flex items-center justify-end gap-[clamp(4px,0.6vw,10px)] shrink-0">
             {/* Language Selector */}
-            <div 
-              className="relative flex items-center py-2" 
-              onMouseEnter={() => { 
-                if (typeof window !== 'undefined' && window.innerWidth > 900) {
+            <div
+              className="relative flex items-center py-2"
+              onMouseEnter={() => {
+                if (typeof window !== "undefined" && window.innerWidth > 900) {
                   setIsLangOpen(true);
                   setIsSearchOpen(false);
                 }
               }}
-              onMouseLeave={() => { if (typeof window !== 'undefined' && window.innerWidth > 900) setIsLangOpen(false); }}
+              onMouseLeave={() => {
+                if (typeof window !== "undefined" && window.innerWidth > 900)
+                  setIsLangOpen(false);
+              }}
             >
               <button
                 onClick={() => {
-                  if (typeof window !== 'undefined' && window.innerWidth <= 900) {
+                  if (
+                    typeof window !== "undefined" &&
+                    window.innerWidth <= 900
+                  ) {
                     const willOpen = !isLangOpen;
                     setIsLangOpen(willOpen);
                     if (willOpen) setIsSearchOpen(false);
                   }
                 }}
-                className="outline-none focus:outline-none [-webkit-tap-highlight-color:transparent] group relative flex items-center gap-1 sm:gap-1.5 px-2 sm:px-[clamp(10px,1.2vw,14px)] py-1 sm:py-[clamp(4px,0.6vw,8px)] bg-gradient-to-br from-white/60 to-white/30 dark:from-[#1a1528]/80 dark:to-[#0d0914]/80 hover:from-white/90 hover:to-white/60 dark:hover:from-[#231b36]/90 dark:hover:to-[#120c1d]/90 backdrop-blur-md border border-purple-200/60 dark:border-purple-700/40 rounded-lg sm:rounded-xl shadow-[0_2px_10px_rgba(103,93,243,0.08)] dark:shadow-[0_4px_15px_rgba(0,0,0,0.4)] transition-all duration-300 hover:shadow-[0_4px_15px_rgba(103,93,243,0.15)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.6)]"
+                className="outline-none focus:outline-none [-webkit-tap-highlight-color:transparent] group relative flex items-center gap-1 sm:gap-1.5 px-2 sm:px-[clamp(10px,1.2vw,14px)] py-1 sm:py-[clamp(4px,0.6vw,8px)] backdrop-blur-md border border-purple-200/60 dark:border-purple-700/40 rounded-lg sm:rounded-xl shadow-[0_2px_10px_rgba(103,93,243,0.08)] dark:shadow-[0_4px_15px_rgba(0,0,0,0.4)] transition-all duration-300 hover:shadow-[0_4px_15px_rgba(103,93,243,0.15)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.6)]"
               >
-                <span className="font-sans font-bold text-[#675df3] dark:text-amber-400 text-[11px] sm:text-[clamp(11px,1.1vw,14px)] tracking-wide sm:tracking-widest">{selectedLang}</span>
-                <ChevronDown className={`w-3 sm:w-[14px] h-3 sm:h-[14px] text-purple-500/70 dark:text-amber-400/70 group-hover:text-[#675df3] dark:group-hover:text-amber-300 transition-transform duration-300 ${isLangOpen ? "rotate-180" : ""}`} />
+                <span className="font-sans font-bold text-[#675df3] dark:text-amber-400 text-[11px] sm:text-[clamp(11px,1.1vw,14px)] tracking-wide sm:tracking-widest">
+                  {selectedLang}
+                </span>
+                <ChevronDown
+                  className={`w-3 sm:w-[14px] h-3 sm:h-[14px] text-purple-500/70 dark:text-amber-400/70 group-hover:text-[#675df3] dark:group-hover:text-amber-300 transition-transform duration-300 ${isLangOpen ? "rotate-180" : ""}`}
+                />
               </button>
-              
+
               <AnimatePresence>
                 {isLangOpen && (
                   <motion.div
@@ -675,8 +685,8 @@ export function Navbar() {
                           setIsLangOpen(false);
                         }}
                         className={`text-left px-3 py-2.5 rounded-xl text-[14px] transition-all duration-200 ${
-                          selectedLang === lang.code 
-                            ? "bg-purple-100/50 dark:bg-purple-900/40 text-[#675df3] dark:text-amber-400 font-semibold" 
+                          selectedLang === lang.code
+                            ? "bg-purple-100/50 dark:bg-purple-900/40 text-[#675df3] dark:text-amber-400 font-semibold"
                             : "text-slate-700 dark:text-cream/80 hover:bg-purple-50 dark:hover:bg-white/5 hover:text-[#675df3] dark:hover:text-amber-300"
                         }`}
                       >
