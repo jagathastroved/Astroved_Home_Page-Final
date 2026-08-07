@@ -584,7 +584,7 @@ export function Navbar() {
                       className={`absolute top-full mt-2 backdrop-blur-2xl rounded-2xl p-2 z-50 border
                       bg-white/95 border-purple-200/50 shadow-[0_15px_45px_rgba(93,95,239,0.08)]
                       dark:bg-[#080512]/98 dark:border-purple-900/30 dark:shadow-[0_20px_50px_rgba(0,0,0,0.75)]
-                      w-[320px] flex flex-col gap-0 ${
+                      min-w-[260px] w-max max-w-[400px] flex flex-col gap-0 ${
                         navLinks.length - index <= 2
                           ? "right-0"
                           : "left-1/2 -translate-x-1/2"
@@ -593,24 +593,24 @@ export function Navbar() {
                       {/* Glowing Top Slim Divider */}
                       <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-purple-500 dark:via-amber-400 to-transparent pointer-events-none" />
 
-                      <div className="flex flex-col gap-0 overflow-y-auto overscroll-contain max-h-[45vh] pr-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-track]:my-2 [&::-webkit-scrollbar-thumb]:bg-[#d0cff6] dark:[&::-webkit-scrollbar-thumb]:bg-[#675df3]/50 [&::-webkit-scrollbar-thumb]:rounded-full">
+                      <div className="flex flex-col gap-0">
                         {navItem.items.map((item: any, idx: number) => {
                           const Icon = ITEM_ICONS[item.label] || Sparkles;
                           return (
                             <div key={idx} className="flex flex-col">
                               {idx > 0 && (
-                                <div className="border-t border-dotted border-purple-300/50 dark:border-purple-800/50 w-[90%] mx-auto" />
+                                <div className="border-t border-dotted border-purple-300/50 dark:border-purple-800/50 w-[90%] mx-auto my-[2px]" />
                               )}
                               <motion.a
                                 href={item.href}
                                 variants={itemVariants}
-                                className="group relative flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-150 cursor-pointer min-w-0
+                                className="group relative flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all duration-150 cursor-pointer min-w-0
                                 hover:bg-[#a855f7]/5 dark:hover:bg-amber-400/5"
                               >
                                 {/* Celestial Mapped Symbol Icon */}
-                                <Icon className="w-4 h-4 lg:w-4 lg:h-4 2xl:w-5 2xl:h-5 text-[#9333ea]/70 dark:text-amber-400/80 group-hover:scale-110 transition-transform duration-200 flex-shrink-0" />
+                                <Icon className="w-3.5 h-3.5 lg:w-4 lg:h-4 2xl:w-4 2xl:h-4 text-[#9333ea]/70 dark:text-amber-400/80 group-hover:scale-110 transition-transform duration-200 flex-shrink-0" />
 
-                                <span className="font-sans text-[15px] lg:text-[16px] 2xl:text-[18px] font-normal text-slate-700 dark:text-cream/90 group-hover:text-[#7e22ce] dark:group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all duration-200 text-left whitespace-normal break-words leading-snug flex-1 pr-4">
+                                <span className="font-sans text-[14px] lg:text-[15px] 2xl:text-[16px] font-normal text-slate-700 dark:text-cream/90 group-hover:text-[#7e22ce] dark:group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all duration-200 text-left whitespace-nowrap leading-snug flex-1 pr-4">
                                   {item.label}
                                 </span>
 
@@ -859,7 +859,7 @@ export function Navbar() {
                                   duration: 0.25,
                                   ease: "easeInOut",
                                 }}
-                                className="overflow-y-auto pr-2 mb-3 max-h-[350px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#d0cff6] dark:[&::-webkit-scrollbar-thumb]:bg-[#675df3]/50 [&::-webkit-scrollbar-thumb]:rounded-full flex flex-col gap-0"
+                                className="mb-3 flex flex-col gap-0"
                               >
                                 {navItem.items.map(
                                   (subItem: any, subIdx: number) => {
