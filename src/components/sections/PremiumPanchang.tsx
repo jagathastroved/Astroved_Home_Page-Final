@@ -202,9 +202,13 @@ export function PremiumPanchang() {
       return "Asia/Kolkata";
     }
   });
-  const [selectedDate, setSelectedDate] = useState<string>(
-    new Date().toISOString().split("T")[0],
-  );
+  const [selectedDate, setSelectedDate] = useState<string>(() => {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  });
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLocationReady, setIsLocationReady] = useState<boolean>(() => {
     return !!getCookie("panchang_location_name");
@@ -276,10 +280,9 @@ export function PremiumPanchang() {
     setCookie("panchang_lat", String(lat));
     setCookie("panchang_lng", String(lng));
 
-    if (tz) {
-      setTimezone(tz);
-      setCookie("panchang_timezone", tz);
-    }
+    const effectiveTz = tz || timezone || "Asia/Kolkata";
+    setTimezone(effectiveTz);
+    setCookie("panchang_timezone", effectiveTz);
 
     setLocationName(name);
     setCookie("panchang_location_name", name);
@@ -296,10 +299,10 @@ export function PremiumPanchang() {
         const countriesArray = Array.isArray(data)
           ? data
           : data.Countries ||
-            data.Data ||
-            (typeof data === "object" &&
-              Object.values(data).find(Array.isArray)) ||
-            [];
+          data.Data ||
+          (typeof data === "object" &&
+            Object.values(data).find(Array.isArray)) ||
+          [];
         setCountriesList(countriesArray);
       })
       .catch((err) => console.error("Error fetching countries:", err));
@@ -447,20 +450,38 @@ export function PremiumPanchang() {
   const formatTime = (isoString?: string) => {
     if (!isoString) return "";
     try {
-      const cleanIso = isoString.substring(0, 19);
-      const date = new Date(cleanIso);
-      return date.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      });
+      const str = isoString.trim();
+
+      // 1. If string already has explicit AM/PM
+      const match12 = str.match(/(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM)/i);
+      if (match12) {
+        const hours = match12[1].padStart(2, "0");
+        const minutes = match12[2];
+        const ampm = match12[3].toUpperCase();
+        return `${hours}:${minutes} ${ampm}`;
+      }
+
+      // 2. Parse 24-hour time directly from raw API string (e.g. "2026-08-29T19:13:12" -> "07:13 PM")
+      // Never use Date object timezone calculations to preserve exact API wall-clock response time.
+      const match24 = str.match(/(?:T|\s|^)(\d{1,2}):(\d{2})/);
+      if (match24) {
+        let hours = parseInt(match24[1], 10);
+        const minutes = match24[2];
+        const ampm = hours >= 12 ? "PM" : "AM";
+        hours = hours % 12;
+        if (hours === 0) hours = 12;
+        const formattedHours = String(hours).padStart(2, "0");
+        return `${formattedHours}:${minutes} ${ampm}`;
+      }
+
+      return str;
     } catch (e) {
       return "";
     }
   };
 
   /**
-   * Formats a start and end ISO string into a readable date range, stripping incorrect API timezone offsets.
+   * Formats a start and end ISO string into a readable date range, preserving exact API response times.
    * @param {string} [start] - The start date ISO string.
    * @param {string} [end] - The end date ISO string.
    * @returns {string} - The formatted date range.
@@ -468,16 +489,33 @@ export function PremiumPanchang() {
   const formatDateRange = (start?: string, end?: string) => {
     if (!start || !end) return "";
     try {
-      const sDate = new Date(start.substring(0, 19));
-      const eDate = new Date(end.substring(0, 19));
-      const options: Intl.DateTimeFormatOptions = {
-        month: "short",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
+      const formatSingle = (isoStr: string) => {
+        const timeFormatted = formatTime(isoStr);
+        const dateMatch = isoStr.match(/(\d{4})-(\d{2})-(\d{2})/);
+        if (dateMatch) {
+          const monthIndex = parseInt(dateMatch[2], 10) - 1;
+          const day = parseInt(dateMatch[3], 10);
+          const monthNames = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ];
+          const monthStr = monthNames[monthIndex] || "";
+          return `${monthStr} ${String(day).padStart(2, "0")}, ${timeFormatted}`;
+        }
+        return timeFormatted;
       };
-      return `${sDate.toLocaleDateString("en-US", options)} — ${eDate.toLocaleDateString("en-US", options)}`;
+
+      return `${formatSingle(start)} — ${formatSingle(end)}`;
     } catch (e) {
       return "";
     }
@@ -493,11 +531,66 @@ export function PremiumPanchang() {
     return str.replace(/([A-Z])/g, " $1").trim();
   };
 
+  /**
+   * Computes and formats the active Hora from panchangData.Horas array or panchangData.hora object.
+   */
+  const getCurrentHoraInfo = (data: any) => {
+    if (!data) return "";
+    if (data?.hora?.HoraName) {
+      const horaName = data.hora.HoraName.toLowerCase().includes("hora")
+        ? data.hora.HoraName
+        : `${data.hora.HoraName} Hora`;
+      return horaName;
+    }
+
+    if (Array.isArray(data?.Horas) && data.Horas.length > 0) {
+      const nowMs = Date.now();
+      const match =
+        data.Horas.find((h: any) => {
+          if (!h?.StartTime || !h?.EndTime) return false;
+          const sDate = new Date(h.StartTime);
+          const eDate = new Date(h.EndTime);
+          return nowMs >= sDate.getTime() && nowMs <= eDate.getTime();
+        }) || data.Horas[0];
+
+      if (match?.HoraName) {
+        const horaName = match.HoraName.toLowerCase().includes("hora")
+          ? match.HoraName
+          : `${match.HoraName} Hora`;
+        const timeRange =
+          match.StartTime && match.EndTime
+            ? ` (${formatTime(match.StartTime)} — ${formatTime(match.EndTime)})`
+            : "";
+        return `${horaName}${timeRange}`;
+      }
+    }
+    return "";
+  };
+
+  /**
+   * Safely formats YYYY-MM-DD into a localized date string without UTC timezone shifts.
+   */
+  const formatSelectedDate = (dateStr: string) => {
+    if (!dateStr) return "";
+    const parts = dateStr.split("-").map(Number);
+    if (parts.length === 3) {
+      const dateObj = new Date(parts[0], parts[1] - 1, parts[2]);
+      return dateObj.toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      });
+    }
+    return dateStr;
+  };
+
   // Sync calendar picker month/year when selectedDate updates
   useEffect(() => {
-    const d = new Date(selectedDate);
-    setCalendarYear(d.getFullYear());
-    setCalendarMonth(d.getMonth());
+    const parts = selectedDate.split("-").map(Number);
+    if (parts.length === 3) {
+      setCalendarYear(parts[0]);
+      setCalendarMonth(parts[1] - 1);
+    }
   }, [selectedDate]);
 
   // Fetch when coordinates, date, or timezone changes
@@ -519,6 +612,7 @@ export function PremiumPanchang() {
         ]);
 
         if (active) {
+          console.log("Panchang Response:", panchangData);
           setPanchangData(panchangData);
         }
 
@@ -746,13 +840,7 @@ export function PremiumPanchang() {
                       className={Styles.DATE_LOCATION_BUTTON_STYLES}
                     >
                       <Calendar className="w-3.5 h-3.5 text-purple dark:text-gold" />
-                      <span>
-                        {new Date(selectedDate).toLocaleDateString("en-US", {
-                          month: "long",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
-                      </span>
+                      <span>{formatSelectedDate(selectedDate)}</span>
                     </button>
 
                     {isCalendarOpen && (
@@ -920,10 +1008,10 @@ export function PremiumPanchang() {
                                     .toLowerCase()
                                     .includes(tempCountry.toLowerCase()),
                                 ).length === 0 && (
-                                  <div className="p-3 text-xs text-slate-500 text-center">
-                                    No countries found.
-                                  </div>
-                                )}
+                                    <div className="p-3 text-xs text-slate-500 text-center">
+                                      No countries found.
+                                    </div>
+                                  )}
                               </div>
                             )}
                           </div>
@@ -1024,7 +1112,7 @@ export function PremiumPanchang() {
                     Sunrise
                   </span>
                   <span className="text-xs font-mono font-semibold text-midnight dark:text-cream">
-                    {formatTime(panchangData?.SunriseTime) || "5:51 AM"}
+                    {formatTime(panchangData?.SunriseTime)}
                   </span>
                 </div>
               </div>
@@ -1036,7 +1124,7 @@ export function PremiumPanchang() {
                     Sunset
                   </span>
                   <span className="text-xs font-mono font-semibold text-midnight dark:text-cream">
-                    {formatTime(panchangData?.SunsetTime) || "6:35 PM"}
+                    {formatTime(panchangData?.SunsetTime)}
                   </span>
                 </div>
               </div>
@@ -1048,7 +1136,9 @@ export function PremiumPanchang() {
                     Moonrise
                   </span>
                   <span className="text-xs font-mono font-semibold text-midnight dark:text-cream">
-                    {formatTime(panchangData?.MoonriseTime) || "9:54 PM"}
+                    {formatTime(
+                      panchangData?.MoonRiseTime || panchangData?.MoonriseTime,
+                    )}
                   </span>
                 </div>
               </div>
@@ -1060,7 +1150,9 @@ export function PremiumPanchang() {
                     Moonset
                   </span>
                   <span className="text-xs font-mono font-semibold text-midnight dark:text-cream">
-                    {formatTime(panchangData?.MoonsetTime) || "10:00 AM"}
+                    {formatTime(
+                      panchangData?.MoonSetTime || panchangData?.MoonsetTime,
+                    )}
                   </span>
                 </div>
               </div>
@@ -1081,7 +1173,7 @@ export function PremiumPanchang() {
                   </span>
                   <span className={Styles.DATA_ROW_VALUE_STYLES}>
                     {panchangData?.specialKalas?.GoodTimeStart &&
-                    panchangData?.specialKalas?.GoodTimeEnd
+                      panchangData?.specialKalas?.GoodTimeEnd
                       ? `${formatTime(panchangData.specialKalas.GoodTimeStart)} — ${formatTime(panchangData.specialKalas.GoodTimeEnd)}`
                       : "09:00 AM — 10:30 AM"}
                   </span>
@@ -1096,7 +1188,7 @@ export function PremiumPanchang() {
                   </span>
                   <span className={Styles.DATA_ROW_VALUE_STYLES}>
                     {panchangData?.specialKalas?.DangerTimeStart &&
-                    panchangData?.specialKalas?.DangerTimeEnd
+                      panchangData?.specialKalas?.DangerTimeEnd
                       ? `${formatTime(panchangData.specialKalas.DangerTimeStart)} — ${formatTime(panchangData.specialKalas.DangerTimeEnd)}`
                       : "01:30 PM — 03:00 PM"}
                   </span>
@@ -1111,7 +1203,7 @@ export function PremiumPanchang() {
                   </span>
                   <span className={Styles.DATA_ROW_VALUE_STYLES}>
                     {panchangData?.specialKalas?.PoisonTimeStart &&
-                    panchangData?.specialKalas?.PoisonTimeEnd
+                      panchangData?.specialKalas?.PoisonTimeEnd
                       ? `${formatTime(panchangData.specialKalas.PoisonTimeStart)} — ${formatTime(panchangData.specialKalas.PoisonTimeEnd)}`
                       : "03:00 PM — 04:30 PM"}
                   </span>
@@ -1123,6 +1215,18 @@ export function PremiumPanchang() {
             <div className="md:col-start-1 md:row-start-2 lg:col-start-1 lg:row-start-2 h-full w-full">
               <div className={Styles.DATA_BOX_ALT_STYLES}>
                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo/5 blur-[20px] rounded-full pointer-events-none" />
+                <div className="relative z-10 flex flex-col items-start w-full gap-1">
+                  <span
+                    className={`${Styles.DATA_ROW_LABEL_STYLES} flex items-center gap-2`}
+                  >
+                    <Clock className="w-4 h-4 text-purple-500 dark:text-purple-400" />
+                    Current Hora
+                  </span>
+                  <span className={Styles.DATA_ROW_VALUE_STYLES}>
+                    {getCurrentHoraInfo(panchangData) || "Mercury Hora"}
+                  </span>
+                </div>
+                <div className={Styles.DATA_DIVIDER_STYLES} />
                 <div className="relative z-10 flex flex-col items-start w-full gap-1">
                   <span
                     className={`${Styles.DATA_ROW_LABEL_STYLES} flex items-center gap-2`}
