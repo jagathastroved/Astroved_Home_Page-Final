@@ -339,6 +339,17 @@ export function Navbar() {
     setIsMobileMenuOpen(false);
   };
 
+function toTitleCase(str: string): string {
+  if (!str) return "";
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map((word) =>
+      word.length > 0 ? word.charAt(0).toUpperCase() + word.slice(1) : ""
+    )
+    .join(" ");
+}
+
   useEffect(() => {
     fetch(`${import.meta.env.VITE_SITE_URL}/mainmenunew.json`)
       .then((res) => res.json())
@@ -364,7 +375,7 @@ export function Navbar() {
               items:
                 menu.sub && menu.sub.length > 0
                   ? menu.sub.map((s: any) => ({
-                      label: s.name,
+                      label: toTitleCase(s.name),
                       href: formatUrl(s.link),
                     }))
                   : undefined,
