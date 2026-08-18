@@ -114,16 +114,20 @@ const Styles = {
 // ---------------------------------------------------------------------------
 const getCookie = (name: string) => {
   if (typeof document === "undefined") return null;
-  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
-  return match ? decodeURIComponent(match[2]).replace(/_/g, " ") : null;
+  const match = document.cookie.match(new RegExp("(?:^|;\\s*)" + name + "=([^;]+)"));
+  if (!match) return null;
+  const decoded = decodeURIComponent(match[1]);
+  if (name === "panchang_location_name" || name === "panchang_city" || name === "panchang_country") {
+    return decoded.replace(/_/g, " ");
+  }
+  return decoded;
 };
 
 const setCookie = (name: string, value: string, days = 30) => {
   if (typeof document === "undefined") return;
   const d = new Date();
   d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
-  const formattedValue = value.replace(/ /g, "_");
-  document.cookie = `${name}=${encodeURIComponent(formattedValue)};expires=${d.toUTCString()};path=/`;
+  document.cookie = `${name}=${encodeURIComponent(value)};expires=${d.toUTCString()};path=/`;
 };
 
 // ---------------------------------------------------------------------------
@@ -213,7 +217,7 @@ export function PremiumPanchang() {
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLocationReady, setIsLocationReady] = useState<boolean>(() => {
-    return !!getCookie("panchang_location_name");
+    return !!getCookie("panchang_location_name") && !!getCookie("panchang_lat") && !!getCookie("panchang_lng");
   });
 
   // Custom Calendar & Location popover states
@@ -314,7 +318,7 @@ export function PremiumPanchang() {
   // AstroVed IP-lookup API as fallback. Skipped entirely if a location is
   // already saved in cookies.
   useEffect(() => {
-    if (getCookie("panchang_location_name")) {
+    if (getCookie("panchang_location_name") && getCookie("panchang_lat") && getCookie("panchang_lng")) {
       setIsLocationReady(true);
       return;
     }
@@ -628,7 +632,7 @@ export function PremiumPanchang() {
         ]);
 
         if (active) {
-          console.log("Panchang Response:", panchangData);
+          // console.log("Panchang Response:", panchangData);
           setPanchangData(panchangData);
         }
 
