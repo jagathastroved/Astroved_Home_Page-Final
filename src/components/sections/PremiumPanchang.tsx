@@ -136,6 +136,7 @@ type ResolvedLocation = {
   lat: number;
   lng: number;
   city: string;
+  state?: string;
   countryCode: string;
   timezone?: string;
 };
@@ -156,6 +157,7 @@ const detectLocationFromNetwork = async (): Promise<ResolvedLocation> => {
     lat: parseFloat(lat),
     lng: parseFloat(lng),
     city: data.City || data.city || "Unknown City",
+    state: data.State || data.state || data.RegionName || data.regionName || data.Region || data.region || data.StateorProvince,
     countryCode: data.CountryCode || data.countryCode || "Unknown Country",
     timezone: data.TimeZone || data.timeZone,
   };
@@ -321,11 +323,25 @@ export function PremiumPanchang() {
       try {
         const resolved = await detectLocationFromNetwork();
         const countryName = resolveCountryName(resolved.countryCode);
-        const formattedName = formatLocationName(
+        let formattedName = formatLocationName(
           resolved.city,
-          undefined,
+          resolved.state,
           countryName,
         );
+
+        try {
+          const astrovedLocData = await fetchCitySuggestions(countryName, resolved.city);
+          if (Array.isArray(astrovedLocData) && astrovedLocData.length > 0) {
+            const match = astrovedLocData[0];
+            formattedName = formatLocationName(
+              match.City || resolved.city,
+              match.StateorProvince,
+              match.Country || countryName,
+            );
+          }
+        } catch (e) {
+          console.error("Astroved location enrichment failed:", e);
+        }
 
         applyLocation(
           resolved.lat,
@@ -819,6 +835,16 @@ export function PremiumPanchang() {
           viewport={{ once: true }}
           className={Styles.MAIN_PANEL_STYLES}
         >
+          {isLoading && (
+            <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/50 dark:bg-[#0c0f24]/50 backdrop-blur-sm">
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-10 h-10 border-4 border-purple/30 border-t-purple rounded-full animate-spin"></div>
+                <span className="text-sm font-bold text-slate-600 dark:text-slate-300 animate-pulse">
+                  Calculating auspicious timings...
+                </span>
+              </div>
+            </div>
+          )}
           {/* Top Astronomical Header Bar */}
           <div className={Styles.TOP_BAR_STYLES}>
             <div className="flex items-center gap-4">
@@ -1175,7 +1201,7 @@ export function PremiumPanchang() {
                     {panchangData?.specialKalas?.GoodTimeStart &&
                       panchangData?.specialKalas?.GoodTimeEnd
                       ? `${formatTime(panchangData.specialKalas.GoodTimeStart)} — ${formatTime(panchangData.specialKalas.GoodTimeEnd)}`
-                      : "09:00 AM — 10:30 AM"}
+                      : "--"}
                   </span>
                 </div>
                 <div className={Styles.DATA_DIVIDER_STYLES} />
@@ -1190,7 +1216,7 @@ export function PremiumPanchang() {
                     {panchangData?.specialKalas?.DangerTimeStart &&
                       panchangData?.specialKalas?.DangerTimeEnd
                       ? `${formatTime(panchangData.specialKalas.DangerTimeStart)} — ${formatTime(panchangData.specialKalas.DangerTimeEnd)}`
-                      : "01:30 PM — 03:00 PM"}
+                      : "--"}
                   </span>
                 </div>
                 <div className={Styles.DATA_DIVIDER_STYLES} />
@@ -1205,7 +1231,7 @@ export function PremiumPanchang() {
                     {panchangData?.specialKalas?.PoisonTimeStart &&
                       panchangData?.specialKalas?.PoisonTimeEnd
                       ? `${formatTime(panchangData.specialKalas.PoisonTimeStart)} — ${formatTime(panchangData.specialKalas.PoisonTimeEnd)}`
-                      : "03:00 PM — 04:30 PM"}
+                      : "--"}
                   </span>
                 </div>
               </div>
@@ -1223,7 +1249,7 @@ export function PremiumPanchang() {
                     Current Hora
                   </span>
                   <span className={Styles.DATA_ROW_VALUE_STYLES}>
-                    {getCurrentHoraInfo(panchangData) || "Mercury Hora"}
+                    {getCurrentHoraInfo(panchangData) || "--"}
                   </span>
                 </div>
                 <div className={Styles.DATA_DIVIDER_STYLES} />
@@ -1235,7 +1261,7 @@ export function PremiumPanchang() {
                     Energy (Yoga)
                   </span>
                   <span className={Styles.DATA_ROW_VALUE_STYLES}>
-                    {panchangData?.yoga?.YogaName || "Siddhi"}
+                    {panchangData?.yoga?.YogaName || "--"}
                   </span>
                 </div>
                 <div className={Styles.DATA_DIVIDER_STYLES} />
@@ -1247,7 +1273,7 @@ export function PremiumPanchang() {
                     Half-Lunar Day
                   </span>
                   <span className={Styles.DATA_ROW_VALUE_STYLES}>
-                    {panchangData?.karana?.KaranaName || "Kaarthar"}
+                    {panchangData?.karana?.KaranaName || "--"}
                   </span>
                 </div>
               </div>
@@ -1266,7 +1292,7 @@ export function PremiumPanchang() {
                     <div className="absolute top-1.5 -left-[5px] w-2 h-2 rounded-full bg-purple dark:bg-gold" />
                     <p className={Styles.ACTIVE_ITEM_TITLE_STYLES}>
                       {formatCamelCase(panchangData?.tithi?.TithiName) ||
-                        "Krishna Paksha Chathurthi"}
+                        "--"}
                       <span className="w-3 h-3 rounded-full border border-midnight dark:border-cream flex items-center justify-center overflow-hidden">
                         <span className="w-1.5 h-3 bg-midnight dark:bg-cream block mr-auto" />
                       </span>
@@ -1275,20 +1301,20 @@ export function PremiumPanchang() {
                       {formatDateRange(
                         panchangData?.tithi?.TithiStart,
                         panchangData?.tithi?.TithiEnd,
-                      ) || "Jul 03, 11:20 AM — Jul 04, 12:40 PM"}
+                      ) || "--"}
                     </p>
                   </div>
                   <div className="pl-4 relative opacity-80 mt-3">
                     <div className="absolute top-1.5 -left-[5px] w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700" />
                     <p className={Styles.ACTIVE_ITEM_TITLE_STYLES}>
                       {formatCamelCase(panchangData?.tithi?.NextTithiName) ||
-                        "Krishna Paksha Panchami"}
+                        "--"}
                     </p>
                     <p className={Styles.ITEM_DATE_STYLES}>
                       {formatDateRange(
                         panchangData?.tithi?.TithiEnd,
                         panchangData?.tithi?.NextTithiEnd,
-                      ) || "Jul 04, 12:40 PM — Jul 05, 01:31 PM"}
+                      ) || "--"}
                     </p>
                   </div>
                 </div>
@@ -1306,7 +1332,7 @@ export function PremiumPanchang() {
                   <div className="pl-4 relative">
                     <div className="absolute top-1.5 -left-[5px] w-2 h-2 rounded-full bg-indigo dark:bg-saffron" />
                     <p className={Styles.ACTIVE_ALT_ITEM_TITLE_STYLES}>
-                      {panchangData?.nakshatra?.NakshatraName || "Avittam"}
+                      {panchangData?.nakshatra?.NakshatraName || "--"}
                       <span className="text-[10px] bg-purple-500/10 dark:bg-saffron/10 px-2 py-0.5 rounded text-purple-600 dark:text-saffron/80 uppercase tracking-wider">
                         Active
                       </span>
@@ -1315,19 +1341,19 @@ export function PremiumPanchang() {
                       {formatDateRange(
                         panchangData?.nakshatra?.NakshatraStart,
                         panchangData?.nakshatra?.NakshatraEnd,
-                      ) || "Jul 03, 11:46 AM — Jul 04, 01:43 PM"}
+                      ) || "--"}
                     </p>
                   </div>
                   <div className="pl-4 relative opacity-80 mt-3">
                     <div className="absolute top-1.5 -left-[5px] w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700" />
                     <p className="text-[13px] font-semibold text-midnight dark:text-cream">
-                      {panchangData?.nakshatra?.NextNakshatraName || "Sadhayam"}
+                      {panchangData?.nakshatra?.NextNakshatraName || "--"}
                     </p>
                     <p className={Styles.ITEM_DATE_STYLES}>
                       {formatDateRange(
                         panchangData?.nakshatra?.NakshatraEnd,
                         panchangData?.nakshatra?.NextNakshatraEnd,
-                      ) || "Jul 04, 01:43 PM — Jul 05, 03:12 PM"}
+                      ) || "--"}
                     </p>
                   </div>
                 </div>
@@ -1342,16 +1368,14 @@ export function PremiumPanchang() {
                     To Do
                   </span>
                   <span className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-                    {todayContentData?.DosDonts?.Dos ||
-                      "Monetary transactions, litigation, progressive acts"}
+                    {todayContentData?.DosDonts?.Dos || "--"}
                   </span>
 
                   <span className="text-[11px] md:text-xs font-bold uppercase tracking-widest text-purple-600 dark:text-purple-400 pt-[2px]">
                     Avoid
                   </span>
                   <span className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-                    {todayContentData?.DosDonts?.Donts ||
-                      "Travel, new meetings, important signings"}
+                    {todayContentData?.DosDonts?.Donts || "--"}
                   </span>
                 </div>
               </div>
