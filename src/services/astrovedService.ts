@@ -11,11 +11,10 @@ export const fetchCitySuggestions = async (country: string, city: string) => {
 
 export const fetchPanchangData = async (timezone: string, lat: number, lng: number, localISOTime: string) => {
     try {
-        const safeTz = timezone || 'Asia/Kolkata';
-        const encodedTz = btoa(safeTz).replace(/=/g, '');
+        const encodedTz = btoa(timezone).replace(/=/g, '');
         const url = `${import.meta.env.VITE_ASTROVED_API_URL}/node/newpanchangam/${encodedTz}/${lat}/${lng}/${localISOTime}`;
         const response = await axios.get(url);
-        // console.log('Punchang Data', response.data)
+        console.log('Punchang Data', response.data)
         return response.data;
     } catch (error) {
         throw new Error('Failed to fetch panchang data');
@@ -24,8 +23,7 @@ export const fetchPanchangData = async (timezone: string, lat: number, lng: numb
 
 export const fetchTodayContent = async (timezone: string, lat: number, lng: number, localISOTime: string) => {
     try {
-        const safeTz = timezone || 'Asia/Kolkata';
-        const encodedTz = btoa(safeTz).replace(/=/g, '');
+        const encodedTz = btoa(timezone).replace(/=/g, '');
         const url = `${import.meta.env.VITE_ASTROVED_API_URL}/node/todaycontent/${encodedTz}/${lat}/${lng}/${localISOTime}`;
         const response = await axios.get(url);
         return response.data;
@@ -42,27 +40,27 @@ export const getUserCurrency = (): string => {
         if (parts.length === 2) return parts.pop()?.split(';').shift();
         return null;
     };
-
+    
     const cookieCurrency = getCookie('currentcurrency');
     if (cookieCurrency) {
         return cookieCurrency;
     }
-
-    // 2. Check cookies for location fallback
-    const savedLocation = getCookie('panchang_location_name');
+    
+    // 2. Check localStorage for location fallback
+    const savedLocation = localStorage.getItem('panchang_location_name');
     if (!savedLocation) {
         return 'USD';
     }
-
+    
     const normalizedLocation = savedLocation.toLowerCase();
     if (normalizedLocation.includes('india')) {
         return 'INR';
     }
-
+    
     if (normalizedLocation.includes('malaysia')) {
         return 'MYR';
     }
-
+    
     return 'USD';
 };
 

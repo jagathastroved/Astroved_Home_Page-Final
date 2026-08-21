@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, ScrollText, PhoneCall } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { fetchSpecialEvents } from "../../services/astrovedService";
-
+import '../../layouts/Navbar.css';
 /**
  * Interface defining the structure of a single banner (one image + link).
  * `sources` holds any <picture><source> variants found *inside that same
@@ -176,27 +176,19 @@ const parseCarouselDoc = (
 };
 
 const preloadImages = async (events: ApiEventItem[]) => {
-  const allUrls = new Set<string>();
-  events.forEach((event) => {
-    event.banners.forEach((banner) => {
-      if (banner.image) allUrls.add(banner.image);
-      banner.sources.forEach((src) => {
-        if (src.srcSet) allUrls.add(src.srcSet);
-      });
-    });
-  });
-
-  const promises = Array.from(allUrls).map(
-    (url) =>
-      new Promise<void>((resolve) => {
-        const img = new Image();
-        img.onload = () => resolve();
-        img.onerror = () => resolve();
-        img.src = url;
-      }),
+  const promises = events.flatMap((event) =>
+    event.banners.map(
+      (banner) =>
+        new Promise<void>((resolve) => {
+          const img = new Image();
+          img.onload = () => resolve();
+          img.onerror = () => resolve();
+          img.src = banner.image;
+        }),
+    ),
   );
 
-  return Promise.all(promises);
+  await Promise.all(promises);
 };
 
 /**
@@ -274,39 +266,23 @@ export function SpecialEvents() {
           setMobileEvents(mobile);
           setCurrentIndex(0);
 
-          const isMobileDevice = window.innerWidth < 768;
-          const currentEvents = isMobileDevice ? mobile : desktop;
+          const firstBanner =
+            desktop[0]?.banners[0]?.image || mobile[0]?.banners[0]?.image;
 
-          const firstUrls = new Set<string>();
-          const addBannerUrls = (event: ApiEventItem | undefined) => {
-            if (!event) return;
-            event.banners.forEach((b) => {
-              if (b.image) firstUrls.add(b.image);
-              b.sources.forEach((s) => s.srcSet && firstUrls.add(s.srcSet));
-            });
-          };
-          addBannerUrls(currentEvents[0]);
-
-          const toLoad = Array.from(firstUrls);
-          let loaded = 0;
-
-          if (toLoad.length > 0) {
-            toLoad.forEach((src) => {
-              const img = new Image();
-              const checkDone = () => {
-                loaded++;
-                if (loaded === toLoad.length) {
-                  setIsLoading(false);
-                  preloadImages(currentEvents);
-                }
-              };
-              img.onload = checkDone;
-              img.onerror = checkDone;
-              img.src = src;
-            });
+          if (firstBanner) {
+            const img = new Image();
+            img.onload = () => {
+              setIsLoading(false);
+              preloadImages([...desktop, ...mobile]);
+            };
+            img.onerror = () => {
+              setIsLoading(false);
+              preloadImages([...desktop, ...mobile]);
+            };
+            img.src = firstBanner;
           } else {
             setIsLoading(false);
-            preloadImages(currentEvents);
+            preloadImages([...desktop, ...mobile]);
           }
         } else {
           setIsLoading(false);
@@ -415,12 +391,12 @@ export function SpecialEvents() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 1.02 }}
                   transition={{ duration: 0.8, ease: "easeInOut" }}
-                  className="absolute top-0 left-0 w-full h-full cursor-pointer flex flex-col items-center justify-center"
+                  className="w-full h-full cursor-pointer flex flex-col items-center justify-center col-start-1 row-start-1"
                   onClick={() => {
                     if (!activeEvent.isThreeBan) {
                       const link = activeEvent.banners[0]?.link;
                       if (link) {
-                        window.open(link, "_blank", "noopener,noreferrer");
+                        window.open(link, "_blank");
                       }
                     }
                   }}
@@ -447,7 +423,7 @@ export function SpecialEvents() {
                     </div>
                   ) : (
                     <div className={SINGLE_BANNER_WRAPPER_STYLES}>
-                      <picture className="w-full h-full block">
+                      <picture>
                         {activeEvent.banners[0].sources.map((src, srcIndex) => (
                           <source
                             key={srcIndex}
@@ -496,18 +472,18 @@ export function SpecialEvents() {
         <div className={CTA_BAR_CONTAINER_STYLES}>
           {/* Talk to Astrologer Button */}
           <a
-            href="https://www.astroved.com/AstrologerScheduler.aspx?id=115&promo=SL_SP_LAC-1"
+            href="/numerology-report/?promo=SL_Home_Numerology"
             target="_blank"
             className={ASTRO_BTN_STYLES}
           >
             <div className={ASTRO_ICON_WRAPPER_STYLES}>
-              <PhoneCall
-                className="w-8 h-8 lg:w-9 lg:h-9 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] fill-white/20"
+              <ScrollText
+                className="w-8 h-8 lg:w-9 lg:h-9 text-orange-200 drop-shadow-[0_0_8px_rgba(245,158,11,0.8)] fill-orange-500/30"
                 strokeWidth={1.5}
               />
             </div>
             <div className={CTA_TEXT_WRAPPER_STYLES}>
-              <span className={CTA_TITLE_STYLES}>Talk to Astrologer</span>
+              <span className={CTA_TITLE_STYLES}>Free Numerology</span>
             </div>
             <div className={CTA_ARROW_WRAPPER_STYLES}>
               <ChevronRight className={CTA_ARROW_ICON_ASTRO_STYLES} />
@@ -516,7 +492,7 @@ export function SpecialEvents() {
 
           {/* Free Kundali Button */}
           <a
-            href="/kundali-report/"
+            href="/kundali-report/?promo=SL_Home_Kundali"
             target="_blank"
             className={HOMA_BTN_STYLES}
           >

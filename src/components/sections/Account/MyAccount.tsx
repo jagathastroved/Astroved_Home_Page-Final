@@ -1,4 +1,4 @@
-import { useState, FormEvent, ReactNode } from 'react';
+import { useState, useEffect,FormEvent, ReactNode } from 'react';
 import './Account.css';
 
 
@@ -7,22 +7,56 @@ interface MyAccountProps {
     onClose: () => void;
 }
 interface CurrentUser {
-    fullName: string
+    fullName: string,
+    membershipName: string
 }
+interface MembershipDetailsResponse {
+    UserLogin: string
+    CustomerId: number
+    CustomerName: string
+    ErrorMessage: string | null
+    IsMobileVerified: boolean
+    IsEmailVerified: boolean
+    MobileNo: string
+    CustomerCurrency: string
+    MembershipId: number
+    MembershipName: string
+    StartDate: string
+    EndDate: string
+}
+async function getMembershipName(customerId: string): Promise<string> {
+    try {
+        const response = await fetch(
+            `${import.meta.env.VITE_API_URL}/UserAccount/GetMembershipDetailsByCustomerId?CustomerId=${customerId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${import.meta.env.VITE_TOKEN}`,
+                },
+            }
+        )
+        if (!response.ok) return ''
 
-function readStoredUser(): CurrentUser | null {
+        const data: MembershipDetailsResponse = await response.json()
+        return data.MembershipName ?? ''
+    } catch (error) {
+        console.warn('Failed to fetch membership name', error)
+        return ''
+    }
+}
+async function readStoredUser(): Promise<CurrentUser | null> {
     try {
         //const raw = localStorage.getItem(import.meta.env.VITE_STORAGE_KEY)
         var GetName = document.cookie.match(new RegExp("(^| )" + "FullName" + "=([^;]+)"));
-        var match1= GetName ? GetName[2] : null;
+        var match1 = GetName ? GetName[2] : null;
         var GetAuth = document.cookie.match(new RegExp("(^| )" + ".ASPXFORMSAUTH" + "=([^;]+)"));
-        var match2= GetAuth ? GetAuth[2] : null;
+        var match2 = GetAuth ? GetAuth[2] : null;
         var GetCustomerId = document.cookie.match(new RegExp("(^| )" + "C_Id" + "=([^;]+)"));
-        var match3= GetCustomerId ? GetCustomerId[2] : null;
-        if(  match3 != null)
-        {
+        var match3 = GetCustomerId ? GetCustomerId[2] : null;
+        if (match3 != null) {
+            const membershipName = await getMembershipName(match3);
             const tempObj: CurrentUser = {
-                fullName: match1 ?? "" 
+                fullName: match1 ?? "",
+                membershipName:membershipName
             }
             return tempObj;
         }
@@ -49,7 +83,11 @@ const ACCOUNT_MENU_ITEMS: { label: string; href: string }[] = [
     { label: 'Deactivate Your Account', href: '/accountdeactivation.aspx' },
 ]
 export function MyAccount({ onClose }: MyAccountProps) {
-    const [currentUser, setCurrentUser] = useState<CurrentUser | null>(() => readStoredUser())
+    const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null)
+
+    useEffect(() => {
+        readStoredUser().then(setCurrentUser)
+    }, [])
     const handleLogOff = () => {
         setCurrentUser(null)
         try {
@@ -82,6 +120,26 @@ export function MyAccount({ onClose }: MyAccountProps) {
             )}
 
             <ul className="account-menu">
+                {/* <li className="membership-txt">
+                    <span id="">Your Membership Plan: </span>
+                    <span className="Platinum Membership">
+                        <a href="/Upgrade-Your-Membership.aspx">
+                            <span>
+                                <span id="ctl00_ctlheader_vaaak_MyCart_vaaak_MyAccount_LoginView2_lblMembershipName">Platinum
+                                </span>
+                            </span>
+                        </a>
+                    </span>
+                </li> */}
+                {currentUser && currentUser.membershipName && (
+                    <p className="account-membership">
+                        <span className="account-membership__label">Your Membership Plan:</span>
+                        <span
+                            className={`account-membership__icon account-membership__icon--${currentUser.membershipName.toLowerCase()}`}
+                        />
+                        <span className="account-membership__name">{currentUser.membershipName}</span>
+                    </p>
+                )}
                 {ACCOUNT_MENU_ITEMS.map((item) => (
                     <li key={item.href}>
                         <a href={item.href} className="account-menu__item">

@@ -8,7 +8,7 @@ const QUICK_LINKS = [
   { label: 'Store', targetId: `${import.meta.env.VITE_SITE_URL}/us/specials/astrology-products` },
   { label: 'Daily Horoscope', targetId: 'daily-widget' },
   { label: 'FAQ', targetId: 'faq-section' },
-  { label: 'Membership', targetId: 'personalized-support' }
+  { label: 'Membership', targetId: 'https://www.astroved.com/us/specials/year-long-loyalty-membership-packages' }
 ];
 
 const SUPPORT_LINKS = [
@@ -94,7 +94,7 @@ export function Footer() {
                   <a
                     href={linkData.targetId}
                     target="_blank"
-
+                    
                     className={getLinkStyles()}
                   >
                     {linkData.label}
@@ -162,10 +162,10 @@ export function Footer() {
       {/* --- App Download Badges & Trust Seals --- */}
       <div className="relative max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 mb-8 flex-wrap w-full">
         <div className="flex items-center gap-4">
-          <a href="https://play.google.com/store/apps/details?id=com.astroved.birthchartnew&pli=1" target="_blank" className="hover:opacity-90 transition-opacity">
+          <a href="https://play.google.com/store/apps/details?id=com.astroved.birthchartnew&pli=1" target="_blank"  className="hover:opacity-90 transition-opacity">
             <img src={`${import.meta.env.VITE_CDN_URL}/images/images-av/play-store.png`} alt="Get it on Google Play" className="h-10 w-auto" />
           </a>
-          <a href="https://apps.apple.com/us/app/astroved-astrology-remedies/id1406242342" target="_blank" className="hover:opacity-90 transition-opacity">
+          <a href="https://apps.apple.com/us/app/astroved-astrology-remedies/id1406242342" target="_blank"  className="hover:opacity-90 transition-opacity">
             <img src={`${import.meta.env.VITE_CDN_URL}/images/images-av/app-store.png`} alt="Download on the App Store" className="h-10 w-auto" />
           </a>
         </div>
@@ -225,11 +225,11 @@ export function Footer() {
           <span className="text-[11px] font-medium uppercase tracking-[0.15em] text-slate-500 dark:text-slate-500/80">
             &copy; {new Date().getFullYear()} AstroVed. All traditional rights reserved.
           </span>
-          <div className="flex gap-4 justify-center md:justify-end text-[10px] font-bold uppercase tracking-[0.2em]">
+          {/* <div className="flex gap-4 justify-center md:justify-end text-[10px] font-bold uppercase tracking-[0.2em]">
             <a href={import.meta.env.VITE_SITE_URL} className="text-slate-400 dark:text-slate-500 hover:text-indigo dark:hover:text-cream transition-colors">Privacy Directives</a>
             <span className="text-purple/20 dark:text-slate-700">&bull;</span>
             <a href={import.meta.env.VITE_SITE_URL} className="text-slate-400 dark:text-slate-500 hover:text-indigo dark:hover:text-cream transition-colors">Calculations Disclaimer</a>
-          </div>
+          </div> */}
         </div>
       </div>
     </footer>

@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { ArrowRight, Sparkles, Flame, Clock, ChevronLeft, ChevronRight, Gift, HeartHandshake, Flower2, Music, Home, Coins } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import divine_statues from "../../assets/Special_events/divine_statues.jpg";
-import donate_homa from "../../assets/Special_events/donate_homa.png";
+import donate_homa from "../../assets/Special_events/varaha-homa.jpg";
 import birthday_cake from "../../assets/Special_events/birthday_cake.png";
-
+import '../../layouts/Navbar.css';
 /** --- Custom Hook for Auto Carousel --- */
 function useAutoCarousel(itemsCount: number, interval: number = 5000) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -50,15 +50,15 @@ const RITUAL_EVENTS: any[] = [
   },
   {
     id: 2,
-    title: "Monthly Ashtalakshmi Homa by Donation",
-    description: "Experience the divine technology of Fire Labs to reverse karma and overcome financial obstacles. AstroVed offers this special monthly Homa by donation so financial constraints are never a barrier to receiving divine blessings.",
+    title: "Monthly Varaha Homa by Donation",
+    description: "Invoke Lord Varaha, the powerful incarnation of Vishnu, through the divine technology of Fire Labs to seek protection, stability, prosperity, and relief from obstacles. Participate in this special monthly Homa by donating any amount you can contribute.",
     image: donate_homa,
     bullets: [
-      { icon: <Flower2 className="w-4 h-4 sm:w-5 sm:h-5 text-pink-500" />, text: "Invoke 8 Forms of Wealth Lakshmi" },
-      { icon: <Coins className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500" />, text: "Overcome financial obstacles & debt burdens" },
+      { icon: <Flower2 className="w-4 h-4 sm:w-5 sm:h-5 text-pink-500" />, text: "Invoke Divine Protection, Strength & Stability" },
+      { icon: <Coins className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500" />, text: "Overcome Obstacles & Attract Lasting Prosperity" },
       { icon: <HeartHandshake className="w-4 h-4 sm:w-5 sm:h-5 text-rose-500" />, text: "Participate by donating any amount you can contribute", fullWidth: true }
     ],
-    urgencyText: "REVERSE KARMA & PROSPER IN LIFE",
+    urgencyText: "PROTECTION • STABILITY • PROSPERITY",
     buttonText: "DONATE NOW",
     link: "/donate-homa.aspx?promo=SL_DONATEHOMA-2",
     badgeText: "MONTHLY HOMA",
@@ -269,7 +269,7 @@ export function Rituals() {
                           <span className="font-bold text-slate-800 dark:text-slate-200 lg:text-[#0a192f] lg:dark:text-[#0a192f] text-sm lg:text-[14px]">{currentEvent.priceText}</span>
                           <span>{currentEvent.deliveryText}</span>
                         </span>
-                        <a href={currentEvent.link} target="_blank" className={CTA_WRAPPER_STYLES}>
+                        <a href={currentEvent.link} target="_blank"  className={CTA_WRAPPER_STYLES}>
                           {currentEvent.buttonText} <ArrowRight className="w-5 h-5 lg:w-4 lg:h-4 ml-1" />
                         </a>
                       </div>

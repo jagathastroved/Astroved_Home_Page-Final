@@ -138,7 +138,7 @@ export function Horoscope({ onCalculateChart }: HoroscopeProps) {
         const timeZone = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Kolkata');
         const responseData = await fetchHoroscope(moonSign, apiPeriod, timeZone);
 
-        // console.log('Horoscope API Success:', responseData);
+        //console.log('Horoscope API Success:', responseData);
 
         if (isMounted) {
           setHoroscopeData(responseData.summary || 'Horoscope data is currently unavailable. Please try again later.');
@@ -312,6 +312,13 @@ export function Horoscope({ onCalculateChart }: HoroscopeProps) {
 
               {/* --- Bottom Interactive Action Section --- */}
               <div className="mt-4 pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                {/* <button
+                  onClick={() => window.open(`${import.meta.env.VITE_SITE_URL}/horoscopes/daily-horoscope/${selectedZodiac.toLowerCase()}`, '_blank')}
+                  className={getDetailsButtonStyles()}
+                >
+                  View full details
+                  <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                </button> */}
                 <a
                   href={`${import.meta.env.VITE_SITE_URL}/horoscopes/${
                     horoscopeTab === 'Today' ? 'daily' : horoscopeTab === 'Week' ? 'weekly' : 'monthly'

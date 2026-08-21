@@ -41,3 +41,49 @@ header nav .py-2 { padding: 0;}}
 .marquee-container .md\:mt-8 {margin-top: 1.5rem;}
 #daily-widget .bg-midnight{background-color: rgb(217 119 6 / var(--tw-bg-opacity, 1));}
 @media (max-width: 767px) {#special-events .lg\:gap-8 { gap: 1.5rem; }}
+
+
+
+
+
+header .max-w-\[clamp\(85px\,10vw\,150px\)\] {
+    max-width: clamp(150px, 15vw, 190px);
+}
+header .h-\[clamp\(22px\,3vw\,40px\)\] {
+    height: clamp(33px, 5vw, 38px);
+}
+header.bg-gradient-to-r {
+    background: #fff;
+}
+.snap-x.snap-mandatory {
+    gap: 1.5rem;
+}
+.snap-x.snap-mandatory .snap-center.shrink-0 {
+    border: 1px solid #dadada;
+    padding: .75rem;
+    box-shadow: 1px 2px 11px #eaeaeab0;
+    border-radius: .7rem;
+}
+.snap-x.snap-mandatory .snap-center.shrink-0 img {
+    border-radius: .7rem;
+}
+.max-w-7xl.px-6 {
+    padding-left: 1rem; max-width: 85rem;
+    padding-right: 1rem;
+}
+.snap-x.snap-mandatory .snap-center.shrink-0 .bg-white {
+    padding: 1rem;
+}
+header nav .absolute a svg:first-child {
+    display: none;
+}
+header nav .mb-3.flex a svg:first-child {
+    display: none;
+}
+#auspicious-actions .items-stretch{gap: 1.5rem;}
+#auspicious-actions .group.overflow-hidden{    border: 1px solid #dadada;
+    padding: .75rem;
+    box-shadow: 1px 2px 11px #eaeaeab0;
+    border-radius: .7rem;
+}
+#auspicious-actions .group.overflow-hidden .rounded-t-\[2\.5rem\]{border-radius: .7rem;}

@@ -19,6 +19,9 @@ const LockIcon = (
 //     fullName: string,
 //     isCurrentUser: Boolean
 // }
+interface CurrentUser {
+    membershipName: string
+}
 
 export function Email() {
     const [email, setEmail] = useState('')
@@ -51,10 +54,27 @@ export function Email() {
         if (!response.ok) {
             throw new Error(`Login failed (${response.status})`)
         }
-
+        //updateMembershipName(session.membershipName);
         const result = await response.json()
         const data = result.d
 
+    }
+    const updateMembershipName = (membershipName: string): void => {
+        const storageKey = import.meta.env.VITE_STORAGE_KEY
+        const raw = localStorage.getItem(storageKey)
+
+        if (!raw) {
+            console.warn('No currentUser found in localStorage')
+            return
+        }
+
+        const currentUser: CurrentUser = JSON.parse(raw)
+
+        const updatedUser: CurrentUser = {
+            membershipName: membershipName,
+        }
+
+        localStorage.setItem(storageKey, JSON.stringify(updatedUser))
     }
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         debugger;
@@ -80,10 +100,11 @@ export function Email() {
                 if (result.loginInfo != null && result.StatusCode == 200) {
                     console.log(result);
                     await createLoginSession({
-                        shopId: 1,
+                        shopId: result.loginInfo.ShopId,
                         customerId: result.loginInfo.CustomerId,
                         fullName: result.loginInfo.CustomerName,
-                        userLogin: result.loginInfo.UserLogin,
+                        userLogin: result.loginInfo.UserLogin
+                        //membershipName: result.loginInfo.MembershipName
                     })
                     setLoginMessage({
                         type: 'success',
@@ -129,7 +150,7 @@ export function Email() {
                     <span className="input-field__icon">{MailIcon}</span>
                     <input
                         id="email"
-                        type="email"
+                        type="text"
                         className="input-field__input"
                         placeholder="User Login"
                         value={email}

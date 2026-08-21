@@ -39,14 +39,14 @@ export function Home() {
       {/* <HeroSection /> */}
       <SpecialEvents />
       <PersonalGuidance />
-      <AIReports />
+      <Horoscope onCalculateChart={(zodiac) => { scrollToSection('birth-form'); }} />
       <PersonalizedSolutions />
       <PersonalizedSupport />
       <Rituals />
       <PremiumPanchang />
       <WhyChooseAstroVed />
       <TrustTicker />
-      <Horoscope onCalculateChart={(zodiac) => { scrollToSection('birth-form'); }} />
+      {/* <AIReports /> */}
       <Testimonials />
       <TrustStats />
       <FAQ />

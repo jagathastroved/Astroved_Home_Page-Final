@@ -8,7 +8,7 @@ import liveConsultationsImg from '../../assets/personal_guidance/live_consultati
 import liveConsultationsImg1 from '../../assets/personal_guidance/viji-mam.jpg';
 import vijimam from '../../assets/personal_guidance/viji-mam.jpg';
 
-
+import '../../layouts/Navbar.css';
 /**
  * Interface defining the structure for Personal Guidance cards.
  */
@@ -21,7 +21,7 @@ interface ExpertItem {
   image: string;
   titleColor: string;
   link?: string;
-  IsfooterTextBtn: Boolean;
+  IsfooterTextBtn:Boolean;
 }
 
 /**
@@ -37,7 +37,7 @@ const EXPERTS: ExpertItem[] = [
     image: vijimam,
     titleColor: "text-gray-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400",
     link: "/AstrologerScheduler.aspx?id=63143&promo=SL_Consult_and_Counsel-1",
-    IsfooterTextBtn: false
+    IsfooterTextBtn:false
   },
   {
     badgeText: "ANCIENT PALM-LEAF READING",
@@ -48,7 +48,7 @@ const EXPERTS: ExpertItem[] = [
     image: palm_leaf,
     titleColor: "text-gray-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400",
     link: "/nadi/nadi-astrology?promo=SL_nadi-astrology-2",
-    IsfooterTextBtn: false
+    IsfooterTextBtn:false
   },
   {
     badgeText: "WRITTEN FOR YOU",
@@ -59,7 +59,7 @@ const EXPERTS: ExpertItem[] = [
     image: personal_report,
     titleColor: "text-gray-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400",
     link: "/prediction-services-personalized-kundali-report-P88426.aspx?promo=SL_kundali-report-3",
-    IsfooterTextBtn: true
+    IsfooterTextBtn:true
   }
 ];
 
@@ -187,7 +187,7 @@ export function PersonalGuidance() {
 
                   {/* CTA Link */}
                   {expert.link ? (
-                    <a href={expert.link} target="_blank" className={CTA_WRAPPER_STYLES}>
+                    <a href={expert.link} target="_blank"  className={CTA_WRAPPER_STYLES}>
                       {expert.cta} <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                     </a>
                   ) : (
@@ -197,17 +197,17 @@ export function PersonalGuidance() {
                   )}
 
                   {/* Footer Context Text */}
-                  {expert.footerText && !expert.IsfooterTextBtn && (
+                  {expert.footerText && !expert.IsfooterTextBtn &&(
                     <div className={FOOTER_TEXT_STYLES}>
                       {expert.footerText}
                     </div>
                   )}
                   {/* Footer Context Text */}
-                  {expert.footerText && expert.IsfooterTextBtn && (
-                    <a
-                      href="/reacthome/reports/Sample Detailed Kundli Premium Report.pdf"
-                      target="_blank"
-
+                  {expert.footerText && expert.IsfooterTextBtn &&(
+                    <a 
+                      href="/reacthome/reports/Sample Detailed Kundali Premium Report.pdf" 
+                      target="_blank" 
+                       
                       className={FOOTER_TEXT_STYLES}
                     >
                       {expert.footerText}

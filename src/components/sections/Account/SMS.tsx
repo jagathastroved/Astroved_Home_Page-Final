@@ -12,6 +12,9 @@ const OtpIcon = (
     <line x1="11" y1="18" x2="13" y2="18" />
   </svg>
 )
+interface CurrentUser {
+    membershipName: string
+}
 export function SMS() {
   const [mobileNumber, setMobileNumber] = useState('') // set value
   const [mobileOtpSent, setMobileOtpSent] = useState(false) //check bool
@@ -49,11 +52,28 @@ export function SMS() {
     if (!response.ok) {
       throw new Error(`Login failed (${response.status})`)
     }
-
+     //updateMembershipName(session.membershipName);
     const result = await response.json()
     const data = result.d
 
   }
+  const updateMembershipName = (membershipName: string): void => {
+        const storageKey = import.meta.env.VITE_STORAGE_KEY
+        const raw = localStorage.getItem(storageKey)
+
+        if (!raw) {
+            console.warn('No currentUser found in localStorage')
+            return
+        }
+
+        const currentUser: CurrentUser = JSON.parse(raw)
+
+        const updatedUser: CurrentUser = {
+            membershipName: membershipName,
+        }
+
+        localStorage.setItem(storageKey, JSON.stringify(updatedUser))
+    }
   const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
     debugger;
     e.preventDefault();
@@ -192,10 +212,11 @@ export function SMS() {
           setIsLoggingIn(true);
           //setTimeout(() => setverifyOtploginMessage(null), 900)
           await createLoginSession({
-            shopId: 1,
+            shopId: result.loginInfo.ShopId,
             customerId: result.loginInfo.CustomerId,
             fullName: result.loginInfo.CustomerName,
             userLogin: result.loginInfo.UserLogin,
+            //membershipName: result.loginInfo.MembershipName
           })
           setverifyOtploginMessage({
             type: 'success',

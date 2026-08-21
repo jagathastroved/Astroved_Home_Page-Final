@@ -13,7 +13,9 @@ const OtpIcon = (
     <line x1="11" y1="18" x2="13" y2="18" />
   </svg>
 )
-
+interface CurrentUser {
+    membershipName: string
+}
 export function WhatsApp() {
   const [whatsappNumber, setWhatsappNumber] = useState('')
   const [whatsappOtpSent, setWhatsappOtpSent] = useState(false)
@@ -31,7 +33,7 @@ export function WhatsApp() {
     customerId: number
     fullName: string
     userLogin: string
-  }) => {
+   }) => {
     const response = await fetch(`${import.meta.env.VITE_SITE_URL}/CheckOutNew.aspx/CookieLogin`, {
       method: 'POST',
       credentials: 'include',
@@ -50,10 +52,27 @@ export function WhatsApp() {
     if (!response.ok) {
       throw new Error(`Login failed (${response.status})`)
     }
-
+    //updateMembershipName(session.membershipName);
     const result = await response.json()
     const data = result.d
   }
+  const updateMembershipName = (membershipName: string): void => {
+        const storageKey = import.meta.env.VITE_STORAGE_KEY
+        const raw = localStorage.getItem(storageKey)
+
+        if (!raw) {
+            console.warn('No currentUser found in localStorage')
+            return
+        }
+
+        const currentUser: CurrentUser = JSON.parse(raw)
+
+        const updatedUser: CurrentUser = {
+            membershipName: membershipName,
+        }
+
+        localStorage.setItem(storageKey, JSON.stringify(updatedUser))
+    }
   const handleSendWhatsapp = async (e: FormEvent<HTMLFormElement>) => {
     debugger;
     e.preventDefault();
@@ -191,10 +210,11 @@ export function WhatsApp() {
           console.log(result);
           setIsLoggingIn(true);
           await createLoginSession({
-            shopId: 1,
+            shopId: result.loginInfo.ShopId,
             customerId: result.loginInfo.CustomerId,
             fullName: result.loginInfo.CustomerName,
             userLogin: result.loginInfo.UserLogin,
+            //membershipName: result.loginInfo.MembershipName
           })
           setverifyWAOtploginMessage({
             type: 'success',

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight, ArrowUpRight } from 'lucide-react';
 import aiKundali from '../../assets/ai_reports/ai_kundali_north.png'
 import aiNumerology from '../../assets/ai_reports/ai_numerology_numbers.png'
-
+import '../../layouts/Navbar.css';
 /** Configuration constants for carousel behavior */
 const SWIPE_THRESHOLD = 50;
 const AUTOPLAY_INTERVAL_MS = 5000;
@@ -24,7 +24,7 @@ const aiReportList: AIReport[] = [
     description: "Get an instant, comprehensive analysis of your birth chart. Discover your planetary positions, doshas, and predictions powered by cutting-edge AI.",
     cta: "Generate Report",
     image: aiKundali,
-    link: "/kundali-report/"
+    link: "/kundali-report/?promo=SL_Home_Kundali"
   },
   {
     id: 2,
@@ -32,7 +32,7 @@ const aiReportList: AIReport[] = [
     description: "Uncover the hidden meanings behind your numbers. Get an AI-driven report on your life path, expression, and soul urge numbers.",
     cta: "Generate Report",
     image: aiNumerology,
-    link: "/numerology-report/"
+    link: "/numerology-report/promo=SL_Home_Numerology"
   }
 ];
 
@@ -130,7 +130,6 @@ export function AIReports() {
                 <a
                   href={report.link}
                   target="_blank"
-
                   className={`inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full ${getButtonColor(report.id)} text-white font-semibold tracking-wide text-xs hover:scale-105 transition-transform shadow-md`}
                 >
                   {report.cta} <ArrowUpRight className="w-3.5 h-3.5" />
@@ -187,7 +186,7 @@ export function AIReports() {
                         <a
                           href={report.link}
                           target="_blank"
-
+                          
                           className={`inline-flex w-full max-w-[240px] justify-center items-center gap-1.5 px-4 py-2.5 rounded-full ${getButtonColor(report.id)} text-white font-semibold tracking-wide text-xs hover:scale-105 transition-transform shadow-lg pointer-events-auto`}
                         >
                           {report.cta} <ArrowUpRight className="w-3.5 h-3.5" />

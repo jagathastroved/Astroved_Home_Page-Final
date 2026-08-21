@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft, ArrowRight, Star } from 'lucide-react';
-import astro_promotion_new from '../../assets/testimonials/astro_promotion_New.png';
+import astro_service from '../../assets/testimonials/astro_service.png';
+import astro_promotion from '../../assets/testimonials/astro_promotion.png';
 import { fetchTestimonialsData } from '../../services/testimonialService';
-
+import '../../layouts/Navbar.css';
 /**
  * Interface defining the expected structure of a testimonial fetched from the API.
  * Handles fallbacks since the API might return different key names.
@@ -17,6 +18,11 @@ interface TestimonialItem {
   role?: string;
   stats?: string;
 }
+
+/**
+ * Static image assets used in the layout.
+ */
+const BRAND_IMAGES = [astro_service, astro_promotion];
 
 /** --- Shared Tailwind CSS Classes --- */
 
@@ -142,7 +148,7 @@ export function Testimonials() {
           {/* --- Left Section: Full Graphic --- */}
           <div className={LEFT_SECTION_WRAPPER_STYLES}>
             <img
-              src={astro_promotion_new}
+              src="https://cdn.astroved.com/images/astro_promotion_New.png"
               alt="Authentic Vedic Astrology Service and Rituals"
               className={LEFT_SECTION_IMAGE_STYLES}
             />

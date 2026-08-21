@@ -85,7 +85,7 @@
 .panel-backdrop {
   position: fixed;
   inset: 0;
-  /* background: rgba(10, 8, 24, 0.35); */
+  background: rgba(10, 8, 24, 0.35);
   z-index: 900;
 }
 
@@ -386,6 +386,8 @@
 
 .login-btn {
   align-self: center;
+  /* min-width: 337px;
+  padding: 6px 10px; */
   width: 100%;
   max-width: 337px;
   padding: 10px;
@@ -587,4 +589,43 @@
     color: #000;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+
+.account-membership {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.account-membership__label {
+    color: #1e88c7;
+    font-weight: 700;
+}
+
+.account-membership__icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    background-size: 20px;
+}
+
+.account-membership__icon--platinum {
+    background-image: url(https://www.astroved.com/images/platinum-member.png);
+}
+
+.account-membership__icon--gold {
+    background-image: url(https://www.astroved.com/images/gold-member.png);
+}
+
+.account-membership__icon--silver {
+    background-image: url(https://www.astroved.com/images/silver-member.png);
+}
+
+.account-membership__name {
+    color: #333;
+    font-weight: 500;
 }

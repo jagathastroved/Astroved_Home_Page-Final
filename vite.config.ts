@@ -23,26 +23,22 @@ function injectSchemaPlugin() {
 }
 
 export default defineConfig({
-  plugins: [react(),
-    // injectSchemaPlugin()
-    , legacy({
-      targets: ['defaults', 'iOS >= 13', 'Safari >= 13'],
-    }),],
+  plugins: [react(), injectSchemaPlugin(), legacy({
+    targets: ['defaults', 'iOS >= 13', 'Safari >= 13'],
+  }),],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "."),
     },
   },
   // server: {
-  //   host: "0.0.0.0",
-  //   port: 2173,
-  //   allowedHosts: ["homepage.astroved.com"],
   //   proxy: {
-  //     '/api/get-cf-location': {
-  //       target: 'http://localhost:3001',
-  //       changeOrigin: true
-  //     }
-  //   }
+  //     '/api/proxy/menu': {
+  //       target: 'https://www.astroved.com/mainmenunew.json',
+  //       changeOrigin: true,
+  //       rewrite: () => '',
+  //     },
+  //   },
   // },
   base: '/ReactHome'
 });
