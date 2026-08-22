@@ -1,5 +1,18 @@
-import { ChandraMoon, guru_pushya_yoga, pradosham, Rahu_Ketu_Node_shift, sun_transit } from '../../assets/Auspicious_portal';
-
+import { useRef, useEffect } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { 
+  vedic_fire_lab,
+  cosmic_planetary_blessing,
+  img_birth_star,
+  img_ashtalakshmi,
+  img_vaidhyanatha,
+  img_muruga,
+  img_ketu,
+  img_durga,
+  img_sun,
+  img_moon,
+  img_mars
+} from '../../assets/Auspicious_portal';
 interface LiveMomentCard {
   id: string;
   title: string;
@@ -10,137 +23,306 @@ interface LiveMomentCard {
 }
 
 const POOJA_MOMENTS: LiveMomentCard[] = [
-  { id: 'p1', title: 'Guru Pushya Yoga Pooja', tag: 'Double Wealth Transit', urgency: 'Limited Seats', image: guru_pushya_yoga, description: 'Participate in this rare planetary alignment to attract immense wealth and prosperity into your life.' },
-  { id: 'p2', title: 'Rahu-Ketu Node Shift Pooja', tag: '18-Month Cycle Launch', urgency: 'Auspicious Portal', image: Rahu_Ketu_Node_shift, description: 'Harness the power of the 18-month node shift to overcome obstacles and initiate new beginnings.' },
-  { id: 'p3', title: 'Pradosham Karma Cleansing Pooja', tag: 'Twilight Energy Peak', urgency: 'Next 24 Hours', image: pradosham, description: 'Cleanse your deep-rooted karmic debts during this powerful twilight energy peak.' },
-  { id: 'p4', title: 'Surya Sun Transit Pooja', tag: 'Intellectual Solar Inflow', urgency: 'This Week', image: sun_transit, description: 'Receive the intellectual and solar blessings of the Sun transit for career and personal growth.' },
-  { id: 'p5', title: 'Chandra Moon Nakshatra Pooja', tag: 'Highest Healing Day', urgency: 'Auspicious Portal', image: ChandraMoon, description: 'Experience profound healing and emotional balance on this highest healing nakshatra day.' }
+  { id: 'p1', title: 'Birth Star Pooja', tag: 'Auspicious Portal', urgency: 'Limited Seats', image: img_birth_star, description: 'The star constellation that the Moon is transiting at the time of birth is your birth star. This Pooja honors your Janma Nakshatra to bring lifelong blessings.' },
+  { id: 'p2', title: 'Ashtalakshmi Pooja', tag: 'Wealth Attraction', urgency: 'Auspicious Portal', image: img_ashtalakshmi, description: 'Ashtalakshmi refers to the 8 divine forms of Lakshmi, the supreme Goddess of wealth, fertility, and fortune. She remains an embodiment of prosperity.' },
+  { id: 'p3', title: 'Vaidhyanatha Pooja', tag: 'Divine Protection', urgency: 'Next 24 Hours', image: img_vaidhyanatha, description: 'Vaidhyanatha Pooja will encircle you with positive vibrations and shield you against health disorders. A powerful spiritual therapy for your well-being.' },
+  { id: 'p4', title: 'Muruga Pooja', tag: 'Obstacle Removal', urgency: 'This Week', image: img_muruga, description: 'Muruga is a rare combination of exceptional courage and supreme intelligence. He leads one towards spiritual evolution and victory over negativity.' },
+  { id: 'p5', title: 'Ketu Pooja', tag: 'Karma Clearing', urgency: 'Auspicious Portal', image: img_ketu, description: 'Ketu is a Nodal planet that acts as an agent for the overlord of the star in which it is placed. Propitiate Ketu to quench the thirst of spiritual quest.' },
+  { id: 'p6', title: 'Durga Pooja', tag: 'Divine Protection', urgency: 'Limited Seats', image: img_durga, description: 'Durga is the universal mother Goddess. She is the aggressive form of the divine Shakti, representing the infinite power of the universe.' }
 ];
 
 const HOMA_MOMENTS: LiveMomentCard[] = [
-  { id: 'h1', title: 'Maha Ganapati Homa', tag: 'Obstacle Removal', urgency: 'Limited Seats', image: pradosham, description: 'Invoke the Supreme Elephant God to shatter all obstacles blocking your path to success.' },
-  { id: 'h2', title: 'Navagraha Homa', tag: 'Planetary Balance', urgency: 'Auspicious Portal', image: sun_transit, description: 'Balance the energies of the nine planets to bring harmony and peace to your daily life.' },
-  { id: 'h3', title: 'Sudarshana Homa', tag: 'Divine Protection', urgency: 'Next 24 Hours', image: guru_pushya_yoga, description: 'Seek divine protection from negative forces with the powerful Sudarshana chakra energy.' },
-  { id: 'h4', title: 'Lakshmi Kubera Homa', tag: 'Wealth Attraction', urgency: 'This Week', image: ChandraMoon, description: 'Attract immense wealth, luxury, and financial stability with the blessings of Goddess Lakshmi.' },
-  { id: 'h5', title: 'Rudra Homa', tag: 'Karma Clearing', urgency: 'Closes in 3 days', image: Rahu_Ketu_Node_shift, description: 'Clear deep karmic blockages and achieve spiritual liberation through this powerful Rudra homa.' }
+  { id: 'h1', title: 'Sun Fire Lab', tag: 'Planetary Blessings', urgency: 'Limited Seats', image: img_sun, description: 'To be your best self in terms of your Sun, cause your energies to work along the path in which they will have maximum help from planetary vibrations.' },
+  { id: 'h2', title: 'Moon Fire Lab', tag: 'Planetary Blessings', urgency: 'Auspicious Portal', image: img_moon, description: 'The Moon rules your mind and emotions. Performing Moon homa can balance your emotions, improve self-worth, and promote love and success.' },
+  { id: 'h3', title: 'Mars Fire Lab', tag: 'Planetary Blessings', urgency: 'Next 24 Hours', image: img_mars, description: 'Mars is a fiery and passionate planet. A positive Mars gives courage, healing, and helps control malefic effects for your financial well-being.' },
+  { id: 'h4', title: 'Mercury Fire Lab', tag: 'Planetary Blessings', urgency: 'This Week', image: vedic_fire_lab, description: 'Propitiating this powerful celestial body can make you sharp-witted and hone your oratory skills, keeping the powers of learning within your grasp.' },
+  { id: 'h5', title: 'Jupiter Fire Lab', tag: 'Planetary Blessings', urgency: 'Limited Seats', image: cosmic_planetary_blessing, description: 'Jupiter is the planet of success and teacher of humankind. This homa targets his blessings for success in endeavors and gaining higher wisdom.' },
+  { id: 'h6', title: 'Venus Fire Lab', tag: 'Planetary Blessings', urgency: 'Auspicious Portal', image: vedic_fire_lab, description: 'Venus governs the female gender. Empower yourself to harness creativity and receive blessings for longevity, wealth, and happiness.' },
+  { id: 'h7', title: 'Saturn Fire Lab', tag: 'Planetary Blessings', urgency: 'Next 24 Hours', image: cosmic_planetary_blessing, description: 'Dedicated to the planet Saturn, performed to appease and harness his blessings to overcome trials and tribulations in life and guide you to the right path.' },
+  { id: 'h8', title: 'Rahu Fire Lab', tag: 'Planetary Blessings', urgency: 'This Week', image: vedic_fire_lab, description: 'Rahu can strengthen your power and overwhelm adversaries. Rahu homa helps make the best use of circumstances and lead the life you desire.' }
 ];
+
+const CarouselRow = ({ items, reverse = false }: { items: LiveMomentCard[], reverse?: boolean }) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const repeatedItems = Array(20).fill(items).flat();
+  
+  // Shared state for scroll logic
+  const state = useRef({
+    isHovered: false,
+    isDragging: false,
+    isSnapping: false,
+    isScrolling: false,
+    snapTimeout: undefined as NodeJS.Timeout | undefined,
+    scrollTimeout: undefined as NodeJS.Timeout | undefined,
+    hoverTimeout: undefined as NodeJS.Timeout | undefined,
+  });
+
+  // Initialize scroll position to the middle to allow immediate swiping in both directions
+  useEffect(() => {
+    if (scrollRef.current) {
+      const container = scrollRef.current;
+      // Use double requestAnimationFrame to ensure layout and images are calculated
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const singleSetWidth = container.scrollWidth / 20; // We now use 20 sets
+          container.scrollLeft = singleSetWidth * 10; // Start exactly in the middle
+        });
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    let animationId: number;
+    let lastTime: number;
+    let exactScrollLeft: number | null = null;
+
+    const handleScroll = () => {
+      state.current.isScrolling = true;
+      clearTimeout(state.current.scrollTimeout);
+      state.current.scrollTimeout = setTimeout(() => {
+        state.current.isScrolling = false;
+        // Sync accumulator with reality once manual scroll physically stops
+        if (container) exactScrollLeft = container.scrollLeft;
+      }, 150); // 150ms without scroll events means momentum/snapping has physically stopped
+    };
+
+    const startScroll = (time: number) => {
+      if (!lastTime) lastTime = time;
+      const deltaTime = time - lastTime;
+      lastTime = time;
+
+      const container = scrollRef.current;
+      if (!container) return;
+
+      if (exactScrollLeft === null) {
+        exactScrollLeft = container.scrollLeft;
+      }
+
+      const singleSetWidth = container.scrollWidth / 20; // We now use 20 sets
+      
+      // Original 40s marquee speed was roughly 38-40 pixels per second.
+      // This ensures identical speed on 60Hz laptops and 120Hz mobile screens.
+      const pixelsPerSecond = 40; 
+      const scrollAmount = (pixelsPerSecond * deltaTime) / 1000;
+
+      // Do not auto-scroll if currently hovered, dragging, OR waiting for snap to finish
+      if (!state.current.isHovered && !state.current.isDragging && !state.current.isSnapping) {
+        if (reverse) {
+          exactScrollLeft -= scrollAmount;
+        } else {
+          exactScrollLeft += scrollAmount;
+        }
+        // Apply the precise float to the container. 
+        // The browser will truncate to int, but our exactScrollLeft preserves the fraction!
+        container.scrollLeft = exactScrollLeft;
+      } else {
+        // Keep accumulator synced with the actual scroll while the user interacts
+        exactScrollLeft = container.scrollLeft;
+      }
+
+      // Seamless wrap boundary enforcement
+      // We only wrap when the carousel has physically stopped moving (!isScrolling) and finger is off (!isDragging).
+      // This is independent of the 3-second auto-scroll pause.
+      if (!state.current.isDragging && !state.current.isScrolling) {
+        if (container.scrollLeft <= singleSetWidth * 4) {
+          // If drifting too far left, jump forward to the middle
+          exactScrollLeft += singleSetWidth * 10;
+          container.scrollLeft = exactScrollLeft;
+        } else if (container.scrollLeft >= singleSetWidth * 16) {
+          // If drifting too far right, jump back to the middle
+          exactScrollLeft -= singleSetWidth * 10;
+          container.scrollLeft = exactScrollLeft;
+        }
+      }
+
+      animationId = requestAnimationFrame(startScroll);
+    };
+
+    animationId = requestAnimationFrame(startScroll);
+
+    // Initial 3-second delay on page load before auto-scroll begins
+    state.current.isSnapping = true;
+    state.current.snapTimeout = setTimeout(() => {
+      state.current.isSnapping = false;
+    }, 3000);
+
+    const handleMouseEnter = () => {
+      clearTimeout(state.current.hoverTimeout);
+      state.current.isHovered = true; // Pause scrolling when mouse enters
+      
+      // Force auto-scroll to resume after 5 seconds even if the mouse is still hovering
+      state.current.hoverTimeout = setTimeout(() => {
+        state.current.isHovered = false;
+      }, 5000);
+    };
+    
+    const handleMouseLeave = () => {
+      // If they move the mouse away before 5 seconds, resume immediately
+      clearTimeout(state.current.hoverTimeout);
+      state.current.isHovered = false;
+    };
+    
+    const handleTouchStart = () => {
+      state.current.isDragging = true;
+      state.current.isSnapping = false; // Cancel any existing snap wait
+      clearTimeout(state.current.snapTimeout);
+      if (container) {
+        container.style.scrollSnapType = 'x mandatory';
+      }
+    };
+    
+    const handleTouchEnd = () => {
+      state.current.isDragging = false;
+      state.current.isSnapping = true; // Block auto-scroll so the browser can snap
+      state.current.snapTimeout = setTimeout(() => {
+        state.current.isSnapping = false;
+        if (!state.current.isDragging && container) {
+          container.style.scrollSnapType = 'none';
+        }
+      }, 3000); // 3 seconds wait after swipe before auto-scroll resumes
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    container.addEventListener('mouseenter', handleMouseEnter);
+    container.addEventListener('mouseleave', handleMouseLeave);
+    container.addEventListener('touchstart', handleTouchStart);
+    container.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      cancelAnimationFrame(animationId);
+      clearTimeout(state.current.snapTimeout);
+      clearTimeout(state.current.scrollTimeout);
+      clearTimeout(state.current.hoverTimeout);
+      container.removeEventListener('scroll', handleScroll);
+      container.removeEventListener('mouseenter', handleMouseEnter);
+      container.removeEventListener('mouseleave', handleMouseLeave);
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [reverse]);
+
+  const scrollByAmount = (amount: number) => {
+    if (scrollRef.current) {
+      const container = scrollRef.current;
+      
+      // Pause auto-scroll for 3 seconds when clicking buttons
+      state.current.isSnapping = true;
+      clearTimeout(state.current.snapTimeout);
+      
+      // Temporarily enable snapping so the browser perfectly aligns the card to the center
+      container.style.scrollSnapType = 'x mandatory';
+      
+      state.current.snapTimeout = setTimeout(() => {
+        state.current.isSnapping = false;
+        if (!state.current.isDragging) {
+          container.style.scrollSnapType = 'none';
+        }
+      }, 3000);
+      
+      // Scroll by approximately one card width. 
+      // The browser's snapping engine will catch it and perfectly center the nearest card!
+      const scrollDist = amount > 0 ? 310 : -310;
+      container.scrollBy({ left: scrollDist, behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <div className="relative group w-full flex">
+      {/* Left Button (Always Visible) */}
+      <button 
+        onClick={() => scrollByAmount(-350)}
+        className="flex absolute top-[80px] left-2 md:left-4 z-30 w-10 h-10 md:w-12 md:h-12 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-full shadow-[0_0_15px_rgba(0,0,0,0.1)] items-center justify-center text-amber-600 hover:bg-amber-50 dark:hover:bg-slate-700 transition-all"
+        aria-label="Scroll left"
+      >
+        <ChevronLeft className="w-6 h-6" />
+      </button>
+
+      {/* Scroll Container */}
+      <div 
+        ref={scrollRef}
+        className="flex w-full overflow-x-auto gap-4 md:gap-6 py-4 px-2 items-stretch"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', scrollSnapType: 'none' }}
+      >
+        {/* We duplicate items 20 times to provide an absolutely massive endless runway for fast swipers */}
+        {repeatedItems.map((item, idx) => (
+          <a
+            href={`#${item.id}`}
+            key={`${item.id}-c-${idx}`}
+            className="w-[280px] h-full min-h-[350px] rounded-[1.5rem] flex flex-col bg-white/90 dark:bg-[#0B1221]/90 backdrop-blur-xl border border-gray-200 dark:border-slate-800 shadow-xl dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] flex-shrink-0 snap-center snap-always group hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 relative z-10 p-3"
+          >
+            {/* Image Section */}
+            <div className="relative w-full h-[140px] flex-shrink-0 rounded-[1.25rem] overflow-hidden mb-2 bg-slate-50">
+              <img
+                src={item.image}
+                alt={item.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute top-2 left-2 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-900/50 rounded-full px-2 py-1 flex items-center gap-1.5 shadow-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+                  <span className="text-[8px] text-rose-700 dark:text-rose-400 font-sans font-bold uppercase tracking-[0.1em]">{item.urgency}</span>
+              </div>
+            </div>
+
+            {/* Text Section */}
+            <div className="flex flex-col flex-1 px-1 pb-1">
+              <span className="text-amber-600 dark:text-amber-500 font-sans text-[9px] uppercase tracking-[0.2em] font-extrabold mb-1 block">
+                {item.tag}
+              </span>
+              <h4 className="font-serif text-[18px] font-bold text-[#0a192f] dark:text-white tracking-tight mb-1 leading-tight line-clamp-2">
+                {item.title}
+              </h4>
+              <p className="font-sans text-gray-500 dark:text-slate-300 text-[12px] leading-relaxed mb-2 flex-1">{item.description}</p>
+              
+              <div className="mt-auto pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-center">
+                <div className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#e67e22] to-[#d35400] group-hover:from-[#d35400] group-hover:to-[#c0392b] text-white font-sans text-[10px] uppercase tracking-widest font-extrabold px-6 py-2.5 rounded-full transition-all duration-300 w-full shadow-[0_8px_20px_-5px_rgba(230,126,34,0.4)] group-hover:shadow-[0_12px_25px_-5px_rgba(230,126,34,0.5)] cursor-pointer">
+                  Participate
+                </div>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      {/* Right Button (Always Visible) */}
+      <button 
+        onClick={() => scrollByAmount(350)}
+        className="flex absolute top-[80px] right-2 md:right-4 z-30 w-10 h-10 md:w-12 md:h-12 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-full shadow-[0_0_15px_rgba(0,0,0,0.1)] items-center justify-center text-amber-600 hover:bg-amber-50 dark:hover:bg-slate-700 transition-all"
+        aria-label="Scroll right"
+      >
+        <ChevronRight className="w-6 h-6" />
+      </button>
+    </div>
+  );
+};
 
 export function Pooja() {
   return (
-    <section className="py-6 md:py-8 border-y border-black/10 dark:border-amber-500/40 dark:shadow-[0_0_15px_rgba(245,158,11,0.2)] relative overflow-hidden transition-colors duration-500 z-10 bg-slate-50 dark:bg-[#0a0514]" id="live-moments">
-      <div className="max-w-7xl mx-auto px-6 mb-12 flex flex-col items-center justify-center text-center relative z-20">
-        <span className="font-2xl uppercase tracking-[0.2em] text-amber-600 dark:text-amber-400 font-bold block mb-4">
-          LIVE HOROLOGICAL STREAM
+    <section className="pt-4 md:pt-6 pb-0 border-y border-black/10 dark:border-amber-500/40 dark:shadow-[0_0_15px_rgba(245,158,11,0.2)] relative overflow-hidden transition-colors duration-500 z-10" id="live-moments">
+      <div className="max-w-7xl mx-auto px-6 mb-6 flex flex-col items-center justify-center text-center relative z-20">
+        <span className="text-amber-600 dark:text-amber-400 font-sans text-xs md:text-sm uppercase tracking-widest font-bold mb-2 text-center block w-full">
+          EXPERIENCE THE POWER OF ANCIENT VEDIC RITUALS
         </span>
-        <h2 className="font-sans text-4xl md:text-5xl text-midnight dark:text-cream tracking-wider">
-          Auspicious Portals & Transits
+        <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl leading-tight font-bold mb-2">
+          <span className="text-midnight dark:text-cream">Authentic Poojas </span>
+          <span className="text-[#d35400] dark:text-orange-400">& Homas</span>
         </h2>
       </div>
 
-      {/* Marquee dual-row stream */}
+      {/* Dual-row stream - Full Width */}
       <div className="space-y-6 relative w-full overflow-hidden">
         {/* Row 1 - Left to Right (Poojas) */}
-        <div className="flex w-fit animate-[marquee_40s_linear_infinite] hover:[animation-play-state:paused] gap-6 py-2">
-          {[...POOJA_MOMENTS, ...POOJA_MOMENTS, ...POOJA_MOMENTS].map((item, idx) => {
-            return (
-              <a
-                href={`#${item.id}`}
-                key={`${item.id}-r1-${idx}`}
-                className="w-[280px] h-[350px] rounded-[1.5rem] flex flex-col bg-white/90 dark:bg-[#0B1221]/90 backdrop-blur-xl border border-gray-200 dark:border-slate-800 shadow-xl dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] flex-shrink-0 group hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 relative z-10 p-3"
-              >
-                {/* Image Section */}
-                <div className="relative w-full h-[140px] rounded-[1.25rem] overflow-hidden mb-3 bg-slate-50">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-2 left-2 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-900/50 rounded-full px-2 py-1 flex items-center gap-1.5 shadow-sm">
-                     <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
-                     <span className="text-[8px] text-rose-700 dark:text-rose-400 font-sans font-bold uppercase tracking-[0.1em]">{item.urgency}</span>
-                  </div>
-                </div>
-
-                {/* Text Section */}
-                <div className="flex flex-col flex-1 px-1 pb-1">
-                  {/* Badge */}
-                  <span className="text-amber-600 dark:text-amber-500 font-sans text-[9px] uppercase tracking-[0.2em] font-extrabold mb-1.5 block">
-                    {item.tag}
-                  </span>
-
-                  {/* Title */}
-                  <h4 className="font-serif text-[18px] font-bold text-[#0a192f] dark:text-white tracking-tight mb-2 leading-tight line-clamp-2">{item.title}</h4>
-                  
-                  {/* Description (Full text) */}
-                  <p className="font-sans text-gray-500 dark:text-slate-300 text-[12px] leading-relaxed mb-3 flex-1">{item.description}</p>
-                  
-                  {/* CTA Button */}
-                  <div className="mt-auto pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-center">
-                    <div className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#e67e22] to-[#d35400] group-hover:from-[#d35400] group-hover:to-[#c0392b] text-white font-sans text-[10px] uppercase tracking-widest font-extrabold px-6 py-2.5 rounded-full transition-all duration-300 w-full shadow-[0_8px_20px_-5px_rgba(230,126,34,0.4)] group-hover:shadow-[0_12px_25px_-5px_rgba(230,126,34,0.5)] cursor-pointer">
-                      Participate
-                    </div>
-                  </div>
-                </div>
-              </a>
-            );
-          })}
-        </div>
+        <CarouselRow items={POOJA_MOMENTS} reverse={false} />
 
         {/* Row 2 - Right to Left (Homas) */}
-        <div className="flex w-fit animate-[marquee-reverse_40s_linear_infinite] hover:[animation-play-state:paused] gap-6 py-2">
-          {[...HOMA_MOMENTS, ...HOMA_MOMENTS, ...HOMA_MOMENTS].map((item, idx) => {
-            return (
-              <a
-                href={`#${item.id}`}
-                key={`${item.id}-r2-${idx}`}
-                className="w-[280px] h-[350px] rounded-[1.5rem] flex flex-col bg-white/90 dark:bg-[#0B1221]/90 backdrop-blur-xl border border-gray-200 dark:border-slate-800 shadow-xl dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] flex-shrink-0 group hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 relative z-10 p-3"
-              >
-                {/* Image Section */}
-                <div className="relative w-full h-[140px] rounded-[1.25rem] overflow-hidden mb-3 bg-slate-50">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-2 left-2 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-900/50 rounded-full px-2 py-1 flex items-center gap-1.5 shadow-sm">
-                     <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
-                     <span className="text-[8px] text-rose-700 dark:text-rose-400 font-sans font-bold uppercase tracking-[0.1em]">{item.urgency}</span>
-                  </div>
-                </div>
-
-                {/* Text Section */}
-                <div className="flex flex-col flex-1 px-1 pb-1">
-                  {/* Badge */}
-                  <span className="text-amber-600 dark:text-amber-500 font-sans text-[9px] uppercase tracking-[0.2em] font-extrabold mb-1.5 block">
-                    {item.tag}
-                  </span>
-
-                  {/* Title */}
-                  <h4 className="font-serif text-[18px] font-bold text-[#0a192f] dark:text-white tracking-tight mb-2 leading-tight line-clamp-2">{item.title}</h4>
-                  
-                  {/* Description (Full text) */}
-                  <p className="font-sans text-gray-500 dark:text-slate-300 text-[12px] leading-relaxed mb-3 flex-1">{item.description}</p>
-                  
-                  {/* CTA Button */}
-                  <div className="mt-auto pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-center">
-                    <div className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#e67e22] to-[#d35400] group-hover:from-[#d35400] group-hover:to-[#c0392b] text-white font-sans text-[10px] uppercase tracking-widest font-extrabold px-6 py-2.5 rounded-full transition-all duration-300 w-full shadow-[0_8px_20px_-5px_rgba(230,126,34,0.4)] group-hover:shadow-[0_12px_25px_-5px_rgba(230,126,34,0.5)] cursor-pointer">
-                      Participate
-                    </div>
-                  </div>
-                </div>
-              </a>
-            );
-          })}
-        </div>
+        <CarouselRow items={HOMA_MOMENTS} reverse={true} />
       </div>
       <style>{`
-        @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-33.333%); }
-        }
-        @keyframes marquee-reverse {
-          0% { transform: translateX(-33.333%); }
-          100% { transform: translateX(0); }
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .overflow-x-auto::-webkit-scrollbar {
+          display: none;
         }
       `}</style>
     </section>
