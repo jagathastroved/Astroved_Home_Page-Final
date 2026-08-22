@@ -14,6 +14,7 @@ import { TrustStats } from '../components/sections/TrustStats';
 import { FAQ } from '../components/sections/FAQ';
 import { scrollToSection } from '../utils/scroll';
 import { Pooja } from '../components/sections/Pooja';
+import { PopularRituals } from '../components/sections/PopularRituals';
 
 export function Home() {
 
@@ -22,6 +23,7 @@ export function Home() {
       {/* <HeroSection /> */}
       <SpecialEvents />
       <PersonalGuidance />
+      <PopularRituals />
       <Pooja />
       <Horoscope onCalculateChart={(zodiac) => { scrollToSection('birth-form'); }} />
       <PersonalizedSolutions />
