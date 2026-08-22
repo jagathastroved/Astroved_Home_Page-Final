@@ -11,13 +11,27 @@ function injectSchemaPlugin() {
       const apiPath = __dirname;
       const sitesPath = path.resolve(apiPath, "..");
 
-      const schemaPath = path.join(sitesPath, "ReactHomePage", "Websiteschema.json");
-      const schemaJson = fs.readFileSync(schemaPath, "utf-8");
+      const localSchemaPath = path.join(apiPath, "Websiteschema.json");
+      const legacySchemaPath = path.join(sitesPath, "ReactHomePage", "Websiteschema.json");
 
-      return html.replace(
-        "</head>",
-        `<script type="application/ld+json">${schemaJson}</script>\n</head>`
-      );
+      let schemaJson = "";
+      try {
+        if (fs.existsSync(localSchemaPath)) {
+          schemaJson = fs.readFileSync(localSchemaPath, "utf-8");
+        } else if (fs.existsSync(legacySchemaPath)) {
+          schemaJson = fs.readFileSync(legacySchemaPath, "utf-8");
+        }
+      } catch (e) {
+        console.error("Error reading schema:", e);
+      }
+
+      if (schemaJson) {
+        return html.replace(
+          "</head>",
+          `<script type="application/ld+json">${schemaJson}</script>\n</head>`
+        );
+      }
+      return html;
     },
   };
 }

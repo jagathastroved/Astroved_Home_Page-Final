@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/ReactHome/(.*)",
+      "destination": "/$1"
+    },
+    {
       "source": "/api/proxy/menu",
       "destination": "https://www.astroved.com/mainmenunew.json"
     }
