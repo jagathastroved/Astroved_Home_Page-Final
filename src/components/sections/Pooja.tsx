@@ -23,23 +23,23 @@ interface LiveMomentCard {
 }
 
 const POOJA_MOMENTS: LiveMomentCard[] = [
-  { id: 'p1', title: 'Birth Star Pooja', tag: 'Auspicious Portal', urgency: 'Limited Seats', image: img_birth_star, description: 'The star constellation that the Moon is transiting at the time of birth is your birth star. This Pooja honors your Janma Nakshatra to bring lifelong blessings.' },
-  { id: 'p2', title: 'Ashtalakshmi Pooja', tag: 'Wealth Attraction', urgency: 'Auspicious Portal', image: img_ashtalakshmi, description: 'Ashtalakshmi refers to the 8 divine forms of Lakshmi, the supreme Goddess of wealth, fertility, and fortune. She remains an embodiment of prosperity.' },
-  { id: 'p3', title: 'Vaidhyanatha Pooja', tag: 'Divine Protection', urgency: 'Next 24 Hours', image: img_vaidhyanatha, description: 'Vaidhyanatha Pooja will encircle you with positive vibrations and shield you against health disorders. A powerful spiritual therapy for your well-being.' },
-  { id: 'p4', title: 'Muruga Pooja', tag: 'Obstacle Removal', urgency: 'This Week', image: img_muruga, description: 'Muruga is a rare combination of exceptional courage and supreme intelligence. He leads one towards spiritual evolution and victory over negativity.' },
-  { id: 'p5', title: 'Ketu Pooja', tag: 'Karma Clearing', urgency: 'Auspicious Portal', image: img_ketu, description: 'Ketu is a Nodal planet that acts as an agent for the overlord of the star in which it is placed. Propitiate Ketu to quench the thirst of spiritual quest.' },
-  { id: 'p6', title: 'Durga Pooja', tag: 'Divine Protection', urgency: 'Limited Seats', image: img_durga, description: 'Durga is the universal mother Goddess. She is the aggressive form of the divine Shakti, representing the infinite power of the universe.' }
+  { id: 'p1', title: 'Birth Star Pooja', tag: 'Auspicious Portal', urgency: 'Limited Seats', image: img_birth_star, description: 'Your birth star holds the key to your destiny. Honor your Janma Nakshatra for lifelong blessings.' },
+  { id: 'p2', title: 'Ashtalakshmi Pooja', tag: 'Wealth Attraction', urgency: 'Auspicious Portal', image: img_ashtalakshmi, description: 'Ashtalakshmi embodies the eight divine forms of wealth. Invoke her supreme grace for abundant prosperity.' },
+  { id: 'p3', title: 'Vaidhyanatha Pooja', tag: 'Divine Protection', urgency: 'Next 24 Hours', image: img_vaidhyanatha, description: 'Shield yourself against health disorders. This powerful spiritual therapy encircles you with healing positive vibrations.' },
+  { id: 'p4', title: 'Muruga Pooja', tag: 'Obstacle Removal', urgency: 'This Week', image: img_muruga, description: 'Muruga combines exceptional courage and supreme intelligence. Secure your victory over all forms of negativity.' },
+  { id: 'p5', title: 'Ketu Pooja', tag: 'Karma Clearing', urgency: 'Auspicious Portal', image: img_ketu, description: 'Ketu acts as a powerful karmic agent. Clear past karma and fulfill your deep spiritual quests.' },
+  { id: 'p6', title: 'Durga Pooja', tag: 'Divine Protection', urgency: 'Limited Seats', image: img_durga, description: 'Durga is the aggressive form of divine Shakti. Harness her infinite protective power against all obstacles.' }
 ];
 
 const HOMA_MOMENTS: LiveMomentCard[] = [
-  { id: 'h1', title: 'Sun Fire Lab', tag: 'Planetary Blessings', urgency: 'Limited Seats', image: img_sun, description: 'To be your best self in terms of your Sun, cause your energies to work along the path in which they will have maximum help from planetary vibrations.' },
-  { id: 'h2', title: 'Moon Fire Lab', tag: 'Planetary Blessings', urgency: 'Auspicious Portal', image: img_moon, description: 'The Moon rules your mind and emotions. Performing Moon homa can balance your emotions, improve self-worth, and promote love and success.' },
-  { id: 'h3', title: 'Mars Fire Lab', tag: 'Planetary Blessings', urgency: 'Next 24 Hours', image: img_mars, description: 'Mars is a fiery and passionate planet. A positive Mars gives courage, healing, and helps control malefic effects for your financial well-being.' },
-  { id: 'h4', title: 'Mercury Fire Lab', tag: 'Planetary Blessings', urgency: 'This Week', image: vedic_fire_lab, description: 'Propitiating this powerful celestial body can make you sharp-witted and hone your oratory skills, keeping the powers of learning within your grasp.' },
-  { id: 'h5', title: 'Jupiter Fire Lab', tag: 'Planetary Blessings', urgency: 'Limited Seats', image: cosmic_planetary_blessing, description: 'Jupiter is the planet of success and teacher of humankind. This homa targets his blessings for success in endeavors and gaining higher wisdom.' },
-  { id: 'h6', title: 'Venus Fire Lab', tag: 'Planetary Blessings', urgency: 'Auspicious Portal', image: vedic_fire_lab, description: 'Venus governs the female gender. Empower yourself to harness creativity and receive blessings for longevity, wealth, and happiness.' },
-  { id: 'h7', title: 'Saturn Fire Lab', tag: 'Planetary Blessings', urgency: 'Next 24 Hours', image: cosmic_planetary_blessing, description: 'Dedicated to the planet Saturn, performed to appease and harness his blessings to overcome trials and tribulations in life and guide you to the right path.' },
-  { id: 'h8', title: 'Rahu Fire Lab', tag: 'Planetary Blessings', urgency: 'This Week', image: vedic_fire_lab, description: 'Rahu can strengthen your power and overwhelm adversaries. Rahu homa helps make the best use of circumstances and lead the life you desire.' }
+  { id: 'h1', title: 'Sun Fire Lab', tag: 'Planetary Blessings', urgency: 'Limited Seats', image: img_sun, description: 'Cause your energies to align with the Sun. Maximize planetary vibrations for ultimate success and authority.' },
+  { id: 'h2', title: 'Moon Fire Lab', tag: 'Planetary Blessings', urgency: 'Auspicious Portal', image: img_moon, description: 'The Moon directly rules your mind and emotions. Balance your inner self and promote lasting peace.' },
+  { id: 'h3', title: 'Mars Fire Lab', tag: 'Planetary Blessings', urgency: 'Next 24 Hours', image: img_mars, description: 'Mars is a fiercely passionate planet. Gain immense courage and overcome any financial hurdles you face.' },
+  { id: 'h4', title: 'Mercury Fire Lab', tag: 'Planetary Blessings', urgency: 'This Week', image: vedic_fire_lab, description: 'Sharpen your intellect and hone your oratory skills. Keep the powers of profound learning within your grasp.' },
+  { id: 'h5', title: 'Jupiter Fire Lab', tag: 'Planetary Blessings', urgency: 'Limited Seats', image: cosmic_planetary_blessing, description: 'Jupiter is the great teacher of humankind. Attract his divine blessings for success and higher wisdom.' },
+  { id: 'h6', title: 'Venus Fire Lab', tag: 'Planetary Blessings', urgency: 'Auspicious Portal', image: vedic_fire_lab, description: 'Venus governs divine creativity and the female gender. Harness her energy for longevity, wealth, and happiness.' },
+  { id: 'h7', title: 'Saturn Fire Lab', tag: 'Planetary Blessings', urgency: 'Next 24 Hours', image: cosmic_planetary_blessing, description: 'Appease the powerful planet Saturn. Overcome life’s greatest trials and let him guide you to the right path.' },
+  { id: 'h8', title: 'Rahu Fire Lab', tag: 'Planetary Blessings', urgency: 'This Week', image: vedic_fire_lab, description: 'Make the best use of your circumstances. Overwhelm your adversaries and lead the life you truly desire.' }
 ];
 
 const CarouselRow = ({ items, reverse = false }: { items: LiveMomentCard[], reverse?: boolean }) => {
