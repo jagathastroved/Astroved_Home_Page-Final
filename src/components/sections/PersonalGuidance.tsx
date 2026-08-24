@@ -72,7 +72,7 @@ const CONTENT_WRAPPER_STYLES = "max-w-7xl mx-auto px-6 relative z-10 mt-2";
 const HEADER_SUBTITLE_STYLES = "text-amber-600 dark:text-amber-400 font-sans text-xs md:text-sm uppercase tracking-widest font-bold mb-3";
 const HEADER_TITLE_STYLES = "font-serif text-3xl sm:text-4xl md:text-5xl text-midnight dark:text-cream leading-tight font-bold mb-4";
 const GRID_CONTAINER_STYLES = "flex items-stretch overflow-x-auto snap-x snap-mandatory lg:grid lg:grid-cols-3 gap-6 lg:gap-8 mt-8 relative z-10 pb-12 pt-6 px-6 -mx-6 lg:mx-0 lg:px-4 lg:pb-16 no-scrollbar";
-const CARD_STYLES = "snap-center shrink-0 w-[85%] sm:w-[50%] lg:w-full rounded-[2.5rem] flex flex-col group cursor-pointer overflow-hidden relative h-auto border border-black/5 dark:border-amber-500/40 dark:shadow-[0_0_15px_rgba(245,158,11,0.2)] shadow-xl hover:border-[#facc15]/50 hover:shadow-[0_0_40px_rgba(250,204,21,0.2)] transition-all duration-500 bg-white dark:bg-[#0a0e17] m-1";
+const CARD_STYLES = "snap-center shrink-0 w-[85%] sm:w-[50%] lg:w-full rounded-[2.5rem] flex flex-col group overflow-hidden relative h-auto border border-black/5 dark:border-amber-500/40 dark:shadow-[0_0_15px_rgba(245,158,11,0.2)] shadow-xl hover:border-[#facc15]/50 hover:shadow-[0_0_40px_rgba(250,204,21,0.2)] transition-all duration-500 bg-white dark:bg-[#0a0e17] m-1";
 const IMAGE_CONTAINER_STYLES = "relative w-full z-0 h-[180px] sm:h-[200px] md:h-[220px] lg:h-[260px] shrink-0 overflow-hidden";
 const IMAGE_STYLES = "w-full h-full object-cover object-[center_20%] group-hover:scale-105 transition-transform duration-[1500ms] ease-out";
 const IMAGE_GRADIENT_STYLES = "hidden";
@@ -81,7 +81,7 @@ const CARD_ANIMATION_WRAPPER_STYLES = "flex flex-col h-full";
 const BADGE_STYLES = "inline-flex items-center justify-center px-4 sm:px-6 py-2 sm:py-2.5 rounded-full bg-yellow-50 dark:bg-amber-900/20 border border-yellow-200 dark:border-amber-700/50 text-amber-700 dark:text-amber-300 font-sans text-[10px] sm:text-xs md:text-sm uppercase tracking-wider sm:tracking-widest mb-4 w-fit max-w-full font-bold text-center leading-tight whitespace-nowrap";
 const DESC_GRID_STYLES = "flex-grow";
 const DESC_TEXT_STYLES = "font-body text-gray-700 dark:text-gray-300 text-sm lg:text-base leading-relaxed mb-6 mt-1 whitespace-pre-line";
-const CTA_WRAPPER_STYLES = "inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-amber-600 hover:bg-amber-500 dark:bg-amber-500 dark:hover:bg-amber-400 text-white dark:text-gray-900 font-sans text-[10px] sm:text-xs md:text-sm uppercase tracking-wider sm:tracking-widest font-bold px-3 sm:px-6 py-3 sm:py-3.5 rounded-xl transition-all duration-300 mt-auto shadow-lg shadow-amber-900/20 w-full group/btn whitespace-nowrap overflow-hidden";
+const CTA_WRAPPER_STYLES = "inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-amber-600 hover:bg-amber-500 dark:bg-amber-500 dark:hover:bg-amber-400 text-white dark:text-gray-900 font-sans text-[10px] sm:text-xs md:text-sm uppercase tracking-wider sm:tracking-widest font-bold px-3 sm:px-6 py-3 sm:py-3.5 rounded-xl transition-all duration-300 mt-auto shadow-lg shadow-amber-900/20 w-full group/btn whitespace-nowrap overflow-hidden cursor-pointer";
 const FOOTER_TEXT_STYLES = "mt-3 text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-sans font-medium text-center";
 
 /**
