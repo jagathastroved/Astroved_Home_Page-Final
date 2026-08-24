@@ -4,8 +4,6 @@ import { AnimatedGrid } from '../ui/AnimatedGrid';
 import { AnimatedCard } from '../ui/AnimatedCard';
 import palm_leaf from '../../assets/personal_guidance/palm_leaf.png';
 import personal_report from '../../assets/personal_guidance/personal_report.png';
-import liveConsultationsImg from '../../assets/personal_guidance/live_consultations.png';
-import liveConsultationsImg1 from '../../assets/personal_guidance/viji-mam.jpg';
 import vijimam from '../../assets/personal_guidance/viji-mam.jpg';
 
 import '../../layouts/Navbar.css';
@@ -35,7 +33,7 @@ const EXPERTS: ExpertItem[] = [
     cta: "BOOK CONSULTATION",
     footerText: "Slots available today • 100% private",
     image: vijimam,
-    titleColor: "text-gray-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400",
+    titleColor: "text-gray-900 dark:text-white",
     link: "/AstrologerScheduler.aspx?id=63143&promo=SL_Consult_and_Counsel-1",
     IsfooterTextBtn:false
   },
@@ -46,7 +44,7 @@ const EXPERTS: ExpertItem[] = [
     cta: "GET MY NADI READING",
     footerText: "Live Reading • Translation • Recording",
     image: palm_leaf,
-    titleColor: "text-gray-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400",
+    titleColor: "text-gray-900 dark:text-white",
     link: "/nadi/nadi-astrology?promo=SL_nadi-astrology-2",
     IsfooterTextBtn:false
   },
@@ -57,7 +55,7 @@ const EXPERTS: ExpertItem[] = [
     cta: "GET MY REPORT",
     footerText: "See a sample report →",
     image: personal_report,
-    titleColor: "text-gray-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400",
+    titleColor: "text-gray-900 dark:text-white",
     link: "/prediction-services-personalized-kundali-report-P88426.aspx?promo=SL_kundali-report-3",
     IsfooterTextBtn:true
   }
