@@ -13,8 +13,7 @@ import { Testimonials } from '../components/sections/Testimonials';
 import { TrustStats } from '../components/sections/TrustStats';
 import { FAQ } from '../components/sections/FAQ';
 import { scrollToSection } from '../utils/scroll';
-import { Pooja } from '../components/sections/Pooja';
-import { PopularRituals } from '../components/sections/PopularRituals';
+import { PopularPoojas } from '../components/sections/PopularPoojas';
 
 export function Home() {
 
@@ -23,8 +22,8 @@ export function Home() {
       {/* <HeroSection /> */}
       <SpecialEvents />
       <PersonalGuidance />
-      <PopularRituals />
-      <Pooja />
+      <PopularPoojas />
+      {/* <Pooja /> */}
       <Horoscope onCalculateChart={(zodiac) => { scrollToSection('birth-form'); }} />
       <PersonalizedSolutions />
       <PersonalizedSupport />

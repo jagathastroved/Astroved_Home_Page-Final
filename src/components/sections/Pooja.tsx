@@ -11,8 +11,9 @@ import {
   img_durga,
   img_sun,
   img_moon,
-  img_mars
-} from '../../assets/Auspicious_portal';
+  img_mars,
+  sacred_shiva_pooja
+} from '../../assets/popularPoojas&homas';
 interface LiveMomentCard {
   id: string;
   title: string;

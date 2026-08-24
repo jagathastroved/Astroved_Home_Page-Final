@@ -13,3 +13,4 @@ export { default as img_durga } from './img_durga.jpg';
 export { default as img_sun } from './img_sun.jpg';
 export { default as img_moon } from './img_moon.jpg';
 export { default as img_mars } from './img_mars.jpg';
+export { default as saturn_fire_lab } from './saturn_fire_lab.jpg';
