@@ -151,8 +151,9 @@ const detectLocationFromNetwork = async (): Promise<ResolvedLocation> => {
   if (!response.ok) throw new Error("AstroVed IP location API failed");
 
   const data = await response.json();
-  const lat = data.Latitude || data.latitude;
-  const lng = data.Longitude || data.longitude;
+  const lat = data.latitude;
+  const lng = data.longitude;
+  console.log('responce', data, 'lat', lat)
   if (!lat || !lng) {
     throw new Error("AstroVed IP location API returned no coordinates");
   }
@@ -160,19 +161,18 @@ const detectLocationFromNetwork = async (): Promise<ResolvedLocation> => {
   return {
     lat: parseFloat(lat),
     lng: parseFloat(lng),
-    city: data.City || data.city || "Unknown City",
-    state: data.State || data.state || data.RegionName || data.regionName || data.Region || data.region || data.StateorProvince,
-    countryCode: data.CountryCode || data.countryCode || "Unknown Country",
-    timezone: data.TimeZone || data.timeZone,
+    city: data.city || "Unknown",
+    state: data.state || "unKnown",
+    countryCode: data.countryCode || "unKnown",
+    timezone: data.timeZone || "Asia/Kolkata",
   };
 };
 
 const resolveCountryName = (countryCode: string) => {
   const matchedCountry = COUNTRIES.find((c) => c.CountryCode === countryCode);
+  console.log('matched country', matchedCountry)
   return (
-    matchedCountry?.CountryName1 ||
-    (matchedCountry as any)?.CountryName ||
-    countryCode
+    matchedCountry?.CountryName1
   );
 };
 
@@ -624,7 +624,24 @@ export function PremiumPanchang() {
         setIsLoading(true);
         const tz = timezone;
         const now = new Date();
-        const currentTime = now.toTimeString().split(" ")[0];
+
+        const todayDateStr = new Intl.DateTimeFormat('en-CA', {
+          timeZone: tz,
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        }).format(now);
+
+        let currentTime = "00:00:00";
+        if (selectedDate === todayDateStr) {
+          currentTime = new Intl.DateTimeFormat('en-GB', {
+            timeZone: tz,
+            hour12: false,
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          }).format(now).replace(/,/g, '').trim();
+        }
         const localISOTime = `${selectedDate}T${currentTime}`;
         const [panchangData, contentData] = await Promise.all([
           fetchPanchangData(tz, coordinates.lat, coordinates.lng, localISOTime),

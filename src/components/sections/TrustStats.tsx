@@ -12,8 +12,8 @@ const BG_GLOW_STYLES = "absolute inset-0 bg-[radial-gradient(ellipse_at_center,r
 const CONTAINER_STYLES = "max-w-7xl mx-auto px-6 relative z-10 grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-8 lg:gap-12 items-center";
 
 /* Title Styles */
-const TITLE_CONTAINER_STYLES = "text-center md:text-left relative z-10";
-const TITLE_LINE_STYLES = "absolute -left-4 top-1/2 -translate-y-1/2 w-1 h-12 bg-gradient-to-b from-amber-400 to-amber-600 rounded-full hidden md:block";
+const TITLE_CONTAINER_STYLES = "text-center md:text-left relative z-10 md:pl-10 lg:pl-12";
+const TITLE_LINE_STYLES = "absolute left-0 md:left-2 lg:left-4 top-1/2 -translate-y-1/2 w-1 h-12 bg-gradient-to-b from-amber-400 to-amber-600 rounded-full hidden md:block";
 const TITLE_SUB_STYLES = "text-xs font-mono uppercase tracking-[0.25em] text-amber-600 dark:text-amber-500 font-bold block mb-2";
 const TITLE_MAIN_STYLES = "font-sans text-2xl md:text-3xl text-midnight dark:text-cream font-medium tracking-wide";
 
