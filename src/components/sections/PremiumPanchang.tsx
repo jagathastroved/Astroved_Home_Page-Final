@@ -264,6 +264,16 @@ export function PremiumPanchang() {
     const effectiveTz = tz || timezone || "Asia/Kolkata";
     setTimezone(effectiveTz);
     setLocationName(name);
+
+    const parts = name.split(",");
+    const city = parts[0]?.trim() || "";
+    const country = parts[parts.length - 1]?.trim() || "";
+
+    setCookie("lat", String(lat));
+    setCookie("lng", String(lng));
+    setCookie("timezone", effectiveTz);
+    if (city) setCookie("city", city);
+    if (country) setCookie("country", country);
   };
 
   useEffect(() => {
@@ -285,7 +295,7 @@ export function PremiumPanchang() {
   // AstroVed IP-lookup API as fallback. Skipped entirely if a location is
   // already saved in cookies.
   useEffect(() => {
-    if (getCookie("panchang_location_name") && getCookie("panchang_lat") && getCookie("panchang_lng")) {
+    if (getCookie("city") && getCookie("lat") && getCookie("lng")) {
       setIsLocationReady(true);
       return;
     }
