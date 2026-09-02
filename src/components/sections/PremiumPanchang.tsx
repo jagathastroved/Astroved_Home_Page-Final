@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
 import {
   MapPin,
@@ -19,9 +19,9 @@ import {
   fetchCitySuggestions,
   fetchPanchangData,
   fetchTodayContent,
+  initializeLocationCookies,
 } from "../../services/astrovedService";
 import { fetchCountries, searchLocation } from "../../services/locationService";
-import { COUNTRIES } from "../../utils/countries";
 
 const Styles = {
   SECTION_STYLES: "relative py-4 pb-20 md:pb-6 md:py-6 overflow-hidden",
@@ -117,7 +117,7 @@ const getCookie = (name: string) => {
   const match = document.cookie.match(new RegExp("(?:^|;\\s*)" + name + "=([^;]+)"));
   if (!match) return null;
   const decoded = decodeURIComponent(match[1]);
-  if (name === "panchang_location_name" || name === "panchang_city" || name === "panchang_country") {
+  if (name === "city" || name === "country" || name === "countryCode") {
     return decoded.replace(/_/g, " ");
   }
   return decoded;
@@ -168,39 +168,26 @@ const detectLocationFromNetwork = async (): Promise<ResolvedLocation> => {
   };
 };
 
-const resolveCountryName = (countryCode: string) => {
-  const matchedCountry = COUNTRIES.find((c) => c.CountryCode === countryCode);
-  console.log('matched country', matchedCountry)
-  return (
-    matchedCountry?.CountryName1
-  );
-};
-
-const formatLocationName = (
-  city: string,
-  state: string | undefined,
-  country: string,
-) => {
-  const statePart = state && state !== "Unknown" ? `${state}, ` : "";
-  return `${city}, ${statePart}${country}`;
-};
-
 export function PremiumPanchang() {
   const [panchangData, setPanchangData] = useState<any>(null);
   const [todayContentData, setTodayContentData] = useState<any>(null);
   const [locationName, setLocationName] = useState<string>(() => {
-    return getCookie("panchang_location_name") || "";
+    const city = getCookie("city");
+    const country = getCookie("country");
+    if (city && country) return `${city}, ${country}`;
+    if (city) return city;
+    return "";
   });
   const [coordinates, setCoordinates] = useState<{
     lat: number;
     lng: number;
   } | null>(() => {
-    const lat = getCookie("panchang_lat");
-    const lng = getCookie("panchang_lng");
+    const lat = getCookie("lat");
+    const lng = getCookie("lng");
     return lat && lng ? { lat: parseFloat(lat), lng: parseFloat(lng) } : null;
   });
   const [timezone, setTimezone] = useState<string>(() => {
-    const tz = getCookie("panchang_timezone");
+    const tz = getCookie("timezone");
     if (tz) return tz;
     try {
       return Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Kolkata";
@@ -217,7 +204,7 @@ export function PremiumPanchang() {
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLocationReady, setIsLocationReady] = useState<boolean>(() => {
-    return !!getCookie("panchang_location_name") && !!getCookie("panchang_lat") && !!getCookie("panchang_lng");
+    return !!getCookie("city") && !!getCookie("lat") && !!getCookie("lng");
   });
 
   // Custom Calendar & Location popover states
@@ -230,23 +217,13 @@ export function PremiumPanchang() {
     new Date().getMonth(),
   );
   const [tempCountry, setTempCountry] = useState(() => {
-    const country = getCookie("panchang_country");
+    const country = getCookie("country");
     if (country) return country;
-    const loc = getCookie("panchang_location_name");
-    if (loc) {
-      const parts = loc.split(",");
-      return parts[parts.length - 1]?.trim() || "";
-    }
     return "";
   });
   const [tempCity, setTempCity] = useState(() => {
-    const city = getCookie("panchang_city");
+    const city = getCookie("city");
     if (city) return city;
-    const loc = getCookie("panchang_location_name");
-    if (loc) {
-      const parts = loc.split(",");
-      return parts[0]?.trim() || "";
-    }
     return "";
   });
   const [citySuggestions, setCitySuggestions] = useState<any[]>([]);
@@ -255,6 +232,7 @@ export function PremiumPanchang() {
   const [searchCountry, setSearchCountry] = useState("");
   const [countriesList, setCountriesList] = useState<any[]>([]);
   const [isCitySelected, setIsCitySelected] = useState(false);
+  const isDetectingLocation = useRef(false);
 
   const months = [
     "January",
@@ -283,20 +261,9 @@ export function PremiumPanchang() {
     name: string,
   ) => {
     setCoordinates({ lat, lng });
-    setCookie("panchang_lat", String(lat));
-    setCookie("panchang_lng", String(lng));
-
     const effectiveTz = tz || timezone || "Asia/Kolkata";
     setTimezone(effectiveTz);
-    setCookie("panchang_timezone", effectiveTz);
-
     setLocationName(name);
-    setCookie("panchang_location_name", name);
-    const nameParts = name.split(",");
-    const city = nameParts[0]?.trim() || "";
-    const country = nameParts[nameParts.length - 1]?.trim() || "";
-    setCookie("panchang_city", city);
-    setCookie("panchang_country", country);
   };
 
   useEffect(() => {
@@ -323,37 +290,35 @@ export function PremiumPanchang() {
       return;
     }
 
+    if (isDetectingLocation.current) return;
+    isDetectingLocation.current = true;
+
     const detectLocation = async () => {
       try {
-        const resolved = await detectLocationFromNetwork();
-        const countryName = resolveCountryName(resolved.countryCode);
-        let formattedName = formatLocationName(
-          resolved.city,
-          resolved.state,
-          countryName,
-        );
+        const resolved = await initializeLocationCookies();
+        const countryName = resolved.countryName || "Unknown";
+        const stateName = resolved.stateName;
+        const statePart = stateName && stateName !== "Unknown" ? `${stateName}, ` : "";
+        let formattedName = resolved.locationName || `${resolved.city || "Unknown"}, ${statePart}${countryName}`;
 
         try {
-          const astrovedLocData = await fetchCitySuggestions(countryName, resolved.city);
+          const astrovedLocData = await fetchCitySuggestions(countryName, resolved.city || "Unknown");
           if (Array.isArray(astrovedLocData) && astrovedLocData.length > 0) {
             const match = astrovedLocData[0];
-            formattedName = formatLocationName(
-              match.City || resolved.city,
-              match.StateorProvince,
-              match.Country || countryName,
-            );
+            const statePart = match.StateorProvince && match.StateorProvince !== "Unknown" ? `${match.StateorProvince}, ` : "";
+            formattedName = `${match.City || resolved.city || "Unknown"}, ${statePart}${match.Country || countryName}`;
           }
         } catch (e) {
           console.error("Astroved location enrichment failed:", e);
         }
 
         applyLocation(
-          resolved.lat,
-          resolved.lng,
-          resolved.timezone,
+          parseFloat(resolved.latitude),
+          parseFloat(resolved.longitude),
+          resolved.timeZone || "Asia/Kolkata",
           formattedName,
         );
-        setTempCity(resolved.city);
+        setTempCity(resolved.city || "Unknown");
         setTempCountry(countryName);
       } catch (err) {
         console.error("Unable to auto-detect location:", err);
@@ -704,11 +669,7 @@ export function PremiumPanchang() {
           const astrovedLocData = await fetchCitySuggestions(country, city);
           if (Array.isArray(astrovedLocData) && astrovedLocData.length > 0) {
             const match = astrovedLocData[0];
-            const finalName = formatLocationName(
-              match.City,
-              match.StateorProvince,
-              match.Country,
-            );
+            const finalName = `${match.City || city}, ${match.StateorProvince}, ${match.Country}`;
             applyLocation(newLat, newLng, match.TimeZone, finalName);
           }
         } catch (e) {
@@ -808,11 +769,7 @@ export function PremiumPanchang() {
         const match = data[0];
         const newLat = parseFloat(match.Latitude);
         const newLng = parseFloat(match.Longitude);
-        const finalName = formatLocationName(
-          match.City,
-          match.StateorProvince,
-          tempCountry || match.Country,
-        );
+        const finalName = `${match.City || tempCity}, ${match.StateorProvince}, ${match.Country}`;
         applyLocation(newLat, newLng, match.TimeZone, finalName);
         return;
       }
@@ -1099,19 +1056,14 @@ export function PremiumPanchang() {
                                     onClick={() => {
                                       setTempCity(suggestion.name);
                                       setIsCitySelected(true);
-                                      const finalName = formatLocationName(
-                                        suggestion.name,
-                                        suggestion.stateName,
-                                        tempCountry || suggestion.country,
-                                      );
+                                      setCitySuggestions([]);
+                                      setIsLocationOpen(false);
                                       applyLocation(
                                         suggestion.lat,
                                         suggestion.lng,
                                         suggestion.timeZone,
-                                        finalName,
+                                        suggestion.displayName
                                       );
-                                      setCitySuggestions([]);
-                                      setIsLocationOpen(false);
                                     }}
                                     className="w-full text-left px-3 py-2 text-xs text-slate-700 dark:text-cream hover:bg-slate-100 dark:hover:bg-white/10 transition-colors cursor-pointer font-medium"
                                   >

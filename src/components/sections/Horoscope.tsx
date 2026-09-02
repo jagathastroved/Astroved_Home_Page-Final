@@ -122,40 +122,58 @@ export function Horoscope({ onCalculateChart }: HoroscopeProps) {
    * selected Zodiac sign and the active time period tab (Today, Week, Month).
    */
   React.useEffect(() => {
-    let isMounted = true;
-
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const moonSign = selectedZodiac.toLowerCase();
-        let apiPeriod = horoscopeTab.toLowerCase();
-
-        // Map UI tab names to API expected period formats
-        if (apiPeriod === 'today') apiPeriod = 'daily';
-        else if (apiPeriod === 'week') apiPeriod = 'weekly';
-        else if (apiPeriod === 'month') apiPeriod = 'monthly';
-
-        const timeZone = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Kolkata');
-        const responseData = await fetchHoroscope(moonSign, apiPeriod, timeZone);
-
-        //console.log('Horoscope API Success:', responseData);
-
-        if (isMounted) {
-          setHoroscopeData(responseData.summary || 'Horoscope data is currently unavailable. Please try again later.');
-          setIsLoading(false);
+      let isMounted = true;
+  
+      const fetchData = async () => {
+        setIsLoading(true);
+        try {
+          const moonSign = selectedZodiac.toLowerCase();
+          let apiPeriod = horoscopeTab.toLowerCase();
+  
+          // Map UI tab names to API expected period formats
+          if (apiPeriod === 'today') apiPeriod = 'daily';
+          else if (apiPeriod === 'week') apiPeriod = 'weekly';
+          else if (apiPeriod === 'month') apiPeriod = 'monthly';
+  
+          const responseData = await fetchHoroscope(moonSign, apiPeriod);
+  
+          if (isMounted) {
+            setHoroscopeData(responseData.summary || 'Horoscope data is currently unavailable. Please try again later.');
+            setIsLoading(false);
+          }
+        } catch (error) {
+          console.error("Horoscope API Failed:", error);
+          if (isMounted) {
+            setHoroscopeData('Horoscope data is currently unavailable. Please try again later.');
+            setIsLoading(false);
+          }
         }
-      } catch (error) {
-        console.error("Horoscope API Failed:", error);
-        if (isMounted) {
-          setHoroscopeData('Horoscope data is currently unavailable. Please try again later.');
-          setIsLoading(false);
-        }
+      };
+  
+      const hasCookie = document.cookie.includes('timezone=');
+      let fallbackTimeout: NodeJS.Timeout;
+  
+      if (hasCookie) {
+          fetchData();
+      } else {
+          const onCookieSet = () => {
+              clearTimeout(fallbackTimeout);
+              if (isMounted) fetchData();
+          };
+          window.addEventListener('locationCookiesInitialized', onCookieSet, { once: true });
+          
+          // Fallback if IP location service fails or takes too long (e.g. adblocker)
+          fallbackTimeout = setTimeout(() => {
+              window.removeEventListener('locationCookiesInitialized', onCookieSet);
+              if (isMounted) fetchData();
+          }, 1500);
       }
-    };
-
-    fetchData();
-    return () => { isMounted = false; };
-  }, [selectedZodiac, horoscopeTab]);
+  
+      return () => { 
+          isMounted = false; 
+          clearTimeout(fallbackTimeout);
+      };
+    }, [selectedZodiac, horoscopeTab]);
 
   /** 
    * Pre-calculate the active zodiac data to avoid redundant Array.find() calls in the render tree 
@@ -320,9 +338,8 @@ export function Horoscope({ onCalculateChart }: HoroscopeProps) {
                   <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                 </button> */}
                 <a
-                  href={`${import.meta.env.VITE_SITE_URL}/horoscopes/${
-                    horoscopeTab === 'Today' ? 'daily' : horoscopeTab === 'Week' ? 'weekly' : 'monthly'
-                  }-horoscope/${selectedZodiac.toLowerCase()}?view=full`}
+                  href={`${import.meta.env.VITE_SITE_URL}/horoscopes/${horoscopeTab === 'Today' ? 'daily' : horoscopeTab === 'Week' ? 'weekly' : 'monthly'
+                    }-horoscope/${selectedZodiac.toLowerCase()}?view=full`}
                   target="_blank"
                   className={getDetailsButtonStyles()}
                 >

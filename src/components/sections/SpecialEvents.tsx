@@ -125,8 +125,8 @@ const parseCarouselDoc = (
         return {
           title: img
             ? img.getAttribute("alt") ||
-              img.getAttribute("title") ||
-              "Special Event"
+            img.getAttribute("title") ||
+            "Special Event"
             : "Special Event",
           image: img ? img.getAttribute("src") || "" : "",
           sources: [],
@@ -163,8 +163,8 @@ const parseCarouselDoc = (
         {
           title: img
             ? img.getAttribute("alt") ||
-              img.getAttribute("title") ||
-              "Special Event"
+            img.getAttribute("title") ||
+            "Special Event"
             : "Special Event",
           image: img ? img.getAttribute("src") || "" : "",
           sources,
@@ -250,16 +250,16 @@ export function SpecialEvents() {
 
           const desktop = data[0].desktop_content
             ? parseCarouselDoc(
-                parser.parseFromString(data[0].desktop_content, "text/html"),
-                ".carousel-item",
-              )
+              parser.parseFromString(data[0].desktop_content, "text/html"),
+              ".carousel-item",
+            )
             : [];
 
           const mobile = data[0].mobile_content
             ? parseCarouselDoc(
-                parser.parseFromString(data[0].mobile_content, "text/html"),
-                ".slide",
-              )
+              parser.parseFromString(data[0].mobile_content, "text/html"),
+              ".slide",
+            )
             : [];
 
           setDesktopEvents(desktop);
@@ -292,8 +292,27 @@ export function SpecialEvents() {
         setIsLoading(false);
       }
     };
+    let fallbackTimeout: NodeJS.Timeout;
+    const hasCookie = document.cookie.includes('countryCode=');
 
-    fetchEvents();
+    if (hasCookie) {
+      fetchEvents();
+    } else {
+      const onCookieSet = () => {
+        clearTimeout(fallbackTimeout);
+        fetchEvents();
+      };
+      window.addEventListener('locationCookiesInitialized', onCookieSet, { once: true });
+
+      fallbackTimeout = setTimeout(() => {
+        window.removeEventListener('locationCookiesInitialized', onCookieSet);
+        fetchEvents();
+      }, 1500);
+    }
+
+    return () => {
+      clearTimeout(fallbackTimeout);
+    };
   }, []);
 
   /** Swipe gesture start logic. */

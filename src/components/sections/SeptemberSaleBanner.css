@@ -1,0 +1,222 @@
+/* SeptemberSaleBanner.css */
+
+.sep-banner-short-wrapper {
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.sep-banner-short-container {
+  max-width: 1400px;
+  width: 100%;
+  height: auto;
+  min-height: 140px;
+  background: linear-gradient(90deg, #F9F1E7 0%, #FFFDF8 40%, #FFFDF8 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(218, 165, 32, 0.2);
+}
+
+@media (min-width: 992px) {
+  .sep-banner-short-container {
+    flex-direction: row;
+    height: 160px;
+  }
+}
+
+/* Left - Title */
+.sep-banner-short-left {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1rem 1rem 1rem;
+  background: transparent;
+  z-index: 2;
+}
+
+@media (min-width: 992px) {
+  .sep-banner-short-left {
+    padding: 1rem 2.5rem;
+    padding-top: 1.5rem;
+  }
+}
+
+.sep-banner-text-stacked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-3deg);
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.sep-banner-text-top {
+  font-family: 'Inter', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #D4AF37;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  -webkit-text-stroke: 1px #fff;
+}
+
+.sep-banner-text-bottom {
+  font-family: 'Inter', sans-serif;
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: #20033b;
+  line-height: 0.9;
+  letter-spacing: 0.05em;
+  -webkit-text-stroke: 1px #fff;
+}
+
+/* Middle - Offer */
+.sep-banner-short-middle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 2;
+  text-align: center;
+}
+
+@media (min-width: 992px) {
+  .sep-banner-short-middle {
+    padding: 1rem 1rem 1rem 2rem;
+    text-align: left;
+  }
+}
+
+.sep-banner-short-offer {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #1a0230;
+  margin: 0 0 0.2rem 0;
+}
+
+@media (min-width: 992px) {
+  .sep-banner-short-offer {
+    font-size: 2.2rem;
+  }
+}
+
+.sep-banner-short-offer span {
+  color: #D4AF37;
+  font-size: 1.2em;
+}
+
+.sep-banner-short-desc {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #4a4a4a;
+  margin: 0 0 1rem 0;
+}
+
+.sep-banner-date-cta-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+@media (min-width: 992px) {
+  .sep-banner-date-cta-row {
+    justify-content: flex-start;
+  }
+}
+
+.sep-banner-short-date {
+  background: #20033b;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: 50px;
+  white-space: nowrap;
+}
+
+.sep-banner-short-cta {
+  background: linear-gradient(90deg, #D4AF37 0%, #f3e5ab 50%, #D4AF37 100%);
+  background-size: 200% auto;
+  color: #1a0230;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.sep-banner-short-cta:hover {
+  background-position: right center;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(212, 175, 55, 0.4);
+}
+
+/* Right - Image */
+.sep-banner-short-right {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  z-index: 1;
+  overflow: hidden;
+}
+
+@media (min-width: 992px) {
+  .sep-banner-short-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 45%;
+    height: auto;
+    border-radius: 0 16px 16px 0;
+  }
+}
+
+.sep-banner-bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.sep-banner-fade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to bottom, #FFFDF8 0%, rgba(255, 253, 248, 0) 50%);
+}
+
+@media (min-width: 992px) {
+  .sep-banner-fade {
+    width: 150px;
+    background: linear-gradient(to right, #FFFDF8 0%, rgba(255, 253, 248, 0) 100%);
+  }
+}
+
+.sep-banner-abs-logo {
+  position: absolute;
+  top: 10px;
+  left: 15px;
+  height: 25px;
+  z-index: 3;
+}
+  
+

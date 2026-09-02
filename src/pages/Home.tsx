@@ -1,5 +1,6 @@
 import React from 'react';
 import { SpecialEvents } from '../components/sections/SpecialEvents';
+import { SeptemberSaleBanner } from '../components/sections/SeptemberSaleBanner';
 import { PersonalGuidance } from '../components/sections/PersonalGuidance';
 import { PersonalizedSolutions } from '../components/sections/PersonalizedSolutions';
 import { PersonalizedSupport } from '../components/sections/PersonalizedSupport';
@@ -21,6 +22,7 @@ export function Home() {
     <>
       {/* <HeroSection /> */}
       <SpecialEvents />
+      <SeptemberSaleBanner />
       <PersonalGuidance />
       <PopularPoojas />
       {/* <Pooja /> */}
