@@ -293,7 +293,7 @@ export function SpecialEvents() {
       }
     };
     let fallbackTimeout: NodeJS.Timeout;
-    const hasCookie = document.cookie.includes('countryCode=');
+    const hasCookie = document.cookie.includes('fetchLocation=');
 
     if (hasCookie) {
       fetchEvents();

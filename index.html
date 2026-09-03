@@ -85,8 +85,8 @@
     integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   <script>
     function getQueryStringValue(key) {
-    return decodeURIComponent(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + encodeURIComponent(key).replace(/[\.\+\*]/g, "\\$&") + "(\\=([^&]*))?)?.*$", "i"), "$1"));
-}
+      return decodeURIComponent(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + encodeURIComponent(key).replace(/[\.\+\*]/g, "\\$&") + "(\\=([^&]*))?)?.*$", "i"), "$1"));
+    }
 
     function setCookieReferralLevel(cvalue) {
       if (!cvalue || cvalue.trim() === "") {

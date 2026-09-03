@@ -233,7 +233,7 @@ export function WhatsApp() {
           setIsLoggingIn(false);
         }
         else {
-          console.log("somthing went wrong");
+          // console.log("somthing went wrong");
           setverifyWAOtploginMessage({
             type: 'error',
             text: 'somthing went wrong',

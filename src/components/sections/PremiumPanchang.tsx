@@ -130,6 +130,20 @@ const setCookie = (name: string, value: string, days = 30) => {
   document.cookie = `${name}=${encodeURIComponent(value)};expires=${d.toUTCString()};path=/`;
 };
 
+const getPanchangLocation = () => {
+  const cookieString = getCookie("PanchangLocation");
+  if (!cookieString) return null;
+  const parts = cookieString.split('&');
+  const locationObj: Record<string, string> = {};
+  parts.forEach(part => {
+    const [key, value] = part.split('=');
+    if (key && value) {
+      locationObj[key] = value;
+    }
+  });
+  return locationObj;
+};
+
 // ---------------------------------------------------------------------------
 // Location resolution helpers
 // ---------------------------------------------------------------------------
@@ -153,7 +167,7 @@ const detectLocationFromNetwork = async (): Promise<ResolvedLocation> => {
   const data = await response.json();
   const lat = data.latitude;
   const lng = data.longitude;
-  console.log('responce', data, 'lat', lat)
+  // console.log('responce', data, 'lat', lat)
   if (!lat || !lng) {
     throw new Error("AstroVed IP location API returned no coordinates");
   }
@@ -172,23 +186,26 @@ export function PremiumPanchang() {
   const [panchangData, setPanchangData] = useState<any>(null);
   const [todayContentData, setTodayContentData] = useState<any>(null);
   const [locationName, setLocationName] = useState<string>(() => {
-    const city = getCookie("city");
-    const country = getCookie("country");
-    if (city && country) return `${city}, ${country}`;
-    if (city) return city;
+    const pl = getPanchangLocation();
+    if (pl) {
+      const parts = [];
+      if (pl.City && pl.City !== "Unknown") parts.push(pl.City);
+      if (pl.State && pl.State !== "Unknown") parts.push(pl.State);
+      if (pl.Country && pl.Country !== "Unknown") parts.push(pl.Country);
+      if (parts.length > 0) return parts.join(", ");
+    }
     return "";
   });
   const [coordinates, setCoordinates] = useState<{
     lat: number;
     lng: number;
   } | null>(() => {
-    const lat = getCookie("lat");
-    const lng = getCookie("lng");
-    return lat && lng ? { lat: parseFloat(lat), lng: parseFloat(lng) } : null;
+    const pl = getPanchangLocation();
+    return pl && pl.Latitude && pl.Longititude ? { lat: parseFloat(pl.Latitude), lng: parseFloat(pl.Longititude) } : null;
   });
   const [timezone, setTimezone] = useState<string>(() => {
-    const tz = getCookie("timezone");
-    if (tz) return tz;
+    const pl = getPanchangLocation();
+    if (pl && pl.TimeZone) return pl.TimeZone;
     try {
       return Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Kolkata";
     } catch (e) {
@@ -204,7 +221,7 @@ export function PremiumPanchang() {
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLocationReady, setIsLocationReady] = useState<boolean>(() => {
-    return !!getCookie("city") && !!getCookie("lat") && !!getCookie("lng");
+    return !!getPanchangLocation();
   });
 
   // Custom Calendar & Location popover states
@@ -217,13 +234,13 @@ export function PremiumPanchang() {
     new Date().getMonth(),
   );
   const [tempCountry, setTempCountry] = useState(() => {
-    const country = getCookie("country");
-    if (country) return country;
+    const pl = getPanchangLocation();
+    if (pl && pl.Country) return pl.Country;
     return "";
   });
   const [tempCity, setTempCity] = useState(() => {
-    const city = getCookie("city");
-    if (city) return city;
+    const pl = getPanchangLocation();
+    if (pl && pl.City) return pl.City;
     return "";
   });
   const [citySuggestions, setCitySuggestions] = useState<any[]>([]);
@@ -268,12 +285,15 @@ export function PremiumPanchang() {
     const parts = name.split(",");
     const city = parts[0]?.trim() || "";
     const country = parts[parts.length - 1]?.trim() || "";
+    const state = parts.length > 2 ? parts[1]?.trim() : "";
 
-    setCookie("lat", String(lat));
-    setCookie("lng", String(lng));
-    setCookie("timezone", effectiveTz);
-    if (city) setCookie("city", city);
-    if (country) setCookie("country", country);
+    const pl = getPanchangLocation();
+    const currentCountryCode = (pl && pl.CountryCode) ? pl.CountryCode : "";
+    const currentState = state || ((pl && pl.State) ? pl.State : "");
+    const expires = new Date();
+    expires.setTime(expires.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const expirydays = expires.toUTCString();
+    document.cookie = "PanchangLocation=Latitude=" + lat + "&Longititude=" + lng + "&TimeZone=" + effectiveTz + "&City=" + city + "&State=" + currentState + "&Country=" + country + "&CountryCode=" + currentCountryCode + ";expires=" + expirydays + ";path=/";
   };
 
   useEffect(() => {
@@ -295,7 +315,7 @@ export function PremiumPanchang() {
   // AstroVed IP-lookup API as fallback. Skipped entirely if a location is
   // already saved in cookies.
   useEffect(() => {
-    if (getCookie("city") && getCookie("lat") && getCookie("lng")) {
+    if (getPanchangLocation()) {
       setIsLocationReady(true);
       return;
     }

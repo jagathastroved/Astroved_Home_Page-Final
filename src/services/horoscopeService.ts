@@ -6,7 +6,22 @@ export const fetchHoroscope = async (moonSign: string, apiPeriod: string) => {
         return match ? decodeURIComponent(match[2]) : null;
     };
 
-    const cookieTz = getCookie("timezone");
+    const getFetchLocation = () => {
+        const cookieString = getCookie("fetchLocation");
+        if (!cookieString) return null;
+        const parts = cookieString.split('&');
+        const locationObj: Record<string, string> = {};
+        parts.forEach(part => {
+            const [key, value] = part.split('=');
+            if (key && value) {
+                locationObj[key] = value;
+            }
+        });
+        return locationObj;
+    };
+
+    const fl = getFetchLocation();
+    const cookieTz = fl ? fl.TimeZone : null;
     const timeZone = encodeURIComponent(cookieTz || Intl.DateTimeFormat().resolvedOptions().timeZone);
 
     try {

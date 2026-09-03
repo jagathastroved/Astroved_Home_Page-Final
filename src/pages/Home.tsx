@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SpecialEvents } from '../components/sections/SpecialEvents';
 import { SeptemberSaleBanner } from '../components/sections/SeptemberSaleBanner';
 import { PersonalGuidance } from '../components/sections/PersonalGuidance';
@@ -15,8 +15,13 @@ import { TrustStats } from '../components/sections/TrustStats';
 import { FAQ } from '../components/sections/FAQ';
 import { scrollToSection } from '../utils/scroll';
 import { PopularPoojas } from '../components/sections/PopularPoojas';
+import { initializeLocationCookies } from '../services/astrovedService';
 
 export function Home() {
+
+  useEffect(() => {
+    initializeLocationCookies().catch((err) => console.error("Error initializing location cookies on mount:", err));
+  }, []);
 
   return (
     <>

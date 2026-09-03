@@ -4,7 +4,7 @@ async function init() {
         const countryCode = await getCountryCode();
         // Retrieve user's currency info based on country code
         const currencyInfo = getCurrencyInfo(countryCode);
-        //console.log(`Currency Code: ${currencyInfo.currencyCode}, Currency Symbol: ${currencyInfo.currencySymbol}`);
+        // console.log(`Currency Code: ${currencyInfo.currencyCode}, Currency Symbol: ${currencyInfo.currencySymbol}`);
 
     } catch (error) {
         console.error('Initialization error:', error);
