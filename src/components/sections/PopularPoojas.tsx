@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 import {
-  ChevronLeft, ChevronRight, ArrowRight, ShieldCheck, UserCheck, Lock, HeadphonesIcon, Flower2, CheckCircle2
+  ChevronLeft, ChevronRight, ArrowRight, CheckCircle2
 } from 'lucide-react';
 import axios from 'axios';
 
@@ -28,6 +28,25 @@ export function PopularPoojas() {
   const [prevBtnEnabled, setPrevBtnEnabled] = useState(false);
   const [nextBtnEnabled, setNextBtnEnabled] = useState(false);
   const [jsonData, setJsonData] = useState([]);
+  
+  const imageWrapperRef = useRef<HTMLDivElement>(null);
+  const [arrowTop, setArrowTop] = useState(128); // Default top fallback
+
+  const updateArrowPosition = useCallback(() => {
+    if (imageWrapperRef.current) {
+      setArrowTop(imageWrapperRef.current.offsetHeight / 2);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Small timeout ensures the DOM has rendered the new layout and aspect-ratio before calculating
+    const timeout = setTimeout(updateArrowPosition, 100);
+    window.addEventListener('resize', updateArrowPosition);
+    return () => {
+      clearTimeout(timeout);
+      window.removeEventListener('resize', updateArrowPosition);
+    };
+  }, [updateArrowPosition, jsonData]);
   const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
   const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
 
@@ -90,7 +109,7 @@ export function PopularPoojas() {
         <div className="relative group/carousel">
           <div className="overflow-hidden" ref={emblaRef}>
             <div className="flex -ml-4 py-4">
-              {jsonData?.map((item: any) => {
+              {jsonData?.map((item: any, index: number) => {
                 const priceObj = item.ProductPriceList?.find((p: any) => p.CurrencyCode === currentCurrency) || item.ProductPriceList?.[0];
                 const currencySymbol = priceObj ? getCurrencySymbol(priceObj.CurrencyCode) : '';
                 const listPrice = priceObj?.ListPrice;
@@ -101,12 +120,13 @@ export function PopularPoojas() {
                     <div className="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-200 dark:border-slate-700 transition-all duration-300 flex flex-col h-full transform lg:hover:-translate-y-1 group">
 
                       {/* Padded Image Wrapper */}
-                      <div className="p-3 pb-0 relative">
+                      <div className="p-3 pb-0 relative" ref={index === 0 ? imageWrapperRef : null}>
                         <div className="relative rounded-xl overflow-hidden bg-slate-100">
                           <img
                             src={item.image}
+                            // src={item.image?.startsWith('http') ? item.image : `https://qa.astroved.com${item.image}`}
                             alt={item.title}
-                            className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700"
+                            className="w-full aspect-[4/3] object-cover transform group-hover:scale-105 transition-transform duration-700"
                             loading="lazy"
                           />
                           {/* Subtle dark gradient overlay for text legibility */}
@@ -144,11 +164,11 @@ export function PopularPoojas() {
                           <div className="flex items-baseline gap-2">
                             {listPrice !== sellingPrice && listPrice != null && (
                               <span className="text-sm font-medium text-gray-400 line-through">
-                                {currencySymbol}{listPrice}
+                                {currencySymbol} {listPrice}
                               </span>
                             )}
                             <span className="text-xl font-bold text-[#D65324] dark:text-amber-500 leading-none">
-                              {currencySymbol}{sellingPrice}
+                              {currencySymbol} {sellingPrice}
                             </span>
                           </div>
                         </div>
@@ -172,7 +192,8 @@ export function PopularPoojas() {
           <button
             onClick={scrollPrev}
             disabled={!prevBtnEnabled}
-            className="flex absolute top-[102px] left-1 md:-left-4 lg:-left-6 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-white/90 backdrop-blur dark:bg-slate-800/90 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.15)] items-center justify-center text-[#D65324] hover:bg-white dark:hover:bg-slate-700 transition-all z-10 disabled:opacity-0 disabled:cursor-not-allowed border border-gray-100 dark:border-slate-700"
+            style={{ top: `${arrowTop}px` }}
+            className="flex absolute left-1 md:-left-4 lg:-left-6 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-white/90 backdrop-blur dark:bg-slate-800/90 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.15)] items-center justify-center text-[#D65324] hover:bg-white dark:hover:bg-slate-700 transition-all z-10 disabled:opacity-50 disabled:cursor-not-allowed border border-gray-100 dark:border-slate-700"
             aria-label="Previous slide"
           >
             <ChevronLeft className="w-6 h-6 lg:w-7 lg:h-7" />
@@ -180,7 +201,8 @@ export function PopularPoojas() {
           <button
             onClick={scrollNext}
             disabled={!nextBtnEnabled}
-            className="flex absolute top-[102px] right-1 md:-right-4 lg:-right-6 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-white/90 backdrop-blur dark:bg-slate-800/90 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.15)] items-center justify-center text-[#D65324] hover:bg-white dark:hover:bg-slate-700 transition-all z-10 disabled:opacity-0 disabled:cursor-not-allowed border border-gray-100 dark:border-slate-700"
+            style={{ top: `${arrowTop}px` }}
+            className="flex absolute right-1 md:-right-4 lg:-right-6 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-white/90 backdrop-blur dark:bg-slate-800/90 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.15)] items-center justify-center text-[#D65324] hover:bg-white dark:hover:bg-slate-700 transition-all z-10 disabled:opacity-50 disabled:cursor-not-allowed border border-gray-100 dark:border-slate-700"
             aria-label="Next slide"
           >
             <ChevronRight className="w-6 h-6 lg:w-7 lg:h-7" />
