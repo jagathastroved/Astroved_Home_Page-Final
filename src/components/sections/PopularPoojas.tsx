@@ -28,7 +28,6 @@ export function PopularPoojas() {
   const [prevBtnEnabled, setPrevBtnEnabled] = useState(false);
   const [nextBtnEnabled, setNextBtnEnabled] = useState(false);
   const [jsonData, setJsonData] = useState([]);
-  
   const imageWrapperRef = useRef<HTMLDivElement>(null);
   const [arrowTop, setArrowTop] = useState(128); // Default top fallback
 
@@ -215,8 +214,8 @@ export function PopularPoojas() {
             href="/pooja-c11.aspx"
             className="inline-flex items-center justify-center px-8 md:px-10 py-2.5 md:py-3 bg-transparent border-[2px] border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white dark:hover:bg-orange-500 dark:hover:text-white text-[13px] md:text-[14px] font-bold rounded-xl transition-colors duration-300 group/btn uppercase tracking-widest"
           >
-            EXPLORE ALL POOJAS & HOMAS
-            <ArrowRight className="w-4 h-4 md:w-5 md:h-5 ml-2 transform group-hover/btn:translate-x-1.5 transition-transform" />
+            <span className="text-center">EXPLORE ALL POOJAS & HOMAS</span>
+            <ArrowRight className="w-4 h-4 md:w-5 md:h-5 ml-2 shrink-0 transform group-hover/btn:translate-x-1.5 transition-transform" />
           </a>
         </div>
 
