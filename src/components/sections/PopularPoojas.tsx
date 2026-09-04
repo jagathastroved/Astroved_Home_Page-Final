@@ -4,35 +4,7 @@ import Autoplay from 'embla-carousel-autoplay';
 import {
   ChevronLeft, ChevronRight, ArrowRight, ShieldCheck, UserCheck, Lock, HeadphonesIcon, Flower2, CheckCircle2
 } from 'lucide-react';
-
-import {
-  img_birth_star,
-  img_ashtalakshmi,
-  img_vaidhyanatha,
-  img_muruga,
-  img_ketu,
-  img_durga,
-  vedic_fire_lab,
-  sacred_shiva_pooja,
-  divine_goddess_pooja,
-  img_sun,
-  saturn_fire_lab
-} from '../../assets/popularPoojas&homas';
 import axios from 'axios';
-
-const HOMA_POOJA_ITEMS = [
-  { id: 1, title: 'Birth Star Pooja', description: 'Align your birth star for harmony and a prosperous life.', image: img_birth_star, benefit1: 'Nakshatra Shanti', benefit2: 'Customized for your chart', price: '1,500' },
-  { id: 2, title: 'Ashtalakshmi Pooja', description: 'Invoke the blessings of the eight forms of wealth and abundance.', image: img_ashtalakshmi, benefit1: 'Attract Wealth & Prosperity', benefit2: '8 Forms of Divine Blessings', price: '2,100' },
-  { id: 3, title: 'Vaidhyanatha Pooja', description: 'Seek divine protection and relief from health challenges.', image: img_vaidhyanatha, benefit1: 'Health & Healing', benefit2: 'Divine Protection', price: '1,800' },
-  { id: 4, title: 'Muruga Pooja', description: 'Overcome obstacles and achieve success in all your endeavors.', image: img_muruga, benefit1: 'Overcome Obstacles', benefit2: 'Victory & Success', price: '1,500' },
-  { id: 5, title: 'Ketu Pooja', description: 'Remove past karma and bring clarity and spiritual growth.', image: img_ketu, benefit1: 'Karmic Cleansing', benefit2: 'Spiritual Enlightenment', price: '1,250' },
-  { id: 6, title: 'Durga Pooja', description: 'Harness the divine power for protection and strength.', image: img_durga, benefit1: 'Divine Protection', benefit2: 'Courage & Strength', price: '2,500' },
-  { id: 7, title: 'Mercury Fire Lab', description: 'Enhance intellect, communication and professional growth.', image: vedic_fire_lab, benefit1: 'Career Growth', benefit2: 'Improved Communication', price: '3,500' },
-  { id: 8, title: 'Divine Goddess Pooja', description: 'Experience the ultimate grace and compassion of the Divine Mother.', image: divine_goddess_pooja, benefit1: 'Supreme Grace', benefit2: 'Inner Peace', price: '3,100' },
-  { id: 9, title: 'Sun Pooja', description: 'Gain leadership qualities, vitality, and authority in life.', image: img_sun, benefit1: 'Vitality & Health', benefit2: 'Leadership Success', price: '2,800' },
-  { id: 10, title: 'Saturn Fire Lab', description: 'Reduce obstacles and bring stability in life.', image: saturn_fire_lab, benefit1: 'Overcome Delays', benefit2: 'Life Stability', price: '4,500' },
-  { id: 11, title: 'Kalyana Pooja', description: 'Blessings for a happy married life and strong relationships.', image: sacred_shiva_pooja, benefit1: 'Marital Bliss', benefit2: 'Find Ideal Partner', price: '5,100' },
-];
 
 const getCurrencySymbol = (code: string) => {
   if (code === 'INR') return '₹';
@@ -216,56 +188,14 @@ export function PopularPoojas() {
         </div>
 
         {/* View All Button */}
-        <div className="flex justify-center mt-4 md:mt-6">
+        <div className="flex justify-center mb-4 mt-4 md:mt-6">
           <a
             href="/pooja-c11.aspx"
             className="inline-flex items-center justify-center px-8 md:px-10 py-2.5 md:py-3 bg-transparent border-[2px] border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white dark:hover:bg-orange-500 dark:hover:text-white text-[13px] md:text-[14px] font-bold rounded-xl transition-colors duration-300 group/btn uppercase tracking-widest"
           >
-            EXPLORE ALL POOJAS AND HOMAS
+            EXPLORE ALL POOJAS & HOMAS
             <ArrowRight className="w-4 h-4 md:w-5 md:h-5 ml-2 transform group-hover/btn:translate-x-1.5 transition-transform" />
           </a>
-        </div>
-
-        {/* Bottom Features Banner */}
-        <div className="mt-6 md:mt-8 mb-4 max-w-[1300px] w-full mx-auto px-4">
-          <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-8 md:p-10 lg:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100/80 dark:border-slate-700/80">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:flex lg:flex-row justify-between items-center gap-6 md:gap-x-12 md:gap-y-8 lg:gap-4 w-full max-w-[240px] md:max-w-[600px] lg:max-w-none mx-auto">
-
-              <div className="flex items-center gap-4 lg:gap-3 text-gray-800 dark:text-gray-200">
-                <ShieldCheck className="w-[22px] h-[22px] lg:w-5 lg:h-5 text-[#D65324] shrink-0" strokeWidth={2.2} />
-                <span className="font-serif text-[15px] lg:text-[14.5px] font-bold tracking-wide">Authentic Vedic Rituals</span>
-              </div>
-
-              <div className="hidden lg:block w-px h-8 bg-gray-200/80 dark:bg-slate-700 shrink-0"></div>
-
-              <div className="flex items-center gap-4 lg:gap-3 text-gray-800 dark:text-gray-200">
-                <UserCheck className="w-[22px] h-[22px] lg:w-5 lg:h-5 text-[#D65324] shrink-0" strokeWidth={2.2} />
-                <span className="font-serif text-[15px] lg:text-[14.5px] font-bold tracking-wide">Experienced Priests</span>
-              </div>
-
-              <div className="hidden lg:block w-px h-8 bg-gray-200/80 dark:bg-slate-700 shrink-0"></div>
-
-              <div className="flex items-center gap-4 lg:gap-3 text-gray-800 dark:text-gray-200">
-                <Flower2 className="w-[22px] h-[22px] lg:w-5 lg:h-5 text-[#D65324] shrink-0" strokeWidth={2.2} />
-                <span className="font-serif text-[15px] lg:text-[14.5px] font-bold tracking-wide">Personalized Poojas</span>
-              </div>
-
-              <div className="hidden lg:block w-px h-8 bg-gray-200/80 dark:bg-slate-700 shrink-0"></div>
-
-              <div className="flex items-center gap-4 lg:gap-3 text-gray-800 dark:text-gray-200">
-                <Lock className="w-[22px] h-[22px] lg:w-5 lg:h-5 text-[#D65324] shrink-0" strokeWidth={2.2} />
-                <span className="font-serif text-[15px] lg:text-[14.5px] font-bold tracking-wide">Secure &amp; Easy Booking</span>
-              </div>
-
-              <div className="hidden lg:block w-px h-8 bg-gray-200/80 dark:bg-slate-700 shrink-0"></div>
-
-              <div className="flex items-center gap-4 lg:gap-3 text-gray-800 dark:text-gray-200">
-                <HeadphonesIcon className="w-[22px] h-[22px] lg:w-5 lg:h-5 text-[#D65324] shrink-0" strokeWidth={2.2} />
-                <span className="font-serif text-[15px] lg:text-[14.5px] font-bold tracking-wide">24/7 Support</span>
-              </div>
-
-            </div>
-          </div>
         </div>
 
       </div>
