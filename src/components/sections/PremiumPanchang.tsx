@@ -792,27 +792,58 @@ export function PremiumPanchang() {
 
   const handleApplyLocation = async () => {
     setIsLocationOpen(false);
-    try {
-      // Try Astroved's PopulateCityBycountry API first
-      const data = await fetchCitySuggestions(tempCountry, tempCity);
-      if (Array.isArray(data) && data.length > 0) {
-        const match = data[0];
-        const newLat = parseFloat(match.Latitude);
-        const newLng = parseFloat(match.Longitude);
-        const finalName = `${match.City || tempCity}, ${match.StateorProvince}, ${match.Country}`;
-        applyLocation(newLat, newLng, match.TimeZone, finalName);
-        return;
-      }
-    } catch (err) {
-      console.error(
-        "Astroved location API failed, falling back to Nominatim:",
-        err,
-      );
-    }
-
-    // Fallback: search using OSM Nominatim
     const query = `${tempCity}, ${tempCountry}`;
-    await handleLocationSearch(query);
+
+    try {
+      // Try OpenStreetMap (Nominatim) first
+      const osmResults = await searchLocation(query);
+      if (!osmResults || osmResults.length === 0) {
+        throw new Error("OpenStreetMap returned no results");
+      }
+
+      const newLat = parseFloat(osmResults[0].lat);
+      const newLng = parseFloat(osmResults[0].lon);
+      const displayName = osmResults[0].display_name;
+      const parts = displayName.split(",");
+      const city = parts[0]?.trim() || tempCity;
+      const country = parts[parts.length - 1]?.trim() || tempCountry;
+      const formattedDisplay =
+        city && country ? `${city}, ${country}` : displayName;
+
+      applyLocation(newLat, newLng, undefined, formattedDisplay);
+
+      // Enrich with Astroved for a more precise state/timezone, if available.
+      // This is a best-effort enrichment, not a fallback — OSM already succeeded.
+      try {
+        const astrovedLocData = await fetchCitySuggestions(country, city);
+        if (Array.isArray(astrovedLocData) && astrovedLocData.length > 0) {
+          const match = astrovedLocData[0];
+          const finalName = `${match.City || city}, ${match.StateorProvince}, ${match.Country}`;
+          applyLocation(newLat, newLng, match.TimeZone, finalName);
+        }
+      } catch (enrichError) {
+        console.error("Astroved enrichment failed (OSM result kept):", enrichError);
+      }
+    } catch (osmError) {
+      console.warn(
+        "OpenStreetMap lookup failed, falling back to Astroved's PopulateCityBycountry API:",
+        osmError,
+      );
+
+      // Fallback: Astroved's PopulateCityBycountry API
+      try {
+        const data = await fetchCitySuggestions(tempCountry, tempCity);
+        if (Array.isArray(data) && data.length > 0) {
+          const match = data[0];
+          const newLat = parseFloat(match.Latitude);
+          const newLng = parseFloat(match.Longitude);
+          const finalName = `${match.City || tempCity}, ${match.StateorProvince}, ${match.Country}`;
+          applyLocation(newLat, newLng, match.TimeZone, finalName);
+        }
+      } catch (astrovedError) {
+        console.error("Astroved fallback also failed:", astrovedError);
+      }
+    }
   };
 
   return (
