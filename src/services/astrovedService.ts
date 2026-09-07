@@ -217,15 +217,25 @@ export const initializeLocationCookies = (): Promise<any> => {
                 const data = response.data;
                 const lat = parseFloat(data.latitude);
                 const lng = parseFloat(data.longitude);
-                const city = data.city || 'Chennai';
-                const countryCode = data.countryCode || 'IN';
 
-                let countryName = 'India';
-                if (CountryInfo[countryCode]) {
-                    countryName = CountryInfo[countryCode].country_name;
+                // Try OpenStreetMap Reverse Geocoding with IP lat/lng to get accurate city/state
+                try {
+                    const osmResponse = await axios.get(`${import.meta.env.VITE_OPENSTREETMAP_API_URL}/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
+                    const osmData = osmResponse.data;
+                    const city = osmData.address?.city || osmData.address?.town || osmData.address?.village || osmData.address?.county || data.city || 'Chennai';
+                    const countryName = osmData.address?.country || (CountryInfo[data.countryCode] ? CountryInfo[data.countryCode].country_name : 'India');
+                    await populateFromCityCountry(city, countryName, lat, lng);
+                } catch (osmError) {
+                    console.warn("OpenStreetMap reverse geocoding for IP failed, falling back to Astroved API data:", osmError);
+                    // Fallback to Astroved's IP-provided city and country
+                    const city = data.city || 'Chennai';
+                    const countryCode = data.countryCode || 'IN';
+                    let countryName = 'India';
+                    if (CountryInfo[countryCode]) {
+                        countryName = CountryInfo[countryCode].country_name;
+                    }
+                    await populateFromCityCountry(city, countryName, lat, lng);
                 }
-
-                await populateFromCityCountry(city, countryName, lat, lng);
             } catch (error) {
                 dispatchAndResolve({}, 'Chennai', 'Tamil Nadu', 'India', 'IN', 'Asia/Kolkata', 13.0827, 80.2707);
             }
