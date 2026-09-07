@@ -45,14 +45,21 @@ export default defineConfig({
       "@": path.resolve(__dirname, "."),
     },
   },
-  // server: {
-  //   proxy: {
-  //     '/api/proxy/menu': {
-  //       target: 'https://www.astroved.com/mainmenunew.json',
-  //       changeOrigin: true,
-  //       rewrite: () => '',
-  //     },
-  //   },
-  // },
+  server: {
+    proxy: {
+      '/wp-json': {
+        target: 'https://www.astroved.com',
+        changeOrigin: true,
+      },
+      '/mainmenunew.json': {
+        target: 'https://www.astroved.com',
+        changeOrigin: true,
+      },
+      '/mycartnew.aspx': {
+        target: 'https://www.astroved.com',
+        changeOrigin: true,
+      }
+    },
+  },
   base: '/ReactHome'
 });

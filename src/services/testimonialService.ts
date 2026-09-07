@@ -3,11 +3,13 @@ export interface Testimonial {
     content: string;
 }
 
-const PROXY_URL = "https://proxy.cors.sh/";
-const API_URL = import.meta.env.VITE_WORDPRESS_API_URL + "/testimonials";
+const isDev = import.meta.env.DEV;
+const API_URL = isDev
+    ? "/wp-json/api/v1/testimonials"
+    : import.meta.env.VITE_WORDPRESS_API_URL + "/testimonials";
 
 export async function fetchTestimonialsData(): Promise<Testimonial[]> {
-    const response = await fetch(`${PROXY_URL}${API_URL}`);
+    const response = await fetch(`${API_URL}`);
     if (!response.ok) {
         throw new Error("Failed to fetch testimonials");
     }

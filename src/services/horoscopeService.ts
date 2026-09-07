@@ -1,6 +1,8 @@
 import axios from 'axios';
+import { initializeLocationCookies } from './astrovedService';
 
 export const fetchHoroscope = async (moonSign: string, apiPeriod: string) => {
+    await initializeLocationCookies();
     const getCookie = (name: string) => {
         const match = document.cookie.match(new RegExp('(^|;\\s*)' + name + '=([^;]*)'));
         return match ? decodeURIComponent(match[2]) : null;

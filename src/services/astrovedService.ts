@@ -41,13 +41,24 @@ const getFetchLocation = () => {
     return locationObj;
 };
 
+const citySuggestionsCache: Record<string, Promise<any>> = {};
+
 export const fetchCitySuggestions = async (country: string, city: string) => {
     try {
         const pl = getPanchangLocation();
         const finalCountry = country || (pl && pl.Country) || "";
         const finalCity = city || (pl && pl.City) || "";
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/Panchang/PopulateCityBycountry/${encodeURIComponent(finalCountry)}/${encodeURIComponent(finalCity)}`);
-        return response.data;
+
+        const cacheKey = `${finalCountry}_${finalCity}`;
+        if (citySuggestionsCache[cacheKey]) {
+            return citySuggestionsCache[cacheKey];
+        }
+
+        const request = axios.get(`${import.meta.env.VITE_API_URL}/Panchang/PopulateCityBycountry/${encodeURIComponent(finalCountry)}/${encodeURIComponent(finalCity)}`)
+            .then(response => response.data);
+
+        citySuggestionsCache[cacheKey] = request;
+        return await request;
     } catch (error) {
         throw new Error('Failed to fetch city suggestions');
     }
@@ -55,6 +66,7 @@ export const fetchCitySuggestions = async (country: string, city: string) => {
 
 export const fetchPanchangData = async (timezone: string, lat: number, lng: number, localISOTime: string) => {
     try {
+        await initializeLocationCookies();
         const pl = getPanchangLocation();
         const finalTimezone = (pl && pl.TimeZone) ? pl.TimeZone : timezone;
         const finalLat = (pl && pl.Latitude) ? parseFloat(pl.Latitude) : lat;
@@ -72,6 +84,7 @@ export const fetchPanchangData = async (timezone: string, lat: number, lng: numb
 
 export const fetchTodayContent = async (timezone: string, lat: number, lng: number, localISOTime: string) => {
     try {
+        await initializeLocationCookies();
         const pl = getPanchangLocation();
         const finalTimezone = (pl && pl.TimeZone) ? pl.TimeZone : timezone;
         const finalLat = (pl && pl.Latitude) ? parseFloat(pl.Latitude) : lat;
@@ -86,7 +99,7 @@ export const fetchTodayContent = async (timezone: string, lat: number, lng: numb
     }
 };
 
-export const getUserCurrency = (): string => {
+export const getUserCurrency = (countryNameOverride?: string): string => {
     // 1. Check cookies for currentcurrency
     const cookieCurrency = getCookie('currentcurrency');
     if (cookieCurrency) {
@@ -94,12 +107,12 @@ export const getUserCurrency = (): string => {
     }
 
     const fl = getFetchLocation();
-    const savedCountryName = (fl && fl.Country) ? fl.Country : null;
+    const savedCountryName = countryNameOverride || (fl && fl.Country ? fl.Country : null);
     if (savedCountryName) {
         const countryData = Object.values(CountryInfo).find(
             info => info.country_name.toLowerCase() === savedCountryName.toLowerCase()
         );
-        console.log(countryData, "countryData")
+        // console.log(countryData, "countryData")
         if (countryData) {
             return countryData.currencycode;
         }
@@ -110,7 +123,8 @@ export const getUserCurrency = (): string => {
 
 export const fetchSpecialEvents = async (currencyOverride?: string) => {
     try {
-        const currency = currencyOverride || getUserCurrency();
+        const resolved = await initializeLocationCookies();
+        const currency = currencyOverride || getUserCurrency(resolved.countryName);
         const response = await axios.get(`${import.meta.env.VITE_ASTROVED_PHP_API_URL}/new-home-slider/${currency}`);
         // console.log(`${import.meta.env.VITE_ASTROVED_PHP_API_URL}/new-home-slider/${currency}`)
         return response.data;
@@ -119,21 +133,34 @@ export const fetchSpecialEvents = async (currencyOverride?: string) => {
     }
 };
 
+let pendingInitPromise: Promise<any> | null = null;
+
 export const initializeLocationCookies = (): Promise<any> => {
-    return new Promise(async (resolve, reject) => {
-        const fl = getFetchLocation();
-        if (fl && fl.City) {
-            // Cookies already initialized, don't overwrite user's manual changes
-            window.dispatchEvent(new Event('locationCookiesInitialized'));
-            return resolve(fl);
-        }
-
-        const setCookie = (name: string, value: string) => {
-            const expires = new Date();
-            expires.setTime(expires.getTime() + 7 * 24 * 60 * 60 * 1000);
-            document.cookie = `${name}=${encodeURIComponent(value)};expires=${expires.toUTCString()};path=/`;
+    const fl = getFetchLocation();
+    if (fl && fl.City) {
+        // Cookies already initialized, don't overwrite user's manual changes
+        window.dispatchEvent(new Event('locationCookiesInitialized'));
+        const standardizedFl = {
+            ...fl,
+            countryName: fl.Country,
+            cityName: fl.City,
+            city: fl.City,
+            stateName: fl.State,
+            state: fl.State,
+            countrycode: fl.CountryCode,
+            latitude: fl.Latitude,
+            longitude: fl.Longititude,
+            timezone: fl.TimeZone,
+            timeZone: fl.TimeZone
         };
+        return Promise.resolve(standardizedFl);
+    }
 
+    if (pendingInitPromise) {
+        return pendingInitPromise;
+    }
+
+    pendingInitPromise = new Promise(async (resolve, reject) => {
         const dispatchAndResolve = (data: any, city: string, state: string, country: string, countrycode: string, timezone: string, lat: number, lng: number) => {
 
             const expires = new Date();
@@ -146,23 +173,26 @@ export const initializeLocationCookies = (): Promise<any> => {
             // Dispatch a custom event to notify components that depend on these cookies
             window.dispatchEvent(new Event('locationCookiesInitialized'));
 
+            pendingInitPromise = null; // Clear the lock
+
             resolve({
                 ...data,
                 countryName: country,
                 cityName: city,
                 city: city,
+                stateName: state,
                 state: state,
                 countrycode: countrycode,
                 latitude: String(lat),
                 longitude: String(lng),
-                timezone: timezone
+                timezone: timezone,
+                timeZone: timezone
             });
         };
 
         const populateFromCityCountry = async (city: string, country: string, defaultLat: number, defaultLng: number) => {
             try {
-                const response = await axios.get(`https://webservice.astroved.com/api/Panchang/PopulateCityBycountry/${encodeURIComponent(country)}/${encodeURIComponent(city)}`);
-                const data = response.data;
+                const data = await fetchCitySuggestions(country, city);
 
                 const locationData = Array.isArray(data) && data.length > 0 ? data[0] : data;
 
@@ -197,49 +227,38 @@ export const initializeLocationCookies = (): Promise<any> => {
 
                 await populateFromCityCountry(city, countryName, lat, lng);
             } catch (error) {
-                console.error('Failed to initialize location from IP. Using default fallback.', error);
                 dispatchAndResolve({}, 'Chennai', 'Tamil Nadu', 'India', 'IN', 'Asia/Kolkata', 13.0827, 80.2707);
             }
         };
 
+        // Try to get precise location via browser geolocation first
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 async (position) => {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
-                    console.log('geolocation.getCurrentPosition', position);
                     try {
-                        const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`, {
-                            headers: {
-                                "Accept": "application/json"
-                            }
-                        });
-
-                        const data = await response.data;
-
-                        if (data.address) {
-                            const city = data.address.county || data.address.state_district || data.address.city || '';
-                            const country = data.address.country || '';
-
-                            await populateFromCityCountry(city, country, lat, lng);
-                        } else {
-                            console.warn("Location data not found, falling back to IP.");
-                            defaultLocationBasedIp();
-                        }
+                        const response = await axios.get(`${import.meta.env.VITE_OPENSTREETMAP_API_URL}/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
+                        const data = response.data;
+                        const city = data.address.city || data.address.town || data.address.village || data.address.county || 'Chennai';
+                        const countryName = data.address.country || 'India';
+                        await populateFromCityCountry(city, countryName, lat, lng);
                     } catch (error) {
-                        console.error("Error fetching location data:", error);
+                        console.error("Reverse geocoding failed, falling back to IP:", error);
                         defaultLocationBasedIp();
                     }
                 },
                 (error) => {
-                    console.error("Error getting location:", error.message);
+                    console.warn("User denied location or location fetch failed. Falling back to Astroved API via IP.");
                     defaultLocationBasedIp();
                 },
-                { timeout: 5000 }
+                { timeout: 5000, enableHighAccuracy: false } // added timeout to prevent infinite loading
             );
         } else {
-            console.warn("Geolocation is not supported by this browser.");
+            console.warn("Geolocation not supported by this browser. Falling back to Astroved API via IP.");
             defaultLocationBasedIp();
         }
     });
+
+    return pendingInitPromise;
 };
