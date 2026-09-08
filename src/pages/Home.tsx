@@ -27,7 +27,7 @@ export function Home() {
     <>
       {/* <HeroSection /> */}
       <SpecialEvents />
-      <SeptemberSaleBanner />
+      {/* <SeptemberSaleBanner /> */}
       <PersonalGuidance />
       <PopularPoojas />
       {/* <Pooja /> */}

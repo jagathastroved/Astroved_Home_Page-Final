@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { ArrowRight, MapPin, CalendarDays } from 'lucide-react';
 import shreemBrzeeImg from '../../assets/personalized_support/shreem_brzee_new.png';
 import tarpanamNewImg from '../../assets/personalized_support/tarpanam_new.png';
@@ -173,7 +173,7 @@ export function PersonalizedSupport() {
 
                 <div className={CTA_WRAPPER}>
                   {support.link ? (
-                    <a href={support.link} target="_blank"  className={`w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-lg text-white font-bold text-sm tracking-widest uppercase transition-colors shadow-md cursor-pointer ${support.buttonColor}`}>
+                    <a href={support.link} target="_blank" className={`w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-lg text-white font-bold text-sm tracking-widest uppercase transition-colors shadow-md cursor-pointer ${support.buttonColor}`}>
                       {support.cta}
                       <ArrowRight className="w-4 h-4" />
                     </a>
