@@ -1310,6 +1310,18 @@ export function PremiumPanchang() {
                     {panchangData?.karana?.KaranaName || "--"}
                   </span>
                 </div>
+                <div className={Styles.DATA_DIVIDER_STYLES} />
+                <div className="relative z-10 flex flex-col items-start w-full gap-1">
+                  <span
+                    className={`${Styles.DATA_ROW_LABEL_STYLES} flex items-center gap-2`}
+                  >
+                    <Moon className="w-4 h-4 text-purple-500 dark:text-purple-400" />
+                    Moon Phase
+                  </span>
+                  <span className={Styles.DATA_ROW_VALUE_STYLES}>
+                    {panchangData?.tithi?.MoonPhase || "--"}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -1327,9 +1339,6 @@ export function PremiumPanchang() {
                     <p className={Styles.ACTIVE_ITEM_TITLE_STYLES}>
                       {formatCamelCase(panchangData?.tithi?.TithiName) ||
                         "--"}
-                      <span className="w-3 h-3 rounded-full border border-midnight dark:border-cream flex items-center justify-center overflow-hidden">
-                        <span className="w-1.5 h-3 bg-midnight dark:bg-cream block mr-auto" />
-                      </span>
                     </p>
                     <p className={Styles.ITEM_DATE_STYLES}>
                       {formatDateRange(
@@ -1357,39 +1366,131 @@ export function PremiumPanchang() {
 
             {/* Child 3: Nakshatram */}
             <div className="md:col-start-2 md:row-start-2 lg:col-start-3 lg:row-start-1 h-full w-full">
-              <div className="pt-5 pl-5 h-full">
+              <div className="bg-white/40 dark:bg-black/10 p-5 rounded-2xl border border-purple/5 dark:border-white/5 h-full">
                 <h3 className={Styles.ELEMENT_TITLE_STYLES}>
                   <Star className="w-4 h-4 text-indigo dark:text-saffron" />{" "}
                   Star Details (Nakshatra)
                 </h3>
-                <div className={Styles.ELEMENT_ALT_LIST_STYLES}>
-                  <div className="pl-4 relative">
-                    <div className="absolute top-1.5 -left-[5px] w-2 h-2 rounded-full bg-indigo dark:bg-saffron" />
-                    <p className={Styles.ACTIVE_ALT_ITEM_TITLE_STYLES}>
-                      {panchangData?.nakshatra?.NakshatraName || "--"}
-                      <span className="text-[10px] bg-purple-500/10 dark:bg-saffron/10 px-2 py-0.5 rounded text-purple-600 dark:text-saffron/80 uppercase tracking-wider">
-                        Active
-                      </span>
-                    </p>
-                    <p className={Styles.ITEM_DATE_STYLES}>
-                      {formatDateRange(
-                        panchangData?.nakshatra?.NakshatraStart,
-                        panchangData?.nakshatra?.NakshatraEnd,
-                      ) || "--"}
-                    </p>
+                <style dangerouslySetInnerHTML={{
+                  __html: `
+                  .force-scrollbar::-webkit-scrollbar {
+                    -webkit-appearance: none !important;
+                    width: 12px !important;
+                    display: block !important;
+                  }
+                  .force-scrollbar::-webkit-scrollbar-thumb {
+                    background-color: rgba(156, 163, 175, 1) !important;
+                    border-radius: 10px !important;
+                    border: 4px solid transparent !important;
+                    background-clip: padding-box !important;
+                  }
+                  .force-scrollbar::-webkit-scrollbar-track {
+                    background-color: rgba(156, 163, 175, 0.2) !important;
+                    border-radius: 10px !important;
+                    border: 4px solid transparent !important;
+                    background-clip: padding-box !important;
+                  }
+                `}} />
+                <div className="flex-1 overflow-y-auto pr-3 mt-4 space-y-5 max-h-[180px] force-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
+                  <div className={`${Styles.ELEMENT_ALT_LIST_STYLES} mb-5`}>
+                    <div className="pl-4 relative">
+                      <div className="absolute top-1.5 -left-[5px] w-2 h-2 rounded-full bg-indigo dark:bg-saffron" />
+                      <p className={Styles.ACTIVE_ALT_ITEM_TITLE_STYLES}>
+                        {panchangData?.nakshatra?.NakshatraName || "--"}
+                        <span className="text-[10px] bg-purple-500/10 dark:bg-saffron/10 px-2 py-0.5 rounded text-purple-600 dark:text-saffron/80 uppercase tracking-wider ml-2">
+                          Active
+                        </span>
+                      </p>
+                      <div className={`${Styles.ITEM_DATE_STYLES} text-[13px] 2xl:text-[14px] tracking-tight mt-1`}>
+                        {(() => {
+                          const dateStr = formatDateRange(
+                            panchangData?.nakshatra?.NakshatraStart,
+                            panchangData?.nakshatra?.NakshatraEnd,
+                          );
+                          if (!dateStr) return <span>--</span>;
+                          const parts = dateStr.split(/\s*[-—–]\s*/);
+                          return parts.length >= 2 ? (
+                            <>
+                              {/* Mobile, Tablet & Small Laptops (up to 1280px): strictly 2 lines */}
+                              <div className="flex flex-col xl:hidden space-y-0.5">
+                                <span className="whitespace-nowrap">{parts[0]} &mdash;</span>
+                                <span className="whitespace-nowrap">{parts[1]}</span>
+                              </div>
+                              {/* Large Laptops: strictly 1 line */}
+                              <span className="hidden xl:inline whitespace-nowrap">{dateStr}</span>
+                            </>
+                          ) : (
+                            <span className="whitespace-normal break-words">{dateStr}</span>
+                          );
+                        })()}
+                      </div>
+                    </div>
+                    <div className="pl-4 relative opacity-80 mt-3">
+                      <div className="absolute top-1.5 -left-[5px] w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700" />
+                      <p className="text-[14px] font-semibold text-midnight dark:text-cream">
+                        {panchangData?.nakshatra?.NextNakshatraName || "--"}
+                      </p>
+                      <div className={`${Styles.ITEM_DATE_STYLES} text-[13px] 2xl:text-[14px] tracking-tight mt-1`}>
+                        {(() => {
+                          const dateStr = formatDateRange(
+                            panchangData?.nakshatra?.NakshatraEnd,
+                            panchangData?.nakshatra?.NextNakshatraEnd,
+                          );
+                          if (!dateStr) return <span>--</span>;
+                          const parts = dateStr.split(/\s*[-—–]\s*/);
+                          return parts.length >= 2 ? (
+                            <>
+                              {/* Mobile, Tablet & Small Laptops (up to 1280px): strictly 2 lines */}
+                              <div className="flex flex-col xl:hidden space-y-0.5">
+                                <span className="whitespace-nowrap">{parts[0]} &mdash;</span>
+                                <span className="whitespace-nowrap">{parts[1]}</span>
+                              </div>
+                              {/* Large Laptops: strictly 1 line */}
+                              <span className="hidden xl:inline whitespace-nowrap">{dateStr}</span>
+                            </>
+                          ) : (
+                            <span className="whitespace-normal break-words">{dateStr}</span>
+                          );
+                        })()}
+                      </div>
+                    </div>
                   </div>
-                  <div className="pl-4 relative opacity-80 mt-3">
-                    <div className="absolute top-1.5 -left-[5px] w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700" />
-                    <p className="text-[13px] font-semibold text-midnight dark:text-cream">
-                      {panchangData?.nakshatra?.NextNakshatraName || "--"}
-                    </p>
-                    <p className={Styles.ITEM_DATE_STYLES}>
-                      {formatDateRange(
-                        panchangData?.nakshatra?.NakshatraEnd,
-                        panchangData?.nakshatra?.NextNakshatraEnd,
-                      ) || "--"}
-                    </p>
-                  </div>
+
+                  {todayContentData?.BirthStar && (
+                    <>
+                      <div className="space-y-1.5">
+                        <span className="block text-[15px] font-semibold text-indigo-600 dark:text-indigo-400">General Characteristics:</span>
+                        <span className="block text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{todayContentData.BirthStar.GeneralCharacteristics || "--"}</span>
+                      </div>
+                      <div className="space-y-1.5">
+                        <span className="text-[15px] font-semibold text-indigo-600 dark:text-indigo-400">Symbol: </span>
+                        <span className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{todayContentData.BirthStar.Symbol || "--"}</span>
+                      </div>
+                      <div className="space-y-1.5">
+                        <span className="text-[15px] font-semibold text-indigo-600 dark:text-indigo-400">Animal Symbol: </span>
+                        <span className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{todayContentData.BirthStar.AnimalSymbol || "--"}</span>
+                      </div>
+                      <div className="space-y-1.5">
+                        <span className="text-[15px] font-semibold text-indigo-600 dark:text-indigo-400">Ruling Planet: </span>
+                        <span className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{todayContentData.BirthStar.RulingPlanet || "--"}</span>
+                      </div>
+                      <div className="space-y-1.5">
+                        <span className="text-[15px] font-semibold text-indigo-600 dark:text-indigo-400">Nature: </span>
+                        <span className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{todayContentData.BirthStar.Nature || "--"}</span>
+                      </div>
+                      <div className="space-y-1.5">
+                        <span className="text-[15px] font-semibold text-indigo-600 dark:text-indigo-400">Presiding deity: </span>
+                        <span className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{todayContentData.BirthStar.PresidingDeity || "--"}</span>
+                      </div>
+                      <div className="space-y-1.5">
+                        <span className="block text-[15px] font-semibold text-indigo-600 dark:text-indigo-400">Strengths:</span>
+                        <span className="block text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{todayContentData.BirthStar.Strengths || "--"}</span>
+                      </div>
+                      <div className="space-y-1.5">
+                        <span className="block text-[15px] font-semibold text-indigo-600 dark:text-indigo-400">Weakness:</span>
+                        <span className="block text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{todayContentData.BirthStar.Weakness || "--"}</span>
+                      </div>
+                    </>)}
                 </div>
               </div>
             </div>
