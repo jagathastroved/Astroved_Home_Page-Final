@@ -49,8 +49,8 @@ interface HoroscopeProps {
  */
 const getZodiacButtonStyles = (isActive: boolean): string => {
   const baseClasses = "cursor-target relative p-4 rounded-[1.5rem] text-center flex flex-col items-center justify-center gap-3 transition-all duration-300 group";
-  const activeClasses = "bg-white dark:bg-[#110c1c] shadow-xl scale-[1.02] border border-amber-500/30";
-  const inactiveClasses = "bg-white dark:bg-[#110c1c] border border-black/5 dark:border-amber-500/40 dark:shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:border-amber-500/20 hover:shadow-lg hover:scale-[1.02]";
+  const activeClasses = "bg-white dark:bg-[#110c1c] shadow-xl scale-[1.02] border border-amber-500/50";
+  const inactiveClasses = "bg-white dark:bg-[#110c1c] border border-gray-200 dark:border-gray-800 dark:shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:border-amber-500/30 hover:shadow-lg hover:scale-[1.02]";
   return `${baseClasses} ${isActive ? activeClasses : inactiveClasses}`;
 };
 
@@ -121,63 +121,63 @@ export function Horoscope({ onCalculateChart }: HoroscopeProps) {
    * Fetches the horoscope data from the Astroved API based on the currently
    * selected Zodiac sign and the active time period tab (Today, Week, Month).
    */
-  React.useEffect(() => {
-      let isMounted = true;
-  
-      const fetchData = async () => {
-        setIsLoading(true);
-        try {
-          const moonSign = selectedZodiac.toLowerCase();
-          let apiPeriod = horoscopeTab.toLowerCase();
-  
-          // Map UI tab names to API expected period formats
-          if (apiPeriod === 'today') apiPeriod = 'daily';
-          else if (apiPeriod === 'week') apiPeriod = 'weekly';
-          else if (apiPeriod === 'month') apiPeriod = 'monthly';
-  
-          const responseData = await fetchHoroscope(moonSign, apiPeriod);
-  
-          if (isMounted) {
-            setHoroscopeData(responseData.summary || 'Horoscope data is currently unavailable. Please try again later.');
-            setIsLoading(false);
-          }
-        } catch (error) {
-          console.error("Horoscope API Failed:", error);
-          if (isMounted) {
-            setHoroscopeData('Horoscope data is currently unavailable. Please try again later.');
-            setIsLoading(false);
-          }
-        }
-      };
-  
-      const hasCookie = document.cookie.includes('timezone=');
-      let fallbackTimeout: NodeJS.Timeout;
-  
-      if (hasCookie) {
-          fetchData();
-      } else {
-          const onCookieSet = () => {
-              clearTimeout(fallbackTimeout);
-              if (isMounted) fetchData();
-          };
-          window.addEventListener('locationCookiesInitialized', onCookieSet, { once: true });
-          
-          // Fallback if IP location service fails or takes too long (e.g. adblocker)
-          fallbackTimeout = setTimeout(() => {
-              window.removeEventListener('locationCookiesInitialized', onCookieSet);
-              if (isMounted) fetchData();
-          }, 1500);
-      }
-  
-      return () => { 
-          isMounted = false; 
-          clearTimeout(fallbackTimeout);
-      };
-    }, [selectedZodiac, horoscopeTab]);
 
-  /** 
-   * Pre-calculate the active zodiac data to avoid redundant Array.find() calls in the render tree 
-   */
+
+  // React.useEffect(() => {
+  //   let isMounted = true;
+
+  //   const fetchData = async () => {
+  //     setIsLoading(true);
+  //     try {
+  //       const moonSign = selectedZodiac.toLowerCase();
+  //       let apiPeriod = horoscopeTab.toLowerCase();
+
+  //       // Map UI tab names to API expected period formats
+  //       if (apiPeriod === 'today') apiPeriod = 'daily';
+  //       else if (apiPeriod === 'week') apiPeriod = 'weekly';
+  //       else if (apiPeriod === 'month') apiPeriod = 'monthly';
+
+  //       const responseData = await fetchHoroscope(moonSign, apiPeriod);
+
+  //       if (isMounted) {
+  //         setHoroscopeData(responseData.summary || 'Horoscope data is currently unavailable. Please try again later.');
+  //         setIsLoading(false);
+  //       }
+  //     } catch (error) {
+  //       console.error("Horoscope API Failed:", error);
+  //       if (isMounted) {
+  //         setHoroscopeData('Horoscope data is currently unavailable. Please try again later.');
+  //         setIsLoading(false);
+  //       }
+  //     }
+  //   };
+
+  //   const hasCookie = document.cookie.includes('timezone=');
+  //   let fallbackTimeout: NodeJS.Timeout;
+
+  //   if (hasCookie) {
+  //     fetchData();
+  //   } else {
+  //     const onCookieSet = () => {
+  //       clearTimeout(fallbackTimeout);
+  //       if (isMounted) fetchData();
+  //     };
+  //     window.addEventListener('locationCookiesInitialized', onCookieSet, { once: true });
+
+  //     // Fallback if IP location service fails or takes too long (e.g. adblocker)
+  //     fallbackTimeout = setTimeout(() => {
+  //       window.removeEventListener('locationCookiesInitialized', onCookieSet);
+  //       if (isMounted) fetchData();
+  //     }, 1500);
+  //   }
+
+  //   return () => {
+  //     isMounted = false;
+  //     clearTimeout(fallbackTimeout);
+  //   };
+  // }, [selectedZodiac, horoscopeTab]);
+
+
   const activeZodiacData = ZODIAC_SIGNS.find(zodiacSign => zodiacSign.name === selectedZodiac);
 
   return (
@@ -206,12 +206,13 @@ export function Horoscope({ onCalculateChart }: HoroscopeProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 w-full max-w-6xl mx-auto">
 
           {/* --- Left Column: 12 Sign Grid Selector --- */}
-          <div className="lg:col-span-4 flex flex-col space-y-4">
+          {/* <div className="lg:col-span-4 flex flex-col space-y-4> */}
+          <div className="lg:col-span-12 flex flex-col space-y-4">
             <span className="text-xs md:text-sm font-mono uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 font-semibold mb-2">
-              Select Sign
+              Select Your Sign
             </span>
-
-            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-3 gap-3">
+            {/* <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-3 gap-3">*/}
+            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3">
               {ZODIAC_SIGNS.map((zodiacSign) => {
                 const isActive = selectedZodiac === zodiacSign.name;
                 return (
@@ -227,24 +228,26 @@ export function Horoscope({ onCalculateChart }: HoroscopeProps) {
                     }}
                     className={getZodiacButtonStyles(isActive)}
                   >
-                    {isActive && (
-                      <motion.div
-                        layoutId="activeZodiacGlow"
-                        className="absolute inset-0 rounded-[1.5rem] bg-amber-500/5 dark:bg-amber-500/10 z-0 pointer-events-none"
-                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                      />
-                    )}
+                    <a href={`${import.meta.env.VITE_SITE_URL}/horoscopes/daily-horoscope/${selectedZodiac.toLowerCase()}?view=full`} target='_blank' className="flex flex-col items-center justify-center gap-3 w-full h-full" >
+                      {isActive && (
+                        <motion.div
+                          layoutId="activeZodiacGlow"
+                          className="absolute inset-0 rounded-[1.5rem] bg-amber-500/5 dark:bg-amber-500/10 z-0 pointer-events-none"
+                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                        />
+                      )}
 
-                    <div className="relative z-10 w-12 h-12 rounded-full p-0.5 bg-white dark:bg-midnight shadow-sm">
-                      <div className={getZodiacImageRingStyles(isActive)} />
-                      <img src={zodiacSign.imageUrl} alt={zodiacSign.name} className="w-full h-full rounded-full object-cover" />
-                    </div>
+                      <div className="relative z-10 w-12 h-12 rounded-full p-0.5 bg-white dark:bg-midnight shadow-sm">
+                        <div className={getZodiacImageRingStyles(isActive)} />
+                        <img src={zodiacSign.imageUrl} alt={zodiacSign.name} className="w-full h-full rounded-full object-cover" />
+                      </div>
 
-                    <div className="z-10">
-                      <span className={getZodiacNameStyles(isActive)}>
-                        {zodiacSign.name}
-                      </span>
-                    </div>
+                      <div className="z-10">
+                        <span className={getZodiacNameStyles(isActive)}>
+                          {zodiacSign.name}
+                        </span>
+                      </div>
+                    </a>
                   </button>
                 );
               })}
@@ -252,107 +255,100 @@ export function Horoscope({ onCalculateChart }: HoroscopeProps) {
           </div>
 
           {/* --- Right Column: Tabbed Horoscope Details Panel --- */}
-          <div ref={contentRef} className="lg:col-span-8 relative group h-full scroll-mt-24">
+          {false && (
+            <div ref={contentRef} className="lg:col-span-8 relative group h-full scroll-mt-24">
 
-            {/* Ambient hover glow behind card */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-amber-500/20 to-purple-500/20 rounded-[3rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
+              {/* Ambient hover glow behind card */}
+              <div className="absolute -inset-1 bg-gradient-to-r from-amber-500/20 to-purple-500/20 rounded-[3rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
 
-            <div className={getGlassPanelStyles()}>
+              <div className={getGlassPanelStyles()}>
 
-              {/* --- Active Zodiac Banner Section --- */}
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between flex-wrap gap-6">
-                <div className="flex items-center gap-6">
-                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden shadow-lg border border-black/5 dark:border-amber-500/40 dark:shadow-[0_0_15px_rgba(245,158,11,0.2)] flex-shrink-0">
-                    <img
-                      src={activeZodiacData?.imageUrl}
-                      alt={selectedZodiac}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-sans text-2xl sm:text-3xl text-midnight dark:text-cream tracking-wide font-medium flex items-center gap-3">
-                      {selectedZodiac} ({activeZodiacData?.sanskrit}) <span className="text-amber-500/40 text-xl font-light hidden sm:inline">·</span>
-                      {/* <span className="text-gray-400 dark:text-gray-500 text-xl hidden sm:inline"></span> */}
-                    </h3>
-                    <div className="flex flex-wrap items-center gap-2 mt-3">
-                      <span className="px-2 py-1 rounded-md bg-black/5 dark:bg-white/5 text-[9px] sm:text-[10px] font-mono text-gray-500 dark:text-gray-400 uppercase tracking-widest">
-                        Ruler: {activeZodiacData?.ruler}
-                      </span>
-                      <span className="px-2 py-1 rounded-md bg-black/5 dark:bg-white/5 text-[9px] sm:text-[10px] font-mono text-gray-500 dark:text-gray-400 uppercase tracking-widest">
-                        Element: {activeZodiacData?.element}
-                      </span>
+                {/* --- Active Zodiac Banner Section --- */}
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between flex-wrap gap-6">
+                  <div className="flex items-center gap-6">
+                    <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden shadow-lg border border-black/5 dark:border-amber-500/40 dark:shadow-[0_0_15px_rgba(245,158,11,0.2)] flex-shrink-0">
+                      <img
+                        src={activeZodiacData?.imageUrl}
+                        alt={selectedZodiac}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <h3 className="font-sans text-2xl sm:text-3xl text-midnight dark:text-cream tracking-wide font-medium flex items-center gap-3">
+                        {selectedZodiac} ({activeZodiacData?.sanskrit}) <span className="text-amber-500/40 text-xl font-light hidden sm:inline">·</span>
+                      </h3>
+                      <div className="flex flex-wrap items-center gap-2 mt-3">
+                        <span className="px-2 py-1 rounded-md bg-black/5 dark:bg-white/5 text-[9px] sm:text-[10px] font-mono text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+                          Ruler: {activeZodiacData?.ruler}
+                        </span>
+                        <span className="px-2 py-1 rounded-md bg-black/5 dark:bg-white/5 text-[9px] sm:text-[10px] font-mono text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+                          Element: {activeZodiacData?.element}
+                        </span>
+                      </div>
                     </div>
                   </div>
+
+                  {/* --- Time Period Tabs Section --- */}
+                  <div className="flex bg-black/5 dark:bg-white/5 p-1 rounded-xl border border-black/5 dark:border-amber-500/40 dark:shadow-[0_0_15px_rgba(245,158,11,0.2)] w-full sm:w-fit self-start lg:self-auto flex-shrink-0">
+                    {(['Today', 'Week', 'Month'] as const).map((timeTab) => {
+                      const isActive = horoscopeTab === timeTab;
+                      return (
+                        <button
+                          key={timeTab}
+                          onClick={() => setHoroscopeTab(timeTab)}
+                          className={getTabButtonStyles(isActive)}
+                        >
+                          {timeTab}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
-                {/* --- Time Period Tabs Section --- */}
-                <div className="flex bg-black/5 dark:bg-white/5 p-1 rounded-xl border border-black/5 dark:border-amber-500/40 dark:shadow-[0_0_15px_rgba(245,158,11,0.2)] w-full sm:w-fit self-start lg:self-auto flex-shrink-0">
-                  {(['Today', 'Week', 'Month'] as const).map((timeTab) => {
-                    const isActive = horoscopeTab === timeTab;
-                    return (
-                      <button
-                        key={timeTab}
-                        onClick={() => setHoroscopeTab(timeTab)}
-                        className={getTabButtonStyles(isActive)}
-                      >
-                        {timeTab}
-                      </button>
-                    );
-                  })}
+                {/* --- Horoscope API Content Section --- */}
+                <div className="flex-1 mt-6">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={`${selectedZodiac}-${horoscopeTab}`}
+                      initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
+                      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                      exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
+                      transition={{ duration: 0.4, ease: "easeOut" }}
+                      className="space-y-4"
+                    >
+                      {isLoading ? (
+                        <div className="animate-pulse space-y-3">
+                          <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-full"></div>
+                          <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-5/6"></div>
+                          <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-4/6"></div>
+                        </div>
+                      ) : (
+                        <p className="font-body text-base sm:text-lg text-gray-700 dark:text-gray-300 leading-relaxed font-light">
+                          {horoscopeData}
+                        </p>
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
-              </div>
 
-              {/* --- Horoscope API Content Section --- */}
-              <div className="flex-1 mt-6">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={`${selectedZodiac}-${horoscopeTab}`}
-                    initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
-                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                    exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
-                    transition={{ duration: 0.4, ease: "easeOut" }}
-                    className="space-y-4"
+                {/* --- Bottom Interactive Action Section --- */}
+                <div className="mt-4 pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                  <a
+                    href={`${import.meta.env.VITE_SITE_URL}/horoscopes/${horoscopeTab === 'Today' ? 'daily' : horoscopeTab === 'Week' ? 'weekly' : 'monthly'
+                      }-horoscope/${selectedZodiac.toLowerCase()}?view=full`}
+                    target="_blank"
+                    className={getDetailsButtonStyles()}
                   >
-                    {isLoading ? (
-                      <div className="animate-pulse space-y-3">
-                        <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-full"></div>
-                        <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-5/6"></div>
-                        <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-4/6"></div>
-                      </div>
-                    ) : (
-                      <p className="font-body text-base sm:text-lg text-gray-700 dark:text-gray-300 leading-relaxed font-light">
-                        {horoscopeData}
-                      </p>
-                    )}
-                  </motion.div>
-                </AnimatePresence>
-              </div>
+                    View full details
+                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                  </a>
+                </div>
 
-              {/* --- Bottom Interactive Action Section --- */}
-              <div className="mt-4 pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                {/* <button
-                  onClick={() => window.open(`${import.meta.env.VITE_SITE_URL}/horoscopes/daily-horoscope/${selectedZodiac.toLowerCase()}`, '_blank')}
-                  className={getDetailsButtonStyles()}
-                >
-                  View full details
-                  <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                </button> */}
-                <a
-                  href={`${import.meta.env.VITE_SITE_URL}/horoscopes/${horoscopeTab === 'Today' ? 'daily' : horoscopeTab === 'Week' ? 'weekly' : 'monthly'
-                    }-horoscope/${selectedZodiac.toLowerCase()}?view=full`}
-                  target="_blank"
-                  className={getDetailsButtonStyles()}
-                >
-                  View full details
-                  <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                </a>
               </div>
-
             </div>
-          </div>
+          )}
 
         </div>
-
       </div>
     </section>
   );

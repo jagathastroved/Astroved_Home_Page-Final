@@ -36,7 +36,7 @@ const SOLUTIONS: SolutionItem[] = [
     footerText: "Guided rituals by expert priests, anywhere.",
     image: Community_Fire,
     imagePosition: "object-[center_15%]",
-    link:"/priest-services?promo=SL_priest-services-1",
+    link: "/priest-services?promo=SL_priest-services-1",
     isExternal: true
   },
   {
@@ -69,7 +69,7 @@ const SOLUTIONS: SolutionItem[] = [
 
 /* Base Section & Headers */
 const SECTION_WRAPPER_STYLES = "py-4 md:py-6 px-6 max-w-7xl mx-auto z-10";
-const HEADER_CONTAINER_STYLES = "text-center max-w-3xl mx-auto mb-10";
+const HEADER_CONTAINER_STYLES = "text-center max-w-3xl mx-auto mb-4";
 const HEADER_SUBTITLE_STYLES = "text-amber-600 dark:text-amber-400 font-sans text-xs md:text-sm uppercase tracking-widest font-bold mb-3";
 const HEADER_TITLE_STYLES = "font-serif text-3xl sm:text-4xl md:text-5xl text-midnight dark:text-cream leading-tight font-bold mb-4";
 const HEADER_DESC_STYLES = "font-sans text-gray-500 dark:text-gray-400 text-sm md:text-base lg:text-lg leading-relaxed max-w-2xl mx-auto font-medium";
@@ -256,7 +256,7 @@ export function PersonalizedSolutions() {
                     <a
                       href={solution.link as string}
                       target="_blank"
-                      
+
                       className={DESKTOP_CTA_STYLES}
                     >
                       {solution.cta} <ArrowUpRight className="w-3.5 h-3.5 flex-shrink-0" />
@@ -354,7 +354,7 @@ export function PersonalizedSolutions() {
                             <a
                               href={currentSolution.link as string}
                               target="_blank"
-                              
+
                               className={MOBILE_CTA_STYLES}
                             >
                               {currentSolution.cta} <ArrowUpRight className="w-3.5 h-3.5" />

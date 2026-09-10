@@ -115,11 +115,11 @@ const PROMO_INNER_GLOW = "absolute inset-0 bg-gradient-to-r from-transparent via
 const PROMO_CONTENT_WRAPPER = "w-full flex items-center justify-center py-2.5 sm:py-3 px-4 relative z-10 min-h-[48px] sm:min-h-[52px]";
 
 /** --- Modern Top/Bottom Layout CSS Classes --- */
-const SECTION_STYLES = "py-6 md:py-8 relative z-10 w-full transition-colors duration-500 overflow-hidden";
+const SECTION_STYLES = "py-4 md:py-6 relative z-10 w-full transition-colors duration-500 overflow-hidden";
 const CONTENT_WRAPPER_STYLES = "max-w-7xl mx-auto px-4 md:px-6 relative z-10 flex flex-col items-center gap-4 md:gap-6";
 
 /* --- TOP SECTION (Typography) --- */
-const TOP_SECTION_STYLES = "flex flex-col items-center text-center w-full min-h-[160px] sm:min-h-[140px] md:min-h-[130px] relative z-20";
+const TOP_SECTION_STYLES = "flex flex-col items-center text-center w-full min-h-[110px] sm:min-h-[90px] md:min-h-[80px] relative z-20";
 
 const HEADER_TITLE_STYLES = "font-serif text-3xl sm:text-4xl md:text-5xl text-midnight mr-2 dark:text-cream leading-tight font-bold";
 const HEADER_ITALIC_STYLES = "font-serif text-3xl sm:text-4xl md:text-5xl text-amber-600 dark:text-amber-400 italic leading-tight font-bold";
@@ -269,7 +269,7 @@ export function Rituals() {
                           <span className="font-bold text-slate-800 dark:text-slate-200 lg:text-[#0a192f] lg:dark:text-[#0a192f] text-sm lg:text-[14px]">{currentEvent.priceText}</span>
                           <span>{currentEvent.deliveryText}</span>
                         </span>
-                        <a href={currentEvent.link} target="_blank"  className={CTA_WRAPPER_STYLES}>
+                        <a href={currentEvent.link} target="_blank" className={CTA_WRAPPER_STYLES}>
                           {currentEvent.buttonText} <ArrowRight className="w-5 h-5 lg:w-4 lg:h-4 ml-1" />
                         </a>
                       </div>

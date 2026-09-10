@@ -19,7 +19,7 @@ interface ExpertItem {
   image: string;
   titleColor: string;
   link?: string;
-  IsfooterTextBtn:Boolean;
+  IsfooterTextBtn: Boolean;
 }
 
 /**
@@ -35,7 +35,7 @@ const EXPERTS: ExpertItem[] = [
     image: vijimam,
     titleColor: "text-gray-900 dark:text-white",
     link: "/AstrologerScheduler.aspx?id=63143&promo=SL_Consult_and_Counsel-1",
-    IsfooterTextBtn:false
+    IsfooterTextBtn: false
   },
   {
     badgeText: "ANCIENT PALM-LEAF READING",
@@ -46,7 +46,7 @@ const EXPERTS: ExpertItem[] = [
     image: palm_leaf,
     titleColor: "text-gray-900 dark:text-white",
     link: "/nadi/nadi-astrology?promo=SL_nadi-astrology-2",
-    IsfooterTextBtn:false
+    IsfooterTextBtn: false
   },
   {
     badgeText: "WRITTEN FOR YOU",
@@ -57,19 +57,19 @@ const EXPERTS: ExpertItem[] = [
     image: personal_report,
     titleColor: "text-gray-900 dark:text-white",
     link: "/prediction-services-personalized-kundali-report-P88426.aspx?promo=SL_kundali-report-3",
-    IsfooterTextBtn:true
+    IsfooterTextBtn: true
   }
 ];
 
 /** --- Shared Tailwind CSS Classes --- */
 
-const SECTION_STYLES = "py-6 md:py-8 transition-colors duration-500 relative z-10";
+const SECTION_STYLES = "py-4 md:py-6 transition-colors duration-500 relative z-10";
 const DIVIDER_TOP_STYLES = "absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-px bg-gradient-to-r from-transparent via-black/10 dark:via-white/10 to-transparent";
 const DIVIDER_GLOW_STYLES = "absolute top-0 left-1/2 -translate-x-1/2 w-[40%] max-w-md h-[1px] bg-gradient-to-r from-transparent via-amber-500/30 dark:via-amber-400/50 to-transparent shadow-[0_0_15px_rgba(245,158,11,0.5)]";
 const CONTENT_WRAPPER_STYLES = "max-w-7xl mx-auto px-6 relative z-10 mt-2";
 const HEADER_SUBTITLE_STYLES = "text-amber-600 dark:text-amber-400 font-sans text-xs md:text-sm uppercase tracking-widest font-bold mb-3";
 const HEADER_TITLE_STYLES = "font-serif text-3xl sm:text-4xl md:text-5xl text-midnight dark:text-cream leading-tight font-bold mb-4";
-const GRID_CONTAINER_STYLES = "flex items-stretch overflow-x-auto snap-x snap-mandatory lg:grid lg:grid-cols-3 gap-6 lg:gap-8 mt-8 relative z-10 pb-12 pt-6 px-6 -mx-6 lg:mx-0 lg:px-4 lg:pb-16 no-scrollbar";
+const GRID_CONTAINER_STYLES = "flex items-stretch overflow-x-auto snap-x snap-mandatory lg:grid lg:grid-cols-3 gap-6 lg:gap-8 relative z-10 pb-4 pt-2 px-6 -mx-6 lg:mx-0 lg:px-4 lg:pb-4 no-scrollbar";
 const CARD_STYLES = "snap-center shrink-0 w-[85%] sm:w-[50%] lg:w-full rounded-[2.5rem] flex flex-col group overflow-hidden relative h-auto border border-black/5 dark:border-amber-500/40 dark:shadow-[0_0_15px_rgba(245,158,11,0.2)] shadow-xl hover:border-[#facc15]/50 hover:shadow-[0_0_40px_rgba(250,204,21,0.2)] transition-all duration-500 bg-white dark:bg-[#0a0e17] m-1";
 const IMAGE_CONTAINER_STYLES = "relative w-full z-0 h-[180px] sm:h-[200px] md:h-[220px] lg:h-[260px] shrink-0 overflow-hidden";
 const IMAGE_STYLES = "w-full h-full object-cover object-[center_20%] group-hover:scale-105 transition-transform duration-[1500ms] ease-out";
@@ -127,7 +127,7 @@ export function PersonalGuidance() {
       <div className={CONTENT_WRAPPER_STYLES}>
 
         {/* --- Header Section --- */}
-        <div className="text-center max-w-4xl mx-auto mb-10">
+        <div className="text-center max-w-4xl mx-auto mb-4">
           <p className={HEADER_SUBTITLE_STYLES}>
             PERSONAL GUIDANCE
           </p>
@@ -185,7 +185,7 @@ export function PersonalGuidance() {
 
                   {/* CTA Link */}
                   {expert.link ? (
-                    <a href={expert.link} target="_blank"  className={CTA_WRAPPER_STYLES}>
+                    <a href={expert.link} target="_blank" className={CTA_WRAPPER_STYLES}>
                       {expert.cta} <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                     </a>
                   ) : (
@@ -195,17 +195,17 @@ export function PersonalGuidance() {
                   )}
 
                   {/* Footer Context Text */}
-                  {expert.footerText && !expert.IsfooterTextBtn &&(
+                  {expert.footerText && !expert.IsfooterTextBtn && (
                     <div className={FOOTER_TEXT_STYLES}>
                       {expert.footerText}
                     </div>
                   )}
                   {/* Footer Context Text */}
-                  {expert.footerText && expert.IsfooterTextBtn &&(
-                    <a 
-                      href="/reacthome/reports/Sample Detailed Kundali Premium Report.pdf" 
-                      target="_blank" 
-                       
+                  {expert.footerText && expert.IsfooterTextBtn && (
+                    <a
+                      href="/reacthome/reports/Sample Detailed Kundali Premium Report.pdf"
+                      target="_blank"
+
                       className={FOOTER_TEXT_STYLES}
                     >
                       {expert.footerText}

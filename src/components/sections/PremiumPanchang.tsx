@@ -24,11 +24,11 @@ import {
 import { fetchCountries, searchLocation } from "../../services/locationService";
 
 const Styles = {
-  SECTION_STYLES: "relative py-4 pb-20 md:pb-6 md:py-6 overflow-hidden",
+  SECTION_STYLES: "relative py-4 pb-6 md:pb-6 md:py-6 overflow-hidden",
   BACKGROUND_GLOW_STYLES:
     "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl h-[600px] bg-indigo/5 dark:bg-gold/5 blur-[120px] rounded-full pointer-events-none",
   CONTENT_WRAPPER_STYLES: "max-w-7xl mx-auto px-4 sm:px-6 relative z-10",
-  HEADER_CONTAINER_STYLES: "text-center max-w-3xl mx-auto mb-10",
+  HEADER_CONTAINER_STYLES: "text-center max-w-3xl mx-auto mb-4",
   HEADER_SUBTITLE_STYLES:
     "text-amber-600 dark:text-amber-400 font-sans text-xs md:text-sm uppercase tracking-widest font-bold mb-3",
   HEADER_TITLE_STYLES:
@@ -1220,6 +1220,7 @@ export function PremiumPanchang() {
           </div>
 
           <div className={Styles.CONTENT_GRID_STYLES}>
+
             {/* Child 1: Auspicious & Inauspicious Timings */}
             <div className="md:col-start-1 md:row-start-1 lg:col-start-1 lg:row-start-1 h-full w-full">
               <div className={Styles.DATA_BOX_BASE_STYLES}>
@@ -1397,9 +1398,9 @@ export function PremiumPanchang() {
                       <div className="absolute top-1.5 -left-[5px] w-2 h-2 rounded-full bg-indigo dark:bg-saffron" />
                       <p className={Styles.ACTIVE_ALT_ITEM_TITLE_STYLES}>
                         {panchangData?.nakshatra?.NakshatraName || "--"}
-                        <span className="text-[10px] bg-purple-500/10 dark:bg-saffron/10 px-2 py-0.5 rounded text-purple-600 dark:text-saffron/80 uppercase tracking-wider ml-2">
+                        {/* <span className="text-[10px] bg-purple-500/10 dark:bg-saffron/10 px-2 py-0.5 rounded text-purple-600 dark:text-saffron/80 uppercase tracking-wider ml-2">
                           Active
-                        </span>
+                        </span> */}
                       </p>
                       <div className={`${Styles.ITEM_DATE_STYLES} text-[13px] 2xl:text-[14px] tracking-tight mt-1`}>
                         {(() => {
@@ -1411,13 +1412,13 @@ export function PremiumPanchang() {
                           const parts = dateStr.split(/\s*[-—–]\s*/);
                           return parts.length >= 2 ? (
                             <>
-                              {/* Mobile, Tablet & Small Laptops (up to 1280px): strictly 2 lines */}
-                              <div className="flex flex-col xl:hidden space-y-0.5">
+                              {/* Mobile devices: strictly 2 lines */}
+                              <div className="flex flex-col md:hidden space-y-0.5">
                                 <span className="whitespace-nowrap">{parts[0]} &mdash;</span>
                                 <span className="whitespace-nowrap">{parts[1]}</span>
                               </div>
-                              {/* Large Laptops: strictly 1 line */}
-                              <span className="hidden xl:inline whitespace-nowrap">{dateStr}</span>
+                              {/* Tablets and up: strictly 1 line */}
+                              <span className="hidden md:inline whitespace-nowrap">{dateStr}</span>
                             </>
                           ) : (
                             <span className="whitespace-normal break-words">{dateStr}</span>
@@ -1440,13 +1441,13 @@ export function PremiumPanchang() {
                           const parts = dateStr.split(/\s*[-—–]\s*/);
                           return parts.length >= 2 ? (
                             <>
-                              {/* Mobile, Tablet & Small Laptops (up to 1280px): strictly 2 lines */}
-                              <div className="flex flex-col xl:hidden space-y-0.5">
+                              {/* Mobile devices: strictly 2 lines */}
+                              <div className="flex flex-col md:hidden space-y-0.5">
                                 <span className="whitespace-nowrap">{parts[0]} &mdash;</span>
                                 <span className="whitespace-nowrap">{parts[1]}</span>
                               </div>
-                              {/* Large Laptops: strictly 1 line */}
-                              <span className="hidden xl:inline whitespace-nowrap">{dateStr}</span>
+                              {/* Tablets and up: strictly 1 line */}
+                              <span className="hidden md:inline whitespace-nowrap">{dateStr}</span>
                             </>
                           ) : (
                             <span className="whitespace-normal break-words">{dateStr}</span>
@@ -1457,8 +1458,8 @@ export function PremiumPanchang() {
                   </div>
 
                   {todayContentData?.BirthStar && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t border-purple/5 dark:border-white/5">
-                      <div className="space-y-1.5 md:col-span-2 lg:col-span-3">
+                    <div className="grid grid-cols-1 gap-4 pt-4 border-t border-purple/5 dark:border-white/5">
+                      <div className="space-y-1.5">
                         <span className="block text-[15px] font-semibold text-indigo-600 dark:text-indigo-400">General Characteristics:</span>
                         <span className="block text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{todayContentData.BirthStar.GeneralCharacteristics || "--"}</span>
                       </div>
@@ -1482,11 +1483,11 @@ export function PremiumPanchang() {
                         <span className="text-[15px] font-semibold text-indigo-600 dark:text-indigo-400">Presiding deity: </span>
                         <span className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{todayContentData.BirthStar.PresidingDeity || "--"}</span>
                       </div>
-                      <div className="space-y-1.5 md:col-span-2 lg:col-span-3">
+                      <div className="space-y-1.5">
                         <span className="block text-[15px] font-semibold text-indigo-600 dark:text-indigo-400">Strengths:</span>
                         <span className="block text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{todayContentData.BirthStar.Strengths || "--"}</span>
                       </div>
-                      <div className="space-y-1.5 md:col-span-2 lg:col-span-3">
+                      <div className="space-y-1.5">
                         <span className="block text-[15px] font-semibold text-indigo-600 dark:text-indigo-400">Weakness:</span>
                         <span className="block text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{todayContentData.BirthStar.Weakness || "--"}</span>
                       </div>
@@ -1515,6 +1516,7 @@ export function PremiumPanchang() {
                 </div>
               </div>
             </div>
+
           </div>
         </motion.div>
       </div>

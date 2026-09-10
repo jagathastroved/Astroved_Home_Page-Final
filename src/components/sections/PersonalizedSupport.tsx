@@ -52,9 +52,9 @@ const SUPPORT_SOLUTIONS: SupportItem[] = [
 /** --- Shared Tailwind CSS Classes --- */
 
 /* Base Section & Headers */
-const SECTION_WRAPPER_STYLES = "py-8 md:py-12 relative overflow-hidden transition-colors duration-500 z-10";
+const SECTION_WRAPPER_STYLES = "py-4 md:py-6 relative overflow-hidden transition-colors duration-500 z-10";
 const CONTENT_WRAPPER_STYLES = "max-w-6xl mx-auto px-4 md:px-6 relative z-10";
-const HEADER_CONTAINER_STYLES = "text-center max-w-3xl mx-auto mb-10 relative z-10";
+const HEADER_CONTAINER_STYLES = "text-center max-w-3xl mx-auto mb-4 relative z-10";
 const HEADER_SUBTITLE_STYLES = "text-amber-600 dark:text-amber-400 font-sans text-xs md:text-sm uppercase tracking-widest font-bold mb-3";
 const HEADER_TITLE_STYLES = "font-serif text-3xl sm:text-4xl md:text-5xl text-midnight dark:text-cream leading-tight font-bold mb-4";
 const HEADER_DESC_STYLES = "font-sans text-gray-500 dark:text-gray-400 text-sm md:text-base lg:text-lg leading-relaxed max-w-2xl mx-auto font-medium";

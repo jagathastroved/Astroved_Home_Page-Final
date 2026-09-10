@@ -94,7 +94,7 @@ export function PopularPoojas() {
       <div className="max-w-[1400px] mx-auto px-4 md:px-6">
 
         {/* Header */}
-        <div className="text-center mb-8 max-w-3xl mx-auto">
+        <div className="text-center mb-4 max-w-3xl mx-auto">
           <p className="text-amber-600 dark:text-amber-400 font-sans text-xs md:text-sm uppercase tracking-widest font-bold mb-3">
             Experience the power of ancient vedic rituals
           </p>

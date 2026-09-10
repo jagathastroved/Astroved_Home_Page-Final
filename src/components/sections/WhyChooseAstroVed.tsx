@@ -11,7 +11,7 @@ const CONTAINER_STYLES = "max-w-7xl mx-auto px-6 relative z-10";
 
 const HEADER_CONTAINER_STYLES = "text-center max-w-3xl mx-auto mb-8 relative z-10";
 const SUBTITLE_STYLES = "text-amber-600 dark:text-amber-400 font-sans text-xs md:text-sm uppercase tracking-widest font-bold mb-3";
-const TITLE_STYLES = "font-serif text-3xl sm:text-4xl md:text-5xl text-midnight dark:text-cream leading-tight font-bold mb-4";
+const TITLE_STYLES = "font-serif text-3xl sm:text-4xl md:text-5xl text-midnight dark:text-cream leading-tight font-bold mb-4 md:whitespace-nowrap";
 const TITLE_HIGHLIGHT_STYLES = "text-amber-600 dark:text-amber-400 italic";
 
 /* Glassmorphism Panel Styles */
@@ -20,11 +20,11 @@ const GLOW_TOP_RIGHT_STYLES = "absolute top-0 right-0 w-96 h-96 bg-amber-500/5 r
 const GLOW_BOTTOM_LEFT_STYLES = "absolute bottom-0 left-0 w-64 h-64 bg-purple-500/5 rounded-full blur-[80px] pointer-events-none transition-opacity duration-700 group-hover/panel:bg-purple-500/10";
 
 /* Grid & Card Content Styles */
-const GRID_CONTAINER_STYLES = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 relative z-10";
-const CARD_WRAPPER_STYLES = "flex flex-col items-center text-center gap-3 group p-3 md:p-4 rounded-2xl hover:bg-white dark:hover:bg-white/5 transition-all duration-300 border border-transparent hover:border-black/5 dark:hover:border-white/5 hover:shadow-sm";
-const TEXT_WRAPPER_STYLES = "flex flex-col h-full w-full items-center";
-const CARD_TITLE_STYLES = "font-sans font-bold text-[13px] md:text-base text-midnight dark:text-cream mb-1.5 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors leading-tight px-2";
-const CARD_DESC_STYLES = "font-body text-gray-600 dark:text-gray-400 text-xs md:text-sm leading-relaxed px-2";
+const GRID_CONTAINER_STYLES = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10";
+const CARD_WRAPPER_STYLES = "flex items-start text-left gap-4 md:gap-5 p-5 sm:p-6 rounded-2xl bg-white/80 dark:bg-[#110c1c]/80 backdrop-blur-md border border-black/5 dark:border-white/10 shadow-sm hover:shadow-xl hover:border-amber-500/30 dark:hover:border-amber-500/30 hover:-translate-y-1 transition-all duration-300 group";
+const TEXT_WRAPPER_STYLES = "flex flex-col flex-1 mt-1";
+const CARD_TITLE_STYLES = "font-sans font-bold text-[15px] sm:text-[17px] text-midnight dark:text-cream mb-2 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors leading-tight";
+const CARD_DESC_STYLES = "font-body text-gray-500 dark:text-gray-400 text-[13px] sm:text-sm leading-relaxed";
 
 /**
  * Computes dynamic Tailwind classes for the icon bounding box.
@@ -87,8 +87,8 @@ const REASONS: ReasonItem[] = [
     title: "Serving devotees since 2000",
     desc: "25 years of Vedic services, 3 lakh+ rituals, devotees in 50+ countries.",
     icon: Award,
-    color: "from-purple-500/20 to-fuchsia-500/20",
-    iconColor: "text-purple-600 dark:text-fuchsia-400"
+    color: "from-yellow-500/20 to-amber-500/20",
+    iconColor: "text-yellow-600 dark:text-yellow-400"
   },
   {
     title: "Join from anywhere in the world",
