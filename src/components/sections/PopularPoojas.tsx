@@ -160,13 +160,13 @@ export function PopularPoojas() {
                         {/* Price Section */}
                         <div className="flex items-center justify-between mb-4 border-t border-gray-100 dark:border-slate-700/50 pt-4">
                           <span className="text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Starts From</span>
-                          <div className="flex items-baseline gap-2">
+                          <div className="flex items-baseline gap-1.5 ml-2 whitespace-nowrap">
                             {listPrice !== sellingPrice && listPrice != null && (
-                              <span className="text-sm font-medium text-gray-400 line-through">
+                              <span className="text-xs font-medium text-gray-400 line-through">
                                 {currencySymbol} {listPrice}
                               </span>
                             )}
-                            <span className="text-xl font-bold text-[#D65324] dark:text-amber-500 leading-none">
+                            <span className="text-lg font-bold text-[#D65324] dark:text-amber-500 leading-none">
                               {currencySymbol} {sellingPrice}
                             </span>
                           </div>
@@ -191,8 +191,7 @@ export function PopularPoojas() {
           <button
             onClick={scrollPrev}
             disabled={!prevBtnEnabled}
-            style={{ top: `${arrowTop}px` }}
-            className="flex absolute left-1 md:-left-4 lg:-left-6 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-white/90 backdrop-blur dark:bg-slate-800/90 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.15)] items-center justify-center text-[#D65324] hover:bg-white dark:hover:bg-slate-700 transition-all z-10 disabled:opacity-50 disabled:cursor-not-allowed border border-gray-100 dark:border-slate-700"
+            className="flex absolute top-[115px] md:top-[120px] lg:top-[125px] xl:top-[135px] left-1 md:-left-4 lg:-left-6 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-white/90 backdrop-blur dark:bg-slate-800/90 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.15)] items-center justify-center text-[#D65324] hover:bg-white dark:hover:bg-slate-700 transition-all z-10 disabled:opacity-50 disabled:cursor-not-allowed border border-gray-100 dark:border-slate-700"
             aria-label="Previous slide"
           >
             <ChevronLeft className="w-6 h-6 lg:w-7 lg:h-7" />
@@ -200,8 +199,7 @@ export function PopularPoojas() {
           <button
             onClick={scrollNext}
             disabled={!nextBtnEnabled}
-            style={{ top: `${arrowTop}px` }}
-            className="flex absolute right-1 md:-right-4 lg:-right-6 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-white/90 backdrop-blur dark:bg-slate-800/90 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.15)] items-center justify-center text-[#D65324] hover:bg-white dark:hover:bg-slate-700 transition-all z-10 disabled:opacity-50 disabled:cursor-not-allowed border border-gray-100 dark:border-slate-700"
+            className="flex absolute top-[115px] md:top-[120px] lg:top-[125px] xl:top-[135px] right-1 md:-right-4 lg:-right-6 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-white/90 backdrop-blur dark:bg-slate-800/90 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.15)] items-center justify-center text-[#D65324] hover:bg-white dark:hover:bg-slate-700 transition-all z-10 disabled:opacity-50 disabled:cursor-not-allowed border border-gray-100 dark:border-slate-700"
             aria-label="Next slide"
           >
             <ChevronRight className="w-6 h-6 lg:w-7 lg:h-7" />

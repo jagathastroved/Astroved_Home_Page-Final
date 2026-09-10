@@ -1365,7 +1365,7 @@ export function PremiumPanchang() {
             </div>
 
             {/* Child 3: Nakshatram */}
-            <div className="md:col-start-2 md:row-start-2 lg:col-start-3 lg:row-start-1 h-full w-full">
+            <div className="md:col-span-2 md:row-start-3 lg:col-span-2 lg:col-start-2 lg:row-start-2 h-full w-full">
               <div className="bg-white/40 dark:bg-black/10 p-5 rounded-2xl border border-purple/5 dark:border-white/5 h-full">
                 <h3 className={Styles.ELEMENT_TITLE_STYLES}>
                   <Star className="w-4 h-4 text-indigo dark:text-saffron" />{" "}
@@ -1457,8 +1457,8 @@ export function PremiumPanchang() {
                   </div>
 
                   {todayContentData?.BirthStar && (
-                    <>
-                      <div className="space-y-1.5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t border-purple/5 dark:border-white/5">
+                      <div className="space-y-1.5 md:col-span-2 lg:col-span-3">
                         <span className="block text-[15px] font-semibold text-indigo-600 dark:text-indigo-400">General Characteristics:</span>
                         <span className="block text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{todayContentData.BirthStar.GeneralCharacteristics || "--"}</span>
                       </div>
@@ -1482,21 +1482,21 @@ export function PremiumPanchang() {
                         <span className="text-[15px] font-semibold text-indigo-600 dark:text-indigo-400">Presiding deity: </span>
                         <span className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{todayContentData.BirthStar.PresidingDeity || "--"}</span>
                       </div>
-                      <div className="space-y-1.5">
+                      <div className="space-y-1.5 md:col-span-2 lg:col-span-3">
                         <span className="block text-[15px] font-semibold text-indigo-600 dark:text-indigo-400">Strengths:</span>
                         <span className="block text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{todayContentData.BirthStar.Strengths || "--"}</span>
                       </div>
-                      <div className="space-y-1.5">
+                      <div className="space-y-1.5 md:col-span-2 lg:col-span-3">
                         <span className="block text-[15px] font-semibold text-indigo-600 dark:text-indigo-400">Weakness:</span>
                         <span className="block text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{todayContentData.BirthStar.Weakness || "--"}</span>
                       </div>
-                    </>)}
+                    </div>)}
                 </div>
               </div>
             </div>
 
-            {/* Child 5: To-Do & Avoid spanning 2 columns on desktop */}
-            <div className="md:col-span-2 md:row-start-3 lg:col-span-2 lg:col-start-2 lg:row-start-2 h-full w-full">
+            {/* Child 5: To-Do & Avoid */}
+            <div className="md:col-start-2 md:row-start-2 lg:col-start-3 lg:row-start-1 h-full w-full">
               <div className={Styles.DATA_BOX_BASE_STYLES}>
                 <div className="grid grid-cols-[80px_1fr] gap-y-4 gap-x-2 items-start">
                   <span className="text-[11px] md:text-xs font-bold uppercase tracking-widest text-amber-600 dark:text-amber-400 pt-[2px]">
