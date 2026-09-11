@@ -3,9 +3,10 @@ import { ArrowRight } from 'lucide-react';
 import { AnimatedGrid } from '../ui/AnimatedGrid';
 import { AnimatedCard } from '../ui/AnimatedCard';
 import palm_leaf from '../../assets/personal_guidance/palm_leaf.png';
-import personal_report from '../../assets/personal_guidance/personal_report.png';
+// import personal_report from '../../assets/personal_guidance/personal_report.png';
+import prasna_img from '../../assets/personal_guidance/prasna_astrology.jpg';
 import vijimam from '../../assets/personal_guidance/viji-mam.jpg';
-
+import gemstone_img from '../../assets/personal_guidance/gemstone_og_image.jpg';
 import '../../layouts/Navbar.css';
 /**
  * Interface defining the structure for Personal Guidance cards.
@@ -25,11 +26,11 @@ interface ExpertItem {
 /**
  * Static configuration for the Personal Guidance cards.
  */
-const EXPERTS: ExpertItem[] = [
+const BASE_EXPERTS: ExpertItem[] = [
   {
     badgeText: "LIVE 1-ON-1 Consultations",
-    title: "Talk with Senior Vedic Astrologer Vijayalakshmi right now.",
-    desc: "Uncover hidden cosmic influences affecting your career and relationships. Vijayalakshmi Krishnan provides personalized remedies to help you overcome current challenges.\nConsult in English or Tamil.",
+    title: "Consult Astrologer Vijayalakshmi",
+    desc: "Uncover hidden cosmic influences shaping your career and finances. Senior Astrologer Vijayalakshmi provides deep insights and personalized remedies to overcome life's challenges. Available in English or Tamil.",
     cta: "BOOK CONSULTATION",
     footerText: "Slots available today • 100% private",
     image: vijimam,
@@ -38,28 +39,41 @@ const EXPERTS: ExpertItem[] = [
     IsfooterTextBtn: false
   },
   {
-    badgeText: "ANCIENT PALM-LEAF READING",
-    title: "Your Destiny, Written Centuries Ago on Palm Leaves",
-    desc: "Trained Nadi readers in the Vaitheeswaran Koil’s tradition locate your leaf from your thumb impression- revealing your past karma, your present chapter, and your future destiny, along with the specific remedies written for you.",
+    badgeText: "PALM-LEAF READING",
+    title: "Discover Your Written Destiny",
+    desc: "Your entire destiny was written on palm leaves centuries ago. Using your thumb impression, our Nadi readers locate your unique leaf to reveal your past karma, present chapter, and future destiny along with specific remedies.",
     cta: "GET MY NADI READING",
     footerText: "Live Reading • Translation • Recording",
     image: palm_leaf,
     titleColor: "text-gray-900 dark:text-white",
     link: "/nadi/nadi-astrology?promo=SL_nadi-astrology-2",
     IsfooterTextBtn: false
-  },
-  {
-    badgeText: "WRITTEN FOR YOU",
-    title: "Know What the Coming Year Holds For You",
-    desc: "Detailed written reports on your career, marriage, and wealth. Understand the upcoming planetary dasha periods shaping the critical years ahead in your life. Know the right remedies recommended for you, included in the report. Prepared from your birth chart by our senior Vedic astrologers.",
-    cta: "GET MY REPORT",
-    footerText: "See a sample report →",
-    image: personal_report,
-    titleColor: "text-gray-900 dark:text-white",
-    link: "/prediction-services-personalized-kundali-report-P88426.aspx?promo=SL_kundali-report-3",
-    IsfooterTextBtn: true
   }
 ];
+
+const PRASNA_EXPERT: ExpertItem = {
+  badgeText: "PRASNA ASTROLOGY",
+  title: "Instant Answers & Insight",
+  desc: "Receive instant divine guidance to pressing questions without providing birth details. By analyzing planetary positions at the precise moment you ask, our expert astrologers decode the alignments to give you immediate answers.",
+  cta: "ASK PRASNA",
+  footerText: "No birth details required",
+  image: prasna_img,
+  titleColor: "text-gray-900 dark:text-white",
+  link: "/prasna",
+  IsfooterTextBtn: false
+};
+
+const GEMSTONE_EXPERT: ExpertItem = {
+  badgeText: "AI GEMSTONE REPORT",
+  title: "Discover Your Chart-Aligned Gemstone",
+  desc: "Go beyond generic Moon-sign advice. Receive an AI-powered report based on your exact birth chart to identify the perfect gemstone for you and stones to approach with caution.",
+  cta: "GET YOUR REPORT",
+  image: gemstone_img,
+  titleColor: "text-gray-900 dark:text-white",
+  footerText: "100% Free • Highly Personalized",
+  link: "https://gem-final.vercel.app/gemstone-report#gemstone-form",
+  IsfooterTextBtn: false
+};
 
 /** --- Shared Tailwind CSS Classes --- */
 
@@ -97,6 +111,24 @@ const getCardTitleStyles = (titleColor: string): string => {
 export function PersonalGuidance() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [lastInteraction, setLastInteraction] = useState(0);
+  const [currency, setCurrency] = useState('INR');
+
+  useEffect(() => {
+    const getCookie = (name: string) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop()?.split(';').shift() || '';
+      return '';
+    };
+
+    const cookieCurrency = getCookie('currentcurrency');
+    if (cookieCurrency) {
+      setCurrency(cookieCurrency);
+    }
+  }, []);
+
+  const thirdExpert = currency === 'INR' ? GEMSTONE_EXPERT : PRASNA_EXPERT;
+  const expertsToShow = [...BASE_EXPERTS, thirdExpert];
 
   /**
    * Auto-scroll functionality for mobile views.
@@ -144,7 +176,7 @@ export function PersonalGuidance() {
           onTouchStart={() => setLastInteraction(Date.now())}
           onMouseDown={() => setLastInteraction(Date.now())}
         >
-          {EXPERTS.map((expert, expertIndex) => (
+          {expertsToShow.map((expert, expertIndex) => (
             <AnimatedCard
               key={expertIndex}
               className={CARD_STYLES}

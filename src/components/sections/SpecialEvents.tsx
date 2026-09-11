@@ -503,7 +503,7 @@ export function SpecialEvents() {
               />
             </div>
             <div className={CTA_TEXT_WRAPPER_STYLES}>
-              <span className={CTA_TITLE_STYLES}>Free Numerology</span>
+              <span className={CTA_TITLE_STYLES}>Chat with Astrologer</span>
             </div>
             <div className={CTA_ARROW_WRAPPER_STYLES}>
               <ChevronRight className={CTA_ARROW_ICON_ASTRO_STYLES} />
