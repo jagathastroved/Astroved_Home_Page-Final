@@ -531,7 +531,7 @@ export function SpecialEvents() {
           </a>
         </div>
       </div>
-      <SeptemberSaleBanner />
+      {/* <SeptemberSaleBanner /> */}
       {/* --- Infinite Scrolling Banner --- */}
       <div className="w-full bg-[#0b1120] border-t border-b border-white/10 overflow-hidden py-2.5 relative z-20 marquee-container mt-4 md:mt-8">
         <div className="animate-marquee">
