@@ -31,6 +31,10 @@
   <meta property="og:type" content="website" />
   <meta property="fb:app_id" content="201285856706759" />
 
+  <!-- jQuery (Loaded before GTM to prevent ReferenceError) -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
   <!-- Google Tag Manager -->
   <script>
     (function (w, d, s, l, i) {
@@ -81,8 +85,7 @@
   <!-- End Google Tag Manager (noscript) -->
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"
-    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
   <script>
     function getQueryStringValue(key) {
       return decodeURIComponent(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + encodeURIComponent(key).replace(/[\.\+\*]/g, "\\$&") + "(\\=([^&]*))?)?.*$", "i"), "$1"));

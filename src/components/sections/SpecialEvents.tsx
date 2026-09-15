@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, ScrollText, PhoneCall } from "lucide-react";
+import { ChevronLeft, ChevronRight, ScrollText, PhoneCall, Gem } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { fetchSpecialEvents } from "../../services/astrovedService";
 import '../../layouts/Navbar.css';
-import { SeptemberSaleBanner } from "./SeptemberSaleBanner";
 /**
  * Interface defining the structure of a single banner (one image + link).
  * `sources` holds any <picture><source> variants found *inside that same
@@ -66,22 +65,28 @@ const PAGINATION_CONTAINER_STYLES =
 const CTA_BAR_CONTAINER_STYLES =
   "w-full flex flex-col md:flex-row justify-center items-center gap-4 sm:gap-6 md:gap-8 lg:gap-8 mt-4 sm:mt-5 lg:mt-3 mb-2 lg:mb-0 px-2 sm:px-6 md:px-10 lg:px-8 relative z-30";
 const ASTRO_BTN_STYLES =
-  "relative flex items-center justify-center rounded-full bg-gradient-to-r from-[#20033b] via-[#3a0c6a] to-[#510e8d] hover:to-[#5c0fa0] transition-all duration-300 shadow-[0_10px_30px_rgba(58,12,106,0.3)] hover:shadow-[0_10px_35px_rgba(176,82,255,0.5)] border-[2px] border-amber-400 hover:scale-[1.03] w-full max-w-[300px] sm:max-w-[340px] md:max-w-[360px] lg:max-w-[380px] h-[64px] sm:h-[72px] lg:h-[76px] group ml-5 sm:ml-6 md:ml-8 lg:ml-0 cursor-pointer";
+  "relative flex items-center justify-center rounded-full bg-gradient-to-r from-[#20033b] via-[#3a0c6a] to-[#510e8d] hover:to-[#5c0fa0] transition-all duration-300 shadow-[0_10px_30px_rgba(58,12,106,0.3)] border-[2px] border-amber-400 hover:scale-[1.03] w-full max-w-[360px] sm:max-w-[380px] md:max-w-[400px] lg:max-w-[420px] h-[64px] sm:h-[72px] lg:h-[76px] group ml-5 sm:ml-6 md:ml-8 lg:ml-0 cursor-pointer";
 const ASTRO_ICON_WRAPPER_STYLES =
   "absolute left-[-20px] sm:left-[-24px] top-1/2 -translate-y-1/2 w-[64px] h-[64px] sm:w-[72px] sm:h-[72px] lg:w-[76px] lg:h-[76px] rounded-full border-[2.5px] border-amber-400 bg-gradient-to-b from-[#2a0854] to-[#120224] flex items-center justify-center shadow-lg z-20 group-hover:scale-105 transition-transform duration-300";
 const HOMA_BTN_STYLES =
-  "relative flex items-center justify-center rounded-full bg-gradient-to-r from-[#983800] via-[#c65104] to-[#ea6b06] hover:to-[#f2740d] transition-all duration-300 shadow-[0_10px_30px_rgba(198,81,4,0.3)] hover:shadow-[0_10px_35px_rgba(245,158,11,0.5)] border-[2px] border-amber-400 hover:scale-[1.03] w-full max-w-[300px] sm:max-w-[340px] md:max-w-[360px] lg:max-w-[380px] h-[64px] sm:h-[72px] lg:h-[76px] group ml-5 sm:ml-6 md:ml-8 lg:ml-0 cursor-pointer";
+  "relative flex items-center justify-center rounded-full bg-gradient-to-r from-[#983800] via-[#c65104] to-[#ea6b06] hover:to-[#f2740d] transition-all duration-300 shadow-[0_10px_30px_rgba(198,81,4,0.3)] border-[2px] border-amber-400 hover:scale-[1.03] w-full max-w-[360px] sm:max-w-[380px] md:max-w-[400px] lg:max-w-[420px] h-[64px] sm:h-[72px] lg:h-[76px] group ml-5 sm:ml-6 md:ml-8 lg:ml-0 cursor-pointer";
 const HOMA_ICON_WRAPPER_STYLES =
   "absolute left-[-20px] sm:left-[-24px] top-1/2 -translate-y-1/2 w-[64px] h-[64px] sm:w-[72px] sm:h-[72px] lg:w-[76px] lg:h-[76px] rounded-full border-[2.5px] border-amber-400 bg-gradient-to-b from-[#8f3a00] to-[#3a1500] flex items-center justify-center shadow-lg z-20 group-hover:scale-105 transition-transform duration-300";
-const CTA_TEXT_WRAPPER_STYLES = "z-10 text-center w-full px-14 sm:px-16";
+const CTA_TEXT_WRAPPER_STYLES = "z-10 text-center w-full px-12 sm:px-14";
 const CTA_TITLE_STYLES =
-  "font-serif text-white text-[17px] sm:text-[19px] lg:text-[22px] font-bold tracking-wide drop-shadow-md leading-tight whitespace-nowrap";
+  "font-serif text-white text-[14px] min-[360px]:text-[16px] sm:text-[18px] lg:text-[21px] font-bold tracking-wide drop-shadow-md leading-tight whitespace-nowrap";
 const CTA_ARROW_WRAPPER_STYLES =
   "absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 rounded-full bg-white flex items-center justify-center shadow-md z-10 group-hover:translate-x-1 transition-transform duration-300 shrink-0";
 const CTA_ARROW_ICON_ASTRO_STYLES =
   "w-4 h-4 sm:w-5 sm:h-5 lg:w-5 lg:h-5 text-purple-800 stroke-[2.5]";
 const CTA_ARROW_ICON_HOMA_STYLES =
   "w-4 h-4 sm:w-5 sm:h-5 lg:w-5 lg:h-5 text-orange-800 stroke-[2.5]";
+const GEMSTONE_BTN_STYLES =
+  "relative flex items-center justify-center rounded-full bg-gradient-to-r from-[#083344] via-[#164e63] to-[#155e75] hover:to-[#0e7490] transition-all duration-300 shadow-[0_10px_30px_rgba(22,78,99,0.3)] border-[2px] border-cyan-400 hover:scale-[1.03] w-full max-w-[360px] sm:max-w-[380px] md:max-w-[400px] lg:max-w-[420px] h-[64px] sm:h-[72px] lg:h-[76px] group ml-5 sm:ml-6 md:ml-8 lg:ml-0 cursor-pointer";
+const GEMSTONE_ICON_WRAPPER_STYLES =
+  "absolute left-[-20px] sm:left-[-24px] top-1/2 -translate-y-1/2 w-[64px] h-[64px] sm:w-[72px] sm:h-[72px] lg:w-[76px] lg:h-[76px] rounded-full border-[2.5px] border-cyan-400 bg-gradient-to-b from-[#164e63] to-[#083344] flex items-center justify-center shadow-lg z-20 group-hover:scale-105 transition-transform duration-300";
+const CTA_ARROW_ICON_GEM_STYLES =
+  "w-4 h-4 sm:w-5 sm:h-5 lg:w-5 lg:h-5 text-cyan-800 stroke-[2.5]";
 
 /**
  * Returns dynamic visibility classes for multi-banner (three-ban) arrays.
@@ -213,6 +218,21 @@ export function SpecialEvents() {
   const [direction, setDirection] = useState(1);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [currency, setCurrency] = useState('INR');
+
+  useEffect(() => {
+    const getCookie = (name: string) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop()?.split(';').shift() || '';
+      return '';
+    };
+
+    const cookieCurrency = getCookie('currentcurrency');
+    if (cookieCurrency) {
+      setCurrency(cookieCurrency);
+    }
+  }, []);
 
   // The carousel actually shown right now — mobile_content on small screens,
   // desktop_content everywhere else.
@@ -491,7 +511,7 @@ export function SpecialEvents() {
         {/* --- Premium Static Theme CTA Bar --- */}
         <div className={CTA_BAR_CONTAINER_STYLES}>
           {/* Talk to Astrologer Button */}
-          <a
+          {currency === "USD" || currency === "MYR" ? (<a
             href="/numerology-report/?promo=SL_Home_Numerology"
             target="_blank"
             className={ASTRO_BTN_STYLES}
@@ -508,8 +528,25 @@ export function SpecialEvents() {
             <div className={CTA_ARROW_WRAPPER_STYLES}>
               <ChevronRight className={CTA_ARROW_ICON_ASTRO_STYLES} />
             </div>
-          </a>
-
+          </a>) : (<a
+            href="/numerology-report/?promo=SL_Home_Numerology"
+            target="_blank"
+            className={GEMSTONE_BTN_STYLES}
+          >
+            <div className={GEMSTONE_ICON_WRAPPER_STYLES}>
+              <Gem
+                className="w-8 h-8 lg:w-9 lg:h-9 text-cyan-300 drop-shadow-[0_0_8px_rgba(103,232,249,0.8)] fill-cyan-500/30"
+                strokeWidth={1.5}
+              />
+            </div>
+            <div className={CTA_TEXT_WRAPPER_STYLES}>
+              <span className={CTA_TITLE_STYLES}>Free Gemstone Report</span>
+            </div>
+            <div className={CTA_ARROW_WRAPPER_STYLES}>
+              <ChevronRight className={CTA_ARROW_ICON_GEM_STYLES} />
+            </div>
+          </a>)
+          }
           {/* Free Kundali Button */}
           <a
             href="/kundali-report/?promo=SL_Home_Kundali"
@@ -531,7 +568,7 @@ export function SpecialEvents() {
           </a>
         </div>
       </div>
-      {/* <SeptemberSaleBanner /> */}
+
       {/* --- Infinite Scrolling Banner --- */}
       <div className="w-full bg-[#0b1120] border-t border-b border-white/10 overflow-hidden py-2.5 relative z-20 marquee-container mt-4 md:mt-8">
         <div className="animate-marquee">
