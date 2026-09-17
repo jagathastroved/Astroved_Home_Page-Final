@@ -78,8 +78,8 @@ const HEADER_DESC_STYLES = "font-sans text-gray-500 dark:text-gray-400 text-sm m
 const DESKTOP_GRID_STYLES = "hidden md:grid md:grid-cols-3 gap-6 lg:gap-8 items-stretch";
 //const DESKTOP_CARD_STYLES = "group overflow-hidden rounded-[2.5rem] bg-[#f8f9fa] dark:bg-[#0b0e14] border border-gray-100 dark:border-white/5 hover:border-[#b052ff]/30 hover:shadow-[0_0_30px_rgba(176,82,255,0.15)] transition-all duration-500 flex flex-col h-full relative";
 const DESKTOP_CARD_STYLES = "group overflow-hidden rounded-[2.5rem] bg-white dark:bg-[#0b0e14] border border-gray-200/80 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-[#b052ff]/40 hover:shadow-[0_8px_40px_rgba(176,82,255,0.25)] hover:-translate-y-1 transition-all duration-500 flex flex-col h-full relative";
-const DESKTOP_IMG_WRAPPER_STYLES = "w-full h-64 lg:h-72 relative overflow-hidden rounded-t-[2.5rem] isolate";
-const DESKTOP_CARD_CONTENT_STYLES = "px-5 lg:px-8 pb-8 pt-4 flex flex-col flex-grow z-10 relative";
+const DESKTOP_IMG_WRAPPER_STYLES = "w-full h-64 lg:h-72 relative isolate";
+const DESKTOP_CARD_CONTENT_STYLES = "px-5 lg:px-8 pb-4 lg:pb-0 pt-2 flex flex-col flex-grow z-10 relative";
 const DESKTOP_HEADER_WRAPPER_STYLES = "min-h-[110px] lg:min-h-[125px] flex flex-col justify-start";
 const TAGLINE_WRAPPER_STYLES = "flex items-center mb-3 lg:mb-4";
 const TAGLINE_STYLES = "before:content-['✦'] before:mr-2.5 before:text-[#d946ef] flex items-center font-serif text-sm lg:text-base uppercase tracking-[0.25em] font-black text-transparent bg-clip-text bg-gradient-to-r from-[#8a2be2] to-[#d946ef] drop-shadow-sm leading-tight";
@@ -96,10 +96,10 @@ const MOBILE_CONTAINER_STYLES = "md:hidden relative group px-0 touch-pan-y";
 //const MOBILE_CAROUSEL_BOX_STYLES = "overflow-hidden rounded-[2.5rem] bg-[#f8f9fa] dark:bg-[#0b0e14] border border-gray-100 dark:border-white/5 hover:border-[#b052ff]/30 hover:shadow-[0_0_40px_rgba(176,82,255,0.15)] transition-all duration-500 relative h-[670px] lg:h-[450px]";
 const MOBILE_CAROUSEL_BOX_STYLES = "overflow-hidden rounded-[2.5rem] bg-white dark:bg-[#0b0e14] border border-gray-200/80 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-[#b052ff]/40 hover:shadow-[0_8px_40px_rgba(176,82,255,0.25)] transition-all duration-500 relative h-[670px] lg:h-[450px]";
 const MOBILE_CARD_INNER_STYLES = "group/card flex flex-col lg:flex-row h-full relative";
-const MOBILE_DESKTOP_IMG_OVERLAY_STYLES = "hidden lg:block absolute top-0 bottom-0 left-0 w-[55%] overflow-hidden pointer-events-none";
-const MOBILE_IMG_WRAPPER_STYLES = "lg:hidden absolute top-0 inset-x-0 h-[220px] overflow-hidden pointer-events-none rounded-t-[2.5rem]";
-const MOBILE_GRADIENT_OVERLAY_STYLES = "absolute inset-0 bg-gradient-to-t from-[#f8f9fa] dark:from-[#0b0e14] to-transparent h-24 top-auto bottom-0";
-const MOBILE_CONTENT_CONTAINER_STYLES = "w-full lg:w-[45%] ml-auto px-6 pb-20 pt-[240px] sm:px-12 lg:p-16 flex flex-col justify-center items-center lg:items-start text-center lg:text-left z-10 relative h-full lg:mt-0 lg:pt-0";
+const MOBILE_DESKTOP_IMG_OVERLAY_STYLES = "hidden lg:block absolute top-0 bottom-0 left-0 w-[55%] pointer-events-none p-2 lg:p-2.5";
+const MOBILE_IMG_WRAPPER_STYLES = "lg:hidden absolute top-0 inset-x-0 h-[240px] pointer-events-none p-2";
+const MOBILE_GRADIENT_OVERLAY_STYLES = "hidden"; // Not used anymore, kept for variable definition just in case
+const MOBILE_CONTENT_CONTAINER_STYLES = "w-full lg:w-[45%] ml-auto px-6 pb-20 pt-[270px] sm:px-12 lg:p-16 flex flex-col justify-center items-center lg:items-start text-center lg:text-left z-10 relative h-full lg:mt-0 lg:pt-0";
 const MOBILE_TAGLINE_WRAPPER_STYLES = "flex items-center justify-center lg:justify-start mb-5 relative z-20 w-full";
 const MOBILE_TAGLINE_STYLES = "before:content-['✦'] before:mr-2.5 before:text-[#d946ef] flex items-center font-serif text-sm md:text-base uppercase tracking-[0.25em] font-black text-transparent bg-clip-text bg-gradient-to-r from-[#8a2be2] to-[#d946ef] drop-shadow-sm relative z-20";
 const MOBILE_TITLE_STYLES = "font-sans text-[1.35rem] leading-tight lg:text-3xl lg:leading-snug text-gray-900 dark:text-white font-bold tracking-tight mb-4";
@@ -223,11 +223,13 @@ export function PersonalizedSolutions() {
         {SOLUTIONS.map((solution, itemIndex) => (
           <div key={itemIndex} className={DESKTOP_CARD_STYLES}>
             <div className={DESKTOP_IMG_WRAPPER_STYLES}>
-              <img
-                src={solution.image}
-                alt={solution.title}
-                className={getDesktopImageStyles(solution.imagePosition)}
-              />
+              <div className="w-full h-full relative overflow-hidden rounded-[1.5rem]">
+                <img
+                  src={solution.image}
+                  alt={solution.title}
+                  className={getDesktopImageStyles(solution.imagePosition)}
+                />
+              </div>
             </div>
 
             <div className={DESKTOP_CARD_CONTENT_STYLES}>
@@ -305,28 +307,27 @@ export function PersonalizedSolutions() {
 
                     {/* Background Image (Desktop override inside carousel) */}
                     <div className={MOBILE_DESKTOP_IMG_OVERLAY_STYLES}>
-                      <img
-                        src={currentSolution.image}
-                        alt={currentSolution.title}
-                        className={getCarouselImageStyles(currentSolution.imagePosition, true)}
-                        style={{
-                          WebkitMaskImage: 'linear-gradient(to right, black 85%, transparent 100%)',
-                          maskImage: 'linear-gradient(to right, black 85%, transparent 100%)'
-                        }}
-                      />
+                      <div className="w-full h-full relative overflow-hidden rounded-[1.5rem]">
+                        <img
+                          src={currentSolution.image}
+                          alt={currentSolution.title}
+                          className={getCarouselImageStyles(currentSolution.imagePosition, true)}
+                        />
+                      </div>
                     </div>
 
                     {/* Background Image (Mobile & Tablet) */}
                     <div className={MOBILE_IMG_WRAPPER_STYLES}>
-                      <picture>
-                        <source media="(min-width: 768px)" srcSet={currentSolution.image} />
-                        <img
-                          src={currentSolution.mobileImage || currentSolution.image}
-                          alt={currentSolution.title}
-                          className={getCarouselImageStyles(currentSolution.imagePosition, false)}
-                        />
-                      </picture>
-                      <div className={MOBILE_GRADIENT_OVERLAY_STYLES}></div>
+                      <div className="w-full h-full relative overflow-hidden rounded-[1.5rem]">
+                        <picture>
+                          <source media="(min-width: 768px)" srcSet={currentSolution.image} />
+                          <img
+                            src={currentSolution.mobileImage || currentSolution.image}
+                            alt={currentSolution.title}
+                            className={getCarouselImageStyles(currentSolution.imagePosition, false)}
+                          />
+                        </picture>
+                      </div>
                     </div>
 
                     {/* Content Section */}

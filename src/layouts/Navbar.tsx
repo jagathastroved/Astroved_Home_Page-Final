@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Sun, Moon, Menu, X, Sparkles, ShoppingBag, Map, Hand, Crown, Clock, Star, Coins, ShieldCheck, Gift, BookOpen, ChevronRight, Zap, Compass, Gem, Leaf, Flame, Eye, Heart, Users, TrendingUp, Calendar, Award, Settings, User, Mail, Phone, Building, FileText, ShoppingCart, Video, ChevronDown, CircleDot, Hexagon, Target, Medal, Search, Import } from 'lucide-react';
 import { motion, AnimatePresence, Variants } from 'motion/react';
 import { useTheme } from '../context/ThemeProvider';
@@ -145,7 +145,7 @@ const UserIcon = (
  * (7 links + 2 buttons + logo).
  */
 
-const HEADER_STYLES = "sticky top-0 z-50 bg-gradient-to-r from-[#f3e8ff]/95 via-[#fae8ff]/95 to-[#fce7f3]/95 dark:bg-gradient-to-r dark:from-[#1e1b4b]/95 dark:via-[#3b0764]/95 dark:to-[#0a0e17]/95 backdrop-blur-md transition-colors duration-500 shadow-sm";
+const HEADER_STYLES = "fixed top-0 left-0 right-0 w-full z-50 bg-gradient-to-r from-[#f3e8ff]/95 via-[#fae8ff]/95 to-[#fce7f3]/95 dark:bg-gradient-to-r dark:from-[#1e1b4b]/95 dark:via-[#3b0764]/95 dark:to-[#0a0e17]/95 backdrop-blur-md transition-all duration-300 shadow-sm";
 const MOBILE_TOGGLE_STYLES = "max-[900px]:flex min-[901px]:hidden p-2 -ml-2 rounded-full border border-amber-400/25 text-purple-700 dark:text-amber-400 hover:bg-amber-400/10 transition-colors";
 
 // Text scales smoothly with viewport width (clamp: min 12px, max 17px) so it never overlaps the logo/buttons as the screen narrows.
@@ -205,6 +205,45 @@ const itemVariants: Variants = {
 
 export function Navbar() {
   const { theme, toggleTheme } = useTheme();
+  const [showNavbar, setShowNavbar] = useState(true);
+  const lastScrollY = useRef(0);
+  const headerRef = useRef<HTMLElement>(null);
+  const [headerHeight, setHeaderHeight] = useState(0);
+
+  useEffect(() => {
+    if (headerRef.current) {
+      setHeaderHeight(headerRef.current.offsetHeight);
+    }
+
+    // Also update on window resize
+    const handleResize = () => {
+      if (headerRef.current) {
+        setHeaderHeight(headerRef.current.offsetHeight);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY < lastScrollY.current) {
+        setShowNavbar(true);
+      } else if (currentScrollY < 50) {
+        setShowNavbar(true);
+      } else if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
+        setShowNavbar(false);
+      }
+      lastScrollY.current = currentScrollY;
+
+      setIsLangOpen(false);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
   const [activeMobileSubMenu, setActiveMobileSubMenu] = useState<string | null>(null);
@@ -216,8 +255,23 @@ export function Navbar() {
   const [isAccountPanelOpen, setAccountPanelOpen] = useState(false);
   const [isPanelOpen, setPanelOpen] = useState(false);
   const [placeholder, setPlaceholder] = useState('Search...');
-  const [isLangOpen,setIsLangOpen] = useState(false);
-  const [selectedLang,setSelectedLang] = useState("EN");
+  const [isLangOpen, setIsLangOpen] = useState(false);
+  const [selectedLang, setSelectedLang] = useState("EN");
+  const [currency, setCurrency] = useState('USD')
+  useEffect(() => {
+    const getCookie = (name: string) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop()?.split(';').shift() || '';
+      return '';
+    };
+
+    const cookieCurrency = getCookie('currentcurrency');
+    if (cookieCurrency) {
+      setCurrency(cookieCurrency);
+    }
+  }, []);
+
   useEffect(() => {
     let isMounted = true;
 
@@ -241,7 +295,7 @@ export function Navbar() {
     fetch('/mainmenunew.json')
       .then(res => res.json())
       .then(data => {
-         const formatUrl = (url: string) => {
+        const formatUrl = (url: string) => {
           if (!url || url === 'javascript:void(0)') return undefined;
           if (url.startsWith('http')) return url;
           return `${import.meta.env.VITE_SITE_URL}${url.startsWith('/') ? url : '/' + url}`;
@@ -251,21 +305,26 @@ export function Navbar() {
           let icon = Sparkles;
           let label = menu.name;
 
+          let filteredSub = menu.sub;
+          if (filteredSub && filteredSub.length > 0 && currency !== 'INR') {
+            filteredSub = filteredSub.filter((s: any) => s.name.trim().toLowerCase() !== 'gemstone' && s.name.trim().toLowerCase() !== 'gemstones');
+          }
+
           return {
             label: label,
             id: menu.name.toLowerCase().replace(/\s+/g, '-'),
             href: formatUrl(menu.link),
             icon: icon,
             color: 'text-purple-600 dark:text-purple-400',
-            items: menu.sub && menu.sub.length > 0
-              ? menu.sub.map((s: any) => ({ label: s.name, href: formatUrl(s.link) }))
-              : undefined
+            items: filteredSub && filteredSub.length > 0
+              ? filteredSub.map((s: any) => ({ label: s.name, href: formatUrl(s.link) }))
+              : null
           };
         });
         setNavLinks(formatted);
       })
       .catch(err => console.error("Error fetching menu:", err));
-  }, []);
+  }, [currency]);
 
   // Prevent scrolling when mobile menu is open
   useEffect(() => {
@@ -368,7 +427,8 @@ export function Navbar() {
   }
   return (
     <>
-      <header className={HEADER_STYLES}>
+      <div style={{ height: headerHeight > 0 ? `${headerHeight}px` : 'auto' }} className="w-full shrink-0" />
+      <header ref={headerRef} className={`${HEADER_STYLES} ${showNavbar ? 'translate-y-0' : '-translate-y-full'}`}>
         <div className="relative w-full max-w-[1600px] mx-auto flex items-center justify-between px-[clamp(10px,2vw,24px)] py-3 gap-2">
 
           {/* --- Floating Dropdown Search (All Screen Sizes) --- */}
@@ -403,7 +463,10 @@ export function Navbar() {
             <button className={MOBILE_TOGGLE_STYLES} onClick={() => {
               const willOpen = !isMobileMenuOpen;
               setIsMobileMenuOpen(willOpen);
-              if (willOpen) setIsSearchOpen(false);
+              if (willOpen) {
+                setIsSearchOpen(false);
+                setIsLangOpen(false);
+              }
             }}>
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -490,75 +553,79 @@ export function Navbar() {
           <div className="flex items-center justify-end gap-[clamp(4px,0.6vw,10px)] shrink-0">
             {/* {/ Language Selector */}
             <div
-            className="relative flex items-center py-2"
-            onMouseEnter={() => {
-            if (typeof window !== 'undefined' && window.innerWidth > 900) {
-            setIsLangOpen(true);
-            setIsSearchOpen(false);
-            }
-            }}
-            onMouseLeave={() => { if (typeof window !== 'undefined' && window.innerWidth > 900) setIsLangOpen(false); }}
+              className="relative flex items-center py-2"
+              onMouseEnter={() => {
+                if (typeof window !== 'undefined' && window.innerWidth > 900) {
+                  setIsLangOpen(true);
+                  setIsSearchOpen(false);
+                  setIsMobileMenuOpen(false);
+                }
+              }}
+              onMouseLeave={() => { if (typeof window !== 'undefined' && window.innerWidth > 900) setIsLangOpen(false); }}
             >
-            <button
-            onClick={() => {
-            if (typeof window !== 'undefined' && window.innerWidth <= 900) {
-            const willOpen = !isLangOpen;
-            setIsLangOpen(willOpen);
-            if (willOpen) setIsSearchOpen(false);
-            }
-            }}
-            // className="outline-none focus:outline-none [-webkit-tap-highlight-color:transparent] group relative flex items-center gap-1 sm:gap-1.5 px-2 sm:px-[clamp(10px,1.2vw,14px)] py-1 sm:py-[clamp(4px,0.6vw,8px)] bg-gradient-to-br from-white/60 to-white/30 dark:from-[#1a1528]/80 dark:to-[#0d0914]/80 hover:from-white/90 hover:to-white/60 dark:hover:from-[#231b36]/90 dark:hover:to-[#120c1d]/90 backdrop-blur-md border border-purple-200/60 dark:border-purple-700/40 rounded-lg sm:rounded-xl shadow-[0_2px_10px_rgba(103,93,243,0.08)] dark:shadow-[0_4px_15px_rgba(0,0,0,0.4)] transition-all duration-300 hover:shadow-[0_4px_15px_rgba(103,93,243,0.15)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.6)]"
-            className="outline-none focus:outline-none [-webkit-tap-highlight-color:transparent] group relative flex items-center gap-1 sm:gap-1.5 px-2 sm:px-[clamp(10px,1.2vw,14px)] py-1 sm:py-[clamp(4px,0.6vw,8px)] backdrop-blur-md border border-purple-200/60 dark:border-purple-700/40 rounded-lg sm:rounded-xl shadow-[0_2px_10px_rgba(103,93,243,0.08)] dark:shadow-[0_4px_15px_rgba(0,0,0,0.4)] transition-all duration-300 hover:shadow-[0_4px_15px_rgba(103,93,243,0.15)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.6)]"
-            >
-              <span className="font-sans font-bold text-[#675df3] dark:text-amber-400 text-[11px] sm:text-[clamp(11px,1.1vw,14px)] tracking-wide sm:tracking-widest">{selectedLang}</span>
-              <ChevronDown className={`w-3 sm:w-[14px] h-3 sm:h-[14px] text-purple-500/70 dark:text-amber-400/70 group-hover:text-[#675df3] dark:group-hover:text-amber-300 transition-transform duration-300 ${isLangOpen ? "rotate-180" : ""}`} />
-            </button>
-
-            <AnimatePresence>
-              {isLangOpen && (
-                <motion.div
-                initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 5, scale: 0.95 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-                className="absolute top-full mt-2 right-0 w-[150px] bg-white/95 dark:bg-[#0a0514]/95 backdrop-blur-xl border border-purple-200/60 dark:border-purple-800/60 rounded-2xl shadow-2xl overflow-hidden z-50 flex flex-col p-1.5"
-                >
-                  {[
-                  { code: "EN", label: "English - EN" },
-                  { code: "TA", label: "தமிழ் - TA" },
-                  { code: "HI", label: "हिंदी - HI" },
-                  ].map((lang) => (
-                  <button
-                  key={lang.code}
-                  onClick={() => {
-                  setSelectedLang(lang.code);
-                  setIsLangOpen(false);
-                  if (lang.code === "EN") {
-                    window.location.href = "/";
-                  } else if (lang.code === "HI") {
-                    window.location.href = "/hindi";
-                  } else if (lang.code === "TA") {
-                    window.location.href = "/tamil";
+              <button
+                onClick={() => {
+                  if (typeof window !== 'undefined' && window.innerWidth <= 900) {
+                    const willOpen = !isLangOpen;
+                    setIsLangOpen(willOpen);
+                    if (willOpen) {
+                      setIsSearchOpen(false);
+                      setIsMobileMenuOpen(false);
+                    }
                   }
-                  }}
-                  className={`text-left px-3 py-2.5 rounded-xl text-[14px] transition-all duration-200 ${
-                  selectedLang === lang.code
-                  ? "bg-purple-100/50 dark:bg-purple-900/40 text-[#675df3] dark:text-amber-400 font-semibold"
-                  : "text-slate-700 dark:text-cream/80 hover:bg-purple-50 dark:hover:bg-white/5 hover:text-[#675df3] dark:hover:text-amber-300"
-                  }`}
+                }}
+                // className="outline-none focus:outline-none [-webkit-tap-highlight-color:transparent] group relative flex items-center gap-1 sm:gap-1.5 px-2 sm:px-[clamp(10px,1.2vw,14px)] py-1 sm:py-[clamp(4px,0.6vw,8px)] bg-gradient-to-br from-white/60 to-white/30 dark:from-[#1a1528]/80 dark:to-[#0d0914]/80 hover:from-white/90 hover:to-white/60 dark:hover:from-[#231b36]/90 dark:hover:to-[#120c1d]/90 backdrop-blur-md border border-purple-200/60 dark:border-purple-700/40 rounded-lg sm:rounded-xl shadow-[0_2px_10px_rgba(103,93,243,0.08)] dark:shadow-[0_4px_15px_rgba(0,0,0,0.4)] transition-all duration-300 hover:shadow-[0_4px_15px_rgba(103,93,243,0.15)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.6)]"
+                className="outline-none focus:outline-none [-webkit-tap-highlight-color:transparent] group relative flex items-center gap-1 sm:gap-1.5 px-2 sm:px-[clamp(10px,1.2vw,14px)] py-1 sm:py-[clamp(4px,0.6vw,8px)] backdrop-blur-md border border-purple-200/60 dark:border-purple-700/40 rounded-lg sm:rounded-xl shadow-[0_2px_10px_rgba(103,93,243,0.08)] dark:shadow-[0_4px_15px_rgba(0,0,0,0.4)] transition-all duration-300 hover:shadow-[0_4px_15px_rgba(103,93,243,0.15)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.6)]"
+              >
+                <span className="font-sans font-bold text-[#675df3] dark:text-amber-400 text-[11px] sm:text-[clamp(11px,1.1vw,14px)] tracking-wide sm:tracking-widest">{selectedLang}</span>
+                <ChevronDown className={`w-3 sm:w-[14px] h-3 sm:h-[14px] text-purple-500/70 dark:text-amber-400/70 group-hover:text-[#675df3] dark:group-hover:text-amber-300 transition-transform duration-300 ${isLangOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              <AnimatePresence>
+                {isLangOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 5, scale: 0.95 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
+                    className="absolute top-full mt-2 right-0 w-[150px] bg-white/95 dark:bg-[#0a0514]/95 backdrop-blur-xl border border-purple-200/60 dark:border-purple-800/60 rounded-2xl shadow-2xl overflow-hidden z-50 flex flex-col p-1.5"
                   >
-                  {lang.label}
-                  </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
+                    {[
+                      { code: "EN", label: "English - EN" },
+                      { code: "TA", label: "தமிழ் - TA" },
+                      { code: "HI", label: "हिंदी - HI" },
+                    ].map((lang) => (
+                      <button
+                        key={lang.code}
+                        onClick={() => {
+                          setSelectedLang(lang.code);
+                          setIsLangOpen(false);
+                          if (lang.code === "EN") {
+                            window.location.href = "/";
+                          } else if (lang.code === "HI") {
+                            window.location.href = "/hindi";
+                          } else if (lang.code === "TA") {
+                            window.location.href = "/tamil";
+                          }
+                        }}
+                        className={`text-left px-3 py-2.5 rounded-xl text-[14px] transition-all duration-200 ${selectedLang === lang.code
+                          ? "bg-purple-100/50 dark:bg-purple-900/40 text-[#675df3] dark:text-amber-400 font-semibold"
+                          : "text-slate-700 dark:text-cream/80 hover:bg-purple-50 dark:hover:bg-white/5 hover:text-[#675df3] dark:hover:text-amber-300"
+                          }`}
+                      >
+                        {lang.label}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
             {/* Search — icon-only trigger, opens full-width overlay below navbar */}
             <button
               onClick={() => {
                 setIsSearchOpen(true);
                 setIsMobileMenuOpen(false);
+                setIsLangOpen(false);
               }}
               aria-label="Open search"
               className={ICON_BTN_STYLES}
@@ -584,7 +651,7 @@ export function Navbar() {
               <button className={DESKTOP_SIGNIN_BTN} onClick={openLoginPanel}>Sign In</button>
             )} */}
             {currentUser ? (
-              <button type="button" className="user-chip" onClick={() => {setAccountPanelOpen(true);setPanelOpen(false);setIsMobileMenuOpen(false);}}>
+              <button type="button" className="user-chip" onClick={() => { setAccountPanelOpen(true); setPanelOpen(false); setIsMobileMenuOpen(false); }}>
                 <span className="user-chip__icon">{UserIcon}</span>
                 <span className="user-chip__name">{currentUser.fullName}</span>
               </button>

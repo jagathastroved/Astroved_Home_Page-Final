@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
-import { ArrowRight, Sparkles, Flame, Clock, ChevronLeft, ChevronRight, Gift, HeartHandshake, Flower2, Music, Home, Coins } from 'lucide-react';
+import axios from 'axios';
+import { ArrowRight, Sparkles, Flame, Clock, ChevronLeft, ChevronRight, Gift, HeartHandshake, Flower2, Music, Home, Coins, Calendar } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import divine_statues from "../../assets/Special_events/divine_statues.jpg";
-import donate_homa from "../../assets/Special_events/varaha-homa.jpg";
-import birthday_cake from "../../assets/Special_events/birthday_cake.png";
 import '../../layouts/Navbar.css';
+
 /** --- Custom Hook for Auto Carousel --- */
 function useAutoCarousel(itemsCount: number, interval: number = 5000) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -21,6 +20,7 @@ function useAutoCarousel(itemsCount: number, interval: number = 5000) {
   };
 
   useEffect(() => {
+    if (itemsCount === 0) return;
     const timer = setTimeout(() => {
       nextSlide();
     }, interval);
@@ -30,59 +30,7 @@ function useAutoCarousel(itemsCount: number, interval: number = 5000) {
   return { currentIndex, direction, nextSlide, prevSlide, setCurrentIndex };
 }
 
-const RITUAL_EVENTS: any[] = [
-  {
-    id: 1,
-    title: "The Living Divine Presence at the Chennai Homa Center",
-    image: divine_statues,
-    description: "Dr. Pillai connected with the divine forms and experienced them as living spiritual presences. Sponsor the ongoing worship of these living divine statues to help support the daily rituals at the Chennai Homa Center.",
-    bullets: [
-      { icon: <Home className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />, text: "Pooja, Abhishekam, Archana" },
-      { icon: <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />, text: "Homa fire rituals" },
-      { icon: <Music className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />, text: "Mantra chanting", fullWidth: true }
-    ],
-    urgencyText: "SPONSOR THE ONGOING WORSHIP",
-    buttonText: "SPONSOR NOW",
-    link: "/us/specials/deity-statue-sponsporship-program?promo=SL_deity_statue_sponsporship_program-1",
-    badgeText: "DIVINE PRESENCE",
-    headerTitle: "Sponsor Living",
-    headerItalic: "Divine Statues."
-  },
-  {
-    id: 2,
-    title: "Monthly Varaha Homa by Donation",
-    description: "Invoke Lord Varaha, the powerful incarnation of Vishnu, through the divine technology of Fire Labs to seek protection, stability, prosperity, and relief from obstacles. Participate in this special monthly Homa by donating any amount you can contribute.",
-    image: donate_homa,
-    bullets: [
-      { icon: <Flower2 className="w-4 h-4 sm:w-5 sm:h-5 text-pink-500" />, text: "Invoke Divine Protection, Strength & Stability" },
-      { icon: <Coins className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500" />, text: "Overcome Obstacles & Attract Lasting Prosperity" },
-      { icon: <HeartHandshake className="w-4 h-4 sm:w-5 sm:h-5 text-rose-500" />, text: "Participate by donating any amount you can contribute", fullWidth: true }
-    ],
-    urgencyText: "PROTECTION • STABILITY • PROSPERITY",
-    buttonText: "DONATE NOW",
-    link: "/donate-homa.aspx?promo=SL_DONATEHOMA-2",
-    badgeText: "MONTHLY HOMA",
-    headerTitle: "Reverse Karma &",
-    headerItalic: "Overcome Obstacles."
-  },
-  {
-    id: 3,
-    title: "Special Birthday Rituals",
-    description: "Powerful Birthday Poojas & Homas to Remove Obstacles & Welcome Success. Enhance your blessings with additional recommended services carefully chosen to support your personal goals and intentions.",
-    image: birthday_cake,
-    bullets: [
-      { icon: <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />, text: "Remove Obstacles & Welcome Success" },
-      { icon: <Gift className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500" />, text: "Save up to 40% on Birthday Rituals" },
-      { icon: <HeartHandshake className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />, text: "Begin your blessed year now", fullWidth: true }
-    ],
-    urgencyText: "SAVE UP TO 40% ON BIRTHDAY RITUAL",
-    buttonText: "EXPLORE SERVICES",
-    link: "/us/specials/birthday-ritual-packages?promo=SL_birthdayritual-3",
-    badgeText: "BIRTHDAY BLESSINGS",
-    headerTitle: "Welcome Success",
-    headerItalic: "in Your New Year."
-  }
-];
+// RITUAL_EVENTS data moved to public/ritual_events.json
 
 /** --- Promo Carousel Data & Styles --- */
 const PROMO_MESSAGES = [
@@ -115,12 +63,12 @@ const PROMO_INNER_GLOW = "absolute inset-0 bg-gradient-to-r from-transparent via
 const PROMO_CONTENT_WRAPPER = "w-full flex items-center justify-center py-2.5 sm:py-3 px-4 relative z-10 min-h-[48px] sm:min-h-[52px]";
 
 /** --- Modern Top/Bottom Layout CSS Classes --- */
+//const SECTION_STYLES = "py-6 md:py-8 relative z-10 w-full transition-colors duration-500 overflow-hidden";
+const CONTENT_WRAPPER_STYLES = "max-w-7xl mx-auto px-4 md:px-6 relative z-10 flex flex-col items-center gap-2 md:gap-6";
 const SECTION_STYLES = "py-4 md:py-6 relative z-10 w-full transition-colors duration-500 overflow-hidden";
-const CONTENT_WRAPPER_STYLES = "max-w-7xl mx-auto px-4 md:px-6 relative z-10 flex flex-col items-center gap-4 md:gap-6";
-
 /* --- TOP SECTION (Typography) --- */
-const TOP_SECTION_STYLES = "flex flex-col items-center text-center w-full min-h-[110px] sm:min-h-[90px] md:min-h-[80px] relative z-20";
-
+//const TOP_SECTION_STYLES = "flex flex-col items-center text-center w-full min-h-[160px] sm:min-h-[140px] md:min-h-[130px] relative z-20";
+const TOP_SECTION_STYLES = "flex flex-col items-center text-center w-full relative z-20";
 const HEADER_TITLE_STYLES = "font-serif text-3xl sm:text-4xl md:text-5xl text-midnight mr-2 dark:text-cream leading-tight font-bold";
 const HEADER_ITALIC_STYLES = "font-serif text-3xl sm:text-4xl md:text-5xl text-amber-600 dark:text-amber-400 italic leading-tight font-bold";
 
@@ -136,8 +84,8 @@ const TITLE_STYLES = "text-xl md:text-base lg:text-3xl xl:text-[32px] font-black
 const DESC_TEXT_STYLES = "font-sans text-slate-600 dark:text-slate-300 lg:text-gray-500 lg:dark:text-gray-500 text-sm md:text-sm lg:text-[15px] leading-relaxed mb-3 md:mb-3 lg:mb-4 text-center md:text-left";
 
 const LIST_CONTAINER_STYLES = "grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-2 lg:gap-3 mb-3 md:mb-3 lg:mb-4 w-full";
-const LIST_ITEM_STYLES = "flex items-center bg-slate-50/50 dark:bg-slate-800/50 lg:bg-[#F9F9FB] lg:dark:bg-[#F9F9FB] rounded-xl lg:rounded-2xl p-2 md:p-2 lg:p-3 border border-slate-100 dark:border-slate-700/50 lg:border-[#F0F0F4] lg:dark:border-[#F0F0F4] font-sans font-semibold text-slate-700 dark:text-slate-300 lg:text-slate-600 lg:dark:text-slate-600 text-sm md:text-[13px] lg:text-sm leading-tight lg:leading-snug";
-const ICON_WRAPPER_STYLES = "w-6 h-6 md:w-6 md:h-6 lg:w-7 lg:h-7 rounded-full bg-white dark:bg-slate-700 lg:bg-transparent lg:dark:bg-transparent flex items-center justify-center shrink-0 mr-2 lg:mr-2.5 shadow-sm lg:shadow-none border border-slate-100 dark:border-slate-600 lg:border-transparent lg:dark:border-transparent text-sm lg:text-base";
+const LIST_ITEM_STYLES = "group flex items-center bg-gradient-to-br from-white to-slate-50/50 dark:from-slate-800/80 dark:to-slate-900/80 rounded-xl lg:rounded-2xl p-2.5 md:p-3 lg:p-3.5 border border-slate-200/70 dark:border-slate-700/60 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_25px_-5px_rgba(245,158,11,0.15)] hover:border-amber-300/50 dark:hover:border-amber-500/30 transition-all duration-300 font-sans font-semibold text-slate-800 dark:text-slate-200 text-sm md:text-[13px] lg:text-[14px] leading-tight lg:leading-snug hover:-translate-y-0.5 cursor-default relative overflow-hidden";
+const ICON_WRAPPER_STYLES = "w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-amber-50 dark:bg-amber-900/30 group-hover:bg-amber-100 dark:group-hover:bg-amber-800/50 flex items-center justify-center shrink-0 mr-3 lg:mr-3.5 shadow-sm border border-amber-100 dark:border-amber-700/50 transition-colors duration-300 relative z-10";
 
 const URGENCY_WRAPPER_STYLES = "flex items-start lg:items-center gap-2 border border-rose-200 dark:border-rose-900/50 lg:border-[#FFD6DC] lg:dark:border-[#FFD6DC] bg-rose-50 dark:bg-rose-900/20 lg:bg-[#FFF0F2] lg:dark:bg-[#FFF0F2] rounded-2xl lg:rounded-full px-4 lg:px-5 py-2.5 lg:py-3 mb-4 w-full sm:w-fit shadow-sm lg:shadow-none mx-auto md:mx-0 text-left";
 const URGENCY_DOT_STYLES = "w-2.5 h-2.5 md:w-2 md:h-2 lg:w-2.5 lg:h-2.5 rounded-full bg-rose-500 lg:bg-[#E83E8C] lg:dark:bg-[#E83E8C] shadow-[0_0_8px_rgba(244,63,94,0.4)] lg:shadow-[0_0_8px_rgba(232,62,140,0.4)] lg:dark:shadow-[0_0_8px_rgba(232,62,140,0.4)] animate-pulse shrink-0 mt-[3px] lg:mt-0";
@@ -149,16 +97,39 @@ const SUB_CTA_TEXT_STYLES = "text-[11px] sm:text-[11px] lg:text-[14px] text-slat
 
 export function Rituals() {
   const [currentPromo, setCurrentPromo] = useState(0);
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const { currentIndex, direction, nextSlide, prevSlide, setCurrentIndex } = useAutoCarousel(RITUAL_EVENTS.length, 6000);
-  const currentEvent = RITUAL_EVENTS[currentIndex];
+  const { currentIndex, direction, nextSlide, prevSlide, setCurrentIndex } = useAutoCarousel(events.length, 6000);
+  const currentEvent = events[currentIndex];
 
   useEffect(() => {
+    // Fetch data using axios
+    axios.get('/json/Rituals.json')
+      .then(response => {
+        setEvents(response.data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error("Error fetching ritual events:", error);
+        setLoading(false);
+      });
+
     const timer = setInterval(() => {
       setCurrentPromo((prev) => (prev + 1) % PROMO_MESSAGES.length);
     }, 4000);
     return () => clearInterval(timer);
   }, []);
+
+  if (loading || events.length === 0) {
+    return (
+      <section className={SECTION_STYLES}>
+        <div className="w-full flex justify-center items-center py-20 min-h-[500px]">
+          <div className="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className={SECTION_STYLES}>
@@ -172,10 +143,10 @@ export function Rituals() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className="flex flex-col items-center absolute w-full"
+              className="flex flex-col items-center w-full relative"
             >
               <span className={BADGE_STYLES}>{currentEvent.badgeText}</span>
-              <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 mt-2 mb-4">
+              <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 mt-2 mb-0 md:mb-2">
                 <h2 className={HEADER_TITLE_STYLES}>
                   {currentEvent.headerTitle}
                 </h2>
@@ -230,16 +201,26 @@ export function Rituals() {
                 <div className={CONTENT_CARD_STYLES}>
                   <div className="flex flex-col lg:flex-row gap-4 md:gap-6 lg:gap-10 w-full">
                     {/* --- Left Column: Image --- */}
-                    <div className={`w-full lg:w-[45%] shrink-0 flex flex-col order-first lg:mb-0 relative min-h-[220px] md:min-h-[350px] lg:min-h-[280px] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden ${currentEvent.id === 3 ? 'bg-[#120d0a]' : ''}`}>
+                    <div className="w-full lg:w-[45%] shrink-0 flex flex-col items-center justify-start lg:justify-center order-first lg:mb-0 relative overflow-hidden">
                       <img
                         src={currentEvent.image}
                         alt={currentEvent.title}
-                        className={`w-full h-full absolute inset-0 ${currentEvent.id === 3 ? 'object-contain object-center py-2' : 'object-cover'}`}
+                        className="w-auto h-auto max-w-full max-h-[300px] md:max-h-[450px] lg:max-h-none object-contain rounded-[1.5rem] md:rounded-[2rem] shadow-sm"
                       />
                     </div>
 
                     {/* --- Right Column: Content --- */}
                     <div className="w-full lg:w-[55%] flex flex-col min-w-0 lg:pr-16 pt-4 lg:pt-0">
+                      {currentEvent.date && (
+                        <div className="flex items-center justify-center md:justify-start gap-3 mb-4 md:mb-5">
+                          <div className="flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 shadow-[0_4px_12px_rgba(245,158,11,0.3)] shrink-0">
+                            <Calendar className="w-4 h-4 text-white" />
+                          </div>
+                          <span className="text-sm md:text-[15px] font-extrabold uppercase tracking-[0.2em] bg-gradient-to-r from-amber-600 to-rose-600 dark:from-amber-400 dark:to-rose-400 bg-clip-text text-transparent">
+                            {currentEvent.date}
+                          </span>
+                        </div>
+                      )}
                       <h3 className={TITLE_STYLES}>{currentEvent.title}</h3>
 
                       {/* Description */}
@@ -249,12 +230,41 @@ export function Rituals() {
 
                       {/* Bullet Points */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-2 lg:gap-3 mb-5 md:mb-4 lg:mb-5 w-full">
-                        {currentEvent.bullets.map((bullet: any, idx: number) => (
-                          <div key={idx} className={`${LIST_ITEM_STYLES} ${bullet.fullWidth ? 'md:col-span-2' : ''}`}>
-                            <div className={ICON_WRAPPER_STYLES}>{bullet.icon}</div>
-                            <span>{bullet.text}</span>
-                          </div>
-                        ))}
+                        {currentEvent.bullets.map((bullet: any, idx: number) => {
+                          const iconClass = "w-4 h-4 sm:w-5 sm:h-5";
+                          let bulletIcon = <Sparkles className={`${iconClass} text-amber-500`} />;
+
+                          switch (currentEvent.id) {
+                            case 1:
+                              switch (idx) {
+                                case 0: bulletIcon = <Home className={`${iconClass} text-amber-500`} />; break;
+                                case 1: bulletIcon = <Flame className={`${iconClass} text-orange-500`} />; break;
+                                case 2: bulletIcon = <Music className={`${iconClass} text-blue-500`} />; break;
+                              }
+                              break;
+                            case 2:
+                              switch (idx) {
+                                case 0: bulletIcon = <Flower2 className={`${iconClass} text-pink-500`} />; break;
+                                case 1: bulletIcon = <Coins className={`${iconClass} text-yellow-500`} />; break;
+                                case 2: bulletIcon = <HeartHandshake className={`${iconClass} text-rose-500`} />; break;
+                              }
+                              break;
+                            case 3:
+                              switch (idx) {
+                                case 0: bulletIcon = <Sparkles className={`${iconClass} text-amber-400`} />; break;
+                                case 1: bulletIcon = <Gift className={`${iconClass} text-purple-500`} />; break;
+                                case 2: bulletIcon = <HeartHandshake className={`${iconClass} text-green-500`} />; break;
+                              }
+                              break;
+                          }
+
+                          return (
+                            <div key={idx} className={`${LIST_ITEM_STYLES} ${idx === 2 ? 'md:col-span-2' : ''}`}>
+                              <div className={ICON_WRAPPER_STYLES}>{bulletIcon}</div>
+                              <span>{bullet}</span>
+                            </div>
+                          );
+                        })}
                       </div>
 
                       {/* Urgency Pill */}
@@ -283,7 +293,7 @@ export function Rituals() {
           {/* Pagination */}
           <div className="flex items-center justify-center mt-2 relative z-20 w-full pb-4">
             <div className="flex gap-2 items-center">
-              {RITUAL_EVENTS.map((_, idx) => (
+              {events.map((_, idx) => (
                 <button
                   key={idx}
                   onClick={() => setCurrentIndex(idx)}
