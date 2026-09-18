@@ -82,7 +82,8 @@ export function PopularPoojas() {
 
   useEffect(() => {
     const getPoojaAndHomaList = async () => {
-      await axios.get('https://qa.astroved.com/json/Poojas&Homas.json').then((res) => {
+      // await axios.get('https://qa.astroved.com/json/Poojas&Homas.json').then((res) => {
+      await axios.get('/json/Poojas&Homas.json').then((res) => {
         setJsonData(res.data)
       })
     }

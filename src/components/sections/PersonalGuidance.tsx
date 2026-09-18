@@ -133,21 +133,22 @@ export function PersonalGuidance() {
   /**
    * Auto-scroll functionality for mobile views.
    */
-  useEffect(() => {
-    const autoScrollInterval = setTimeout(() => {
-      if (scrollRef.current && window.innerWidth < 1024) {
-        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-        if (scrollLeft + clientWidth >= scrollWidth - 20) {
-          scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-          scrollRef.current.scrollBy({ left: clientWidth * 0.85, behavior: 'smooth' });
-        }
-      }
-      setLastInteraction(Date.now());
-    }, 5000);
 
-    return () => clearTimeout(autoScrollInterval);
-  }, [lastInteraction]);
+  // useEffect(() => {
+  //   const autoScrollInterval = setTimeout(() => {
+  //     if (scrollRef.current && window.innerWidth < 1024) {
+  //       const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+  //       if (scrollLeft + clientWidth >= scrollWidth - 20) {
+  //         scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+  //       } else {
+  //         scrollRef.current.scrollBy({ left: clientWidth * 0.85, behavior: 'smooth' });
+  //       }
+  //     }
+  //     setLastInteraction(Date.now());
+  //   }, 5000);
+
+  //   return () => clearTimeout(autoScrollInterval);
+  // }, [lastInteraction]);
 
   return (
     <section className={SECTION_STYLES}>

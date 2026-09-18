@@ -105,6 +105,7 @@ export function Rituals() {
 
   useEffect(() => {
     // Fetch data using axios
+    // axios.get('https://qa.astroved.com/json/Rituals.json')
     axios.get('/json/Rituals.json')
       .then(response => {
         setEvents(response.data);
